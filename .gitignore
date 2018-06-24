@@ -3,3 +3,7 @@
 ################################################################################
 
 /TPublish/packages
+/TPublish/.vs
+/TPublish/TPublish.Web/obj/Debug
+/TPublish/TPublish.Web/bin
+/TPublish/TPublish.Web/TPublish.Web.csproj.user
