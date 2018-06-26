@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -31,6 +32,20 @@ namespace TPublish.Web.Controllers
                 mgr.CommitChanges();
             }
             return null;
+        }
+
+        public string UploadTest(HttpPostedFileBase uploadFile)
+        {
+            var f1 = Request.Files[0];
+            f1.SaveAs(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, f1.FileName));
+
+            string strPars = "";
+            foreach (var key in Request.Form.AllKeys)
+            {
+                string val = Request[key];
+                strPars += "[" + key + ":" + val + "] ";
+            }
+            return strPars;
         }
     }
 }
