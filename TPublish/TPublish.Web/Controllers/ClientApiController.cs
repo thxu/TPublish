@@ -50,21 +50,22 @@ namespace TPublish.Web.Controllers
                     throw new Exception("缺少参数");
                 }
 
-                string type = Request["Type"];
-                string appName = Request["AppName"];
+                string type = Request["Type"].TrimEnd('\r', '\n');
+                string appName = Request["AppName"].TrimEnd('\r', '\n');
 
                 switch (type.ToUpper())
                 {
                     case "IIS":
-                        res = DoIIS(appName, fileName, fileInfo);
-                        break;
+                        {
+                            res = DoIIS(appName, fileName, fileInfo);
+                            break;
+                        }
                     case "EXE":
-                        break;
+                        {
+                            res = DoExe(appName, fileName, fileInfo);
+                            break;
+                        }
                 }
-
-
-                var allProcesses = System.Diagnostics.Process.GetProcesses();
-                
             }
             catch (Exception e)
             {
@@ -84,6 +85,31 @@ namespace TPublish.Web.Controllers
             return changeRes;
         }
 
+        public Result DoExe(string appName, string fileName, HttpPostedFileBase fileInfo)
+        {
+            Result res = new Result();
+            try
+            {
+                var allProcesses = System.Diagnostics.Process.GetProcesses();
+                var appProcess = allProcesses.FirstOrDefault(n => n.ProcessName == appName);
+                if (appProcess == null)
+                {
+                    throw new Exception("未找到该进程");
+                }
+                string appFullPath = appProcess.MainModule.FileName;
+                string appPath = Directory.GetParent(appFullPath).FullName;
+                string newAppPath = appPath.AddVersion();
+                string zipPath = Path.Combine(newAppPath, fileName);
+                appPath.CopyDirectoryTo(newAppPath);
+                fileInfo.SaveAs(zipPath);
+            }
+            catch (Exception e)
+            {
+                res.Message = e.Message;
+            }
+
+            return res;
+        }
 
 
     }

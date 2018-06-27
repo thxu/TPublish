@@ -1,7 +1,7 @@
-﻿using Microsoft.Web.Administration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Web.Administration;
 
 namespace TPublish.Common
 {
@@ -18,7 +18,7 @@ namespace TPublish.Common
             Result res = new Result();
             try
             {
-                using (var mgr = new ServerManager())
+                using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
                 {
                     var site = mgr.Sites.FirstOrDefault(n => n.Name == appName);
                     if (site == null)
@@ -62,7 +62,7 @@ namespace TPublish.Common
         /// <returns>新文件夹路径</returns>
         public static string CopyIISAppToNewDir(this string appName)
         {
-            using (var mgr = new ServerManager())
+            using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
             {
                 var site = mgr.Sites.FirstOrDefault(n => n.Name == appName);
                 if (site == null)
@@ -85,7 +85,7 @@ namespace TPublish.Common
             List<string> res = new List<string>();
             try
             {
-                using (var mgr = new ServerManager())
+                using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
                 {
                     foreach (var site in mgr.Sites)
                     {
