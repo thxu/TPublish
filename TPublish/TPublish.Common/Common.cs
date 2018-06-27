@@ -100,6 +100,7 @@ namespace TPublish.Common
             {
                 memStream.Write(buffer, 0, bytesRead);
             }
+            fileStream.Close();
 
             // 写入字符串的Key
             var stringKeyHeader = "\r\n--" + boundary +
@@ -137,7 +138,6 @@ namespace TPublish.Common
                 responseContent = httpStreamReader.ReadToEnd();
             }
 
-            fileStream.Close();
             httpWebResponse.Close();
             webRequest.Abort();
 

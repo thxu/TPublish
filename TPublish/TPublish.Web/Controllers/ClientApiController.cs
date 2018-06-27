@@ -16,36 +16,75 @@ namespace TPublish.Web.Controllers
             return "hello";
         }
 
-        public string PublishToIIS()
+        /// <summary>
+        /// 获取所有iis应用程序名称
+        /// </summary>
+        /// <returns>应用程序名称集合</returns>
+        public List<string> GetAllIISAppName()
         {
-            using (var mgr = new ServerManager())
+            return IISHelper.GetAllIISAppName();
+        }
+
+        public Result UploadTest()
+        {
+            Result res = new Result();
+            try
             {
-                var site = mgr.Sites.FirstOrDefault(n => n.Name == "test");
-                if (site == null)
+                if (Request.Files.Count <= 0)
                 {
-                    return "";
+                    throw new Exception("未接收到文件");
                 }
-                var lastVersionPath = site?.Applications["/"]?.VirtualDirectories["/"]?.PhysicalPath;
-                string newVersion = lastVersionPath.AddVersion();
-                lastVersionPath.CopyDirectoryTo(newVersion);
-                site.Applications["/"].VirtualDirectories["/"].PhysicalPath = newVersion;
-                mgr.CommitChanges();
+                var fileInfo = Request.Files[0];
+                if (fileInfo == null)
+                {
+                    throw new Exception("文件已损坏");
+                }
+                var fileName = Path.GetFileName(fileInfo.FileName);
+                if (string.IsNullOrWhiteSpace(fileName))
+                {
+                    throw new Exception("文件名无法读取");
+                }
+
+                if (!Request.Form.AllKeys.Contains("Type") || !Request.Form.AllKeys.Contains("AppName"))
+                {
+                    throw new Exception("缺少参数");
+                }
+
+                string type = Request["Type"];
+                string appName = Request["AppName"];
+
+                switch (type.ToUpper())
+                {
+                    case "IIS":
+                        res = DoIIS(appName, fileName, fileInfo);
+                        break;
+                    case "EXE":
+                        break;
+                }
+
+
+                var allProcesses = System.Diagnostics.Process.GetProcesses();
+                
             }
-            return null;
-        }
-
-        public string UploadTest(HttpPostedFileBase uploadFile)
-        {
-            var f1 = Request.Files[0];
-            f1.SaveAs(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, f1.FileName));
-
-            string strPars = "";
-            foreach (var key in Request.Form.AllKeys)
+            catch (Exception e)
             {
-                string val = Request[key];
-                strPars += "[" + key + ":" + val + "] ";
+                res.Message = e.Message;
             }
-            return strPars;
+
+            return res;
         }
+
+        public Result DoIIS(string appName, string fileName, HttpPostedFileBase fileInfo)
+        {
+            string newVersionPath = appName.CopyIISAppToNewDir();
+            string zipPath = Path.Combine(newVersionPath, fileName);
+            fileInfo.SaveAs(zipPath);
+            new ZipHelper().UnZip(zipPath, Directory.GetParent(zipPath).FullName);
+            var changeRes = appName.ChangeIISAppVersion(newVersionPath);
+            return changeRes;
+        }
+
+
+
     }
 }
