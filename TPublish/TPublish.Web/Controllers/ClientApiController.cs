@@ -102,6 +102,7 @@ namespace TPublish.Web.Controllers
                 string zipPath = Path.Combine(newAppPath, fileName);
                 appPath.CopyDirectoryTo(newAppPath);
                 fileInfo.SaveAs(zipPath);
+                new ZipHelper().UnZip(zipPath, Directory.GetParent(zipPath).FullName);
                 res.IsSucceed = true;
             }
             catch (Exception e)
