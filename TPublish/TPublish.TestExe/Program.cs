@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -13,6 +15,7 @@ namespace TPublish.TestExe
     {
         static void Main(string[] args)
         {
+            //ZipTest1();
             UploadTest();
             Console.Out.WriteLine("hello");
             Console.ReadKey();
@@ -28,7 +31,32 @@ namespace TPublish.TestExe
             pathList.Add(@"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi\WCFConfig");
             pathList.Add(@"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi\Web.config");
 
-            var zipRes = new ZipHelper().ZipManyFilesOrDictorys(pathList, @"E:\1.zip");
+            var zipRes = new ZipHelper().ZipManyFilesOrDictorys(pathList, @"E:\1.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi");
+        }
+
+        public static void ZipTest1()
+        {
+            List<string> pathList = new List<string>();
+            //pathList.Add(@"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
+
+            DirectoryInfo fileDire = new DirectoryInfo(@"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
+
+            foreach (var directory in fileDire.GetDirectories())
+            {
+                pathList.Add(directory.FullName);
+            }
+            foreach (FileInfo file in fileDire.GetFiles("*.*"))
+            {
+                pathList.Add(file.FullName);
+            }
+
+            //var hashtable = new ZipHelper().GetAllFies(@"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
+            //foreach (DictionaryEntry entry in hashtable)
+            //{
+            //    pathList.Add(entry.Key.ToString());
+            //}
+
+            var zipRes = new ZipHelper().ZipManyFilesOrDictorys(pathList, @"E:\2.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
         }
 
         public static void UnZipTest()
@@ -41,15 +69,16 @@ namespace TPublish.TestExe
 
         private static void UploadTest()
         {
-            string path = @"E:\1.zip";
+            string path = @"E:\2.zip";
             string url = "http://localhost:11722/ClientApi/UploadTest";
+            //string url = "http://localhost:8083/ClientApi/UploadTest";
             //string url = "http://10.0.0.4:11722/ClientApi/UploadTest";
             //WebClient client = new WebClient();
             //client.UploadFile(url,path);
 
             NameValueCollection dic = new NameValueCollection();
-            dic.Add("Type", "iis");
-            dic.Add("AppName", "GroundingResistance");
+            dic.Add("Type", "exe");
+            dic.Add("AppName", "TcpService");
             var res = Common.Common.HttpPostData(url, 100000, "1.zip", path, dic).DeserializeObject<Result>();
         }
 
