@@ -20,12 +20,12 @@ namespace TPublish.Web.Controllers
         /// 获取所有iis应用程序名称
         /// </summary>
         /// <returns>应用程序名称集合</returns>
-        public List<string> GetAllIISAppName()
+        public string GetAllIISAppName()
         {
-            return IISHelper.GetAllIISAppName();
+            return IISHelper.GetAllIISAppName().SerializeObject();
         }
 
-        public Result UploadTest()
+        public string UploadTest()
         {
             Result res = new Result();
             try
@@ -72,7 +72,7 @@ namespace TPublish.Web.Controllers
                 res.Message = e.Message;
             }
 
-            return res;
+            return res.SerializeObject();
         }
 
         public Result DoIIS(string appName, string fileName, HttpPostedFileBase fileInfo)

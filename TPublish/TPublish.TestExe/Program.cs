@@ -50,7 +50,7 @@ namespace TPublish.TestExe
             NameValueCollection dic = new NameValueCollection();
             dic.Add("Type", "iis");
             dic.Add("AppName", "GroundingResistance");
-            var res = Common.Common.HttpPostData(url, 100000, "1.zip", path, dic);
+            var res = Common.Common.HttpPostData(url, 100000, "1.zip", path, dic).DeserializeObject<Result>();
         }
 
         private static void GetAllIISAppName()
@@ -58,7 +58,7 @@ namespace TPublish.TestExe
             string url = "http://localhost:11722/ClientApi/GetAllIISAppName";
 
             WebClient client = new WebClient();
-            var res = client.DownloadString(url);
+            var res = client.DownloadString(url).DeserializeObject<List<string>>();
         }
     }
 }
