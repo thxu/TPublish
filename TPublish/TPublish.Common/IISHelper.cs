@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Web.Administration;
+using TPublish.Common.Model;
 
 namespace TPublish.Common
 {
@@ -80,16 +81,20 @@ namespace TPublish.Common
         /// 获取所有iis应用程序名称
         /// </summary>
         /// <returns>应用程序名称集合</returns>
-        public static List<string> GetAllIISAppName()
+        public static List<AppView> GetAllIISAppName()
         {
-            List<string> res = new List<string>();
+            List<AppView> res = new List<AppView>();
             try
             {
                 using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
                 {
                     foreach (var site in mgr.Sites)
                     {
-                        res.Add(site.Name);
+                        res.Add(new AppView
+                        {
+                            AppName = site.Name,
+                            AppPhysicalPath = site.Applications["/"]?.VirtualDirectories["/"]?.PhysicalPath ?? string.Empty,
+                        });
                     }
                 }
             }

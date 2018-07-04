@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using EnvDTE;
 using Microsoft.VisualStudio;
@@ -9,7 +10,6 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using TPublish.ClientVsix.Model;
 using TPublish.ClientVsix.Setting;
-using TPublish.Common;
 
 namespace TPublish.ClientVsix.Service
 {
@@ -80,26 +80,49 @@ namespace TPublish.ClientVsix.Service
                 {
                     Regex reg = new Regex(@"<OutputType>(?<Word>(\s|\S)*?)</OutputType>");
                     var typeMatch = reg.Match(match.Value);
-                    if (typeMatch.Success && typeMatch.Groups["Word"].Value == "Library")
+                    if (typeMatch.Success)
                     {
                         model.ProjType = typeMatch.Groups["Word"].Value;
                     }
                 }
             }
 
-            return null;
+            return model;
         }
 
-        public static List<string> GetAllIISAppNames()
+        public static List<AppView> GetAllIISAppNames()
         {
             //var res  = ThreadHelper.JoinableTaskFactory.Run();
 
-            OptionPageGrid setting = GetSettingPage();
-            string url = $"{setting.GetApiUrl()}/ClientApi/GetAllIISAppName";
-            WebClient client = new WebClient();
-            var res = client.DownloadString(url).DeserializeObject<List<string>>();
+            try
+            {
+                OptionPageGrid setting = GetSettingPage();
+                string url = $"{setting.GetApiUrl()}/GetAllIISAppView";
+                WebClient client = new WebClient();
+                var res = client.DownloadString(url).DeserializeObject<List<AppView>>();
+                return res;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
 
-            return res;
+        public static AppView GetExeAppView(string appName)
+        {
+            try
+            {
+                OptionPageGrid setting = GetSettingPage();
+                string url = $"{setting.GetApiUrl()}/GetExeAppView?appName={appName}";
+
+                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 3000);
+
+                return res.DeserializeObject<AppView>();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

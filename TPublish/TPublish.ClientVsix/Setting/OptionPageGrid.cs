@@ -18,7 +18,7 @@ namespace TPublish.ClientVsix.Setting
 
         public string GetApiUrl()
         {
-            return $"{IpAdress}/ClientApi/UploadZip";
+            return $"{IpAdress}/ClientApi";
         }
 
         protected override IWin32Window Window

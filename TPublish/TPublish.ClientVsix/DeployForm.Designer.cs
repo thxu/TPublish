@@ -101,8 +101,9 @@
             this.cbAppName.FormattingEnabled = true;
             this.cbAppName.Location = new System.Drawing.Point(131, 65);
             this.cbAppName.Name = "cbAppName";
-            this.cbAppName.Size = new System.Drawing.Size(121, 20);
+            this.cbAppName.Size = new System.Drawing.Size(311, 20);
             this.cbAppName.TabIndex = 6;
+            this.cbAppName.SelectedIndexChanged += new System.EventHandler(this.cbAppName_SelectedIndexChanged);
             // 
             // lbAppPath
             // 
@@ -116,6 +117,7 @@
             // radioFullPush
             // 
             this.radioFullPush.AutoSize = true;
+            this.radioFullPush.Checked = true;
             this.radioFullPush.Location = new System.Drawing.Point(131, 149);
             this.radioFullPush.Name = "radioFullPush";
             this.radioFullPush.Size = new System.Drawing.Size(47, 16);
@@ -131,7 +133,6 @@
             this.radioPartPush.Name = "radioPartPush";
             this.radioPartPush.Size = new System.Drawing.Size(47, 16);
             this.radioPartPush.TabIndex = 9;
-            this.radioPartPush.TabStop = true;
             this.radioPartPush.Text = "增量";
             this.radioPartPush.UseVisualStyleBackColor = true;
             // 

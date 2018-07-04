@@ -92,17 +92,17 @@ namespace TPublish.ClientVsix
             ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
-                string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()----", this.GetType().FullName);
-                string title = "Push";
+                //string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()----", this.GetType().FullName);
+                //string title = "Push";
 
-                // Show a message box to prove we were here
-                VsShellUtilities.ShowMessageBox(
-                    this.package,
-                    message,
-                    title,
-                    OLEMSGICON.OLEMSGICON_INFO,
-                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                //// Show a message box to prove we were here
+                //VsShellUtilities.ShowMessageBox(
+                //    this.package,
+                //    message,
+                //    title,
+                //    OLEMSGICON.OLEMSGICON_INFO,
+                //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
 
 
                 var projInfo = GetSelectedProjInfo();
@@ -124,6 +124,7 @@ namespace TPublish.ClientVsix
                 }
 
                 var form = new DeployForm();
+                form.Ini(projModel);
                 form.Show();
             }
             catch (Exception exception)

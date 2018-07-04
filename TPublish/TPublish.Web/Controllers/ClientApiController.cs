@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.Web.Administration;
 using TPublish.Common;
+using TPublish.Common.Model;
 
 namespace TPublish.Web.Controllers
 {
@@ -20,9 +21,31 @@ namespace TPublish.Web.Controllers
         /// 获取所有iis应用程序名称
         /// </summary>
         /// <returns>应用程序名称集合</returns>
-        public string GetAllIISAppName()
+        public string GetAllIISAppView()
         {
             return IISHelper.GetAllIISAppName().SerializeObject();
+        }
+
+        public string GetExeAppView(string appName)
+        {
+            AppView view = new AppView();
+            try
+            {
+                var allProcesses = System.Diagnostics.Process.GetProcesses();
+                var appProcess = allProcesses.FirstOrDefault(n => n.ProcessName == appName);
+                if (appProcess == null)
+                {
+                    throw new Exception("未找到该进程");
+                }
+                string appFullPath = appProcess.MainModule.FileName;
+                view.AppName = appName;
+                view.AppPhysicalPath = appFullPath;
+            }
+            catch (Exception e)
+            {
+
+            }
+            return view.SerializeObject();
         }
 
         public string UploadZip()

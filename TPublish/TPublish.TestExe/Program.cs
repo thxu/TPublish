@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using TPublish.Common;
+using TPublish.Common.Model;
 
 namespace TPublish.TestExe
 {
@@ -15,8 +16,9 @@ namespace TPublish.TestExe
     {
         static void Main(string[] args)
         {
+            var tmp = GetExeAppView("TcpService");
             //ZipTest1();
-            UploadTest();
+            //UploadTest();
             Console.Out.WriteLine("hello");
             Console.ReadKey();
 
@@ -65,6 +67,23 @@ namespace TPublish.TestExe
             string unZipPath = @"E:\1";
 
             new ZipHelper().UnZip(zipPath, unZipPath);
+        }
+
+        public static AppView GetExeAppView(string appName)
+        {
+            try
+            {
+                string url = $"http://localhost:8083/ClientApi/GetExeAppView?appName={appName}";
+                //string url = $"http://localhost:8083/ClientApi/GetExeAppView";
+
+                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
+
+                return res.DeserializeObject<AppView>();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         private static void UploadTest()
