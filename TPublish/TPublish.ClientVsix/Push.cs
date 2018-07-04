@@ -1,8 +1,13 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.Windows.Forms;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using TPublish.ClientVsix.Service;
+using TPublish.ClientVsix.Setting;
 
 namespace TPublish.ClientVsix
 {
@@ -85,17 +90,63 @@ namespace TPublish.ClientVsix
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()----", this.GetType().FullName);
-            string title = "Push";
+            try
+            {
+                string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()----", this.GetType().FullName);
+                string title = "Push";
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                // Show a message box to prove we were here
+                VsShellUtilities.ShowMessageBox(
+                    this.package,
+                    message,
+                    title,
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+
+
+                var projInfo = GetSelectedProjInfo();
+                if (projInfo == null)
+                {
+                    throw new Exception("您还未选中项目");
+                }
+
+                var projModel = projInfo.AnalysisProject();
+                if (projModel == null)
+                {
+                    throw new Exception("项目信息解析失败");
+                }
+
+                OptionPageGrid settingInfo = TPublishService.GetSettingPage();
+                if (string.IsNullOrWhiteSpace(settingInfo?.IpAdress))
+                {
+                    throw new Exception("请先完善设置信息");
+                }
+
+                var form = new DeployForm();
+                form.Show();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        private Project GetSelectedProjInfo()
+        {
+            if (!((ServiceProvider.GetService(typeof(DTE))) is DTE2 dte))
+            {
+                return null;
+            }
+            var projInfo = (Array)dte.ToolWindows.SolutionExplorer.SelectedItems;
+            foreach (UIHierarchyItem selItem in projInfo)
+            {
+                if (selItem.Object is Project item)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
     }
 }
