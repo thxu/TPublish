@@ -25,7 +25,7 @@ namespace TPublish.Web.Controllers
             return IISHelper.GetAllIISAppName().SerializeObject();
         }
 
-        public string UploadTest()
+        public string UploadZip()
         {
             Result res = new Result();
             try

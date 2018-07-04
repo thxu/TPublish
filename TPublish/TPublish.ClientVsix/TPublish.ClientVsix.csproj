@@ -57,6 +57,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Push.cs" />
     <Compile Include="PushPackage.cs" />
+    <Compile Include="Service\TPublishService.cs" />
+    <Compile Include="Setting\OptionPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Setting\TPublishSettingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Setting\TPublishSettingControl.Designer.cs">
+      <DependentUpon>TPublishSettingControl.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -175,6 +185,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Setting\TPublishSettingControl.resx">
+      <DependentUpon>TPublishSettingControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>

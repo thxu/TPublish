@@ -70,9 +70,9 @@ namespace TPublish.TestExe
         private static void UploadTest()
         {
             string path = @"E:\2.zip";
-            string url = "http://localhost:11722/ClientApi/UploadTest";
-            //string url = "http://localhost:8083/ClientApi/UploadTest";
-            //string url = "http://10.0.0.4:11722/ClientApi/UploadTest";
+            string url = "http://localhost:11722/ClientApi/UploadZip";
+            //string url = "http://localhost:8083/ClientApi/UploadZip";
+            //string url = "http://10.0.0.4:11722/ClientApi/UploadZip";
             //WebClient client = new WebClient();
             //client.UploadFile(url,path);
 
