@@ -26,6 +26,10 @@ namespace TPublish.Common
             {
                 if (i is DirectoryInfo)     //判断是否文件夹
                 {
+                    if (i.Name.ToLower().Contains("log"))
+                    {
+                        continue;
+                    }
                     if (!Directory.Exists(destPath + "\\" + i.Name))
                     {
                         Directory.CreateDirectory(destPath + "\\" + i.Name);   //目标目录下不存在此文件夹即创建子文件夹
