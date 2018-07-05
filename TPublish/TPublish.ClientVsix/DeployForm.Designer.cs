@@ -40,6 +40,8 @@
             this.radioPartPush = new System.Windows.Forms.RadioButton();
             this.txtRemark = new System.Windows.Forms.TextBox();
             this.btnDeploy = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.lbStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -155,11 +157,31 @@
             this.btnDeploy.UseVisualStyleBackColor = true;
             this.btnDeploy.Click += new System.EventHandler(this.btnDeploy_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(82, 283);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(41, 12);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "状态：";
+            // 
+            // lbStatus
+            // 
+            this.lbStatus.AutoSize = true;
+            this.lbStatus.Location = new System.Drawing.Point(137, 283);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(11, 12);
+            this.lbStatus.TabIndex = 13;
+            this.lbStatus.Text = "-";
+            // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(454, 376);
+            this.Controls.Add(this.lbStatus);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnDeploy);
             this.Controls.Add(this.txtRemark);
             this.Controls.Add(this.radioPartPush);
@@ -193,5 +215,7 @@
         private System.Windows.Forms.RadioButton radioPartPush;
         private System.Windows.Forms.TextBox txtRemark;
         private System.Windows.Forms.Button btnDeploy;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lbStatus;
     }
 }

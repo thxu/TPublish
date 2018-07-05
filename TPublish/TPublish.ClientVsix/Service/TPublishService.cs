@@ -15,7 +15,7 @@ namespace TPublish.ClientVsix.Service
 {
     public static class TPublishService
     {
-        public static PushPackage GetSettingPackage()
+        private static PushPackage GetSettingPackage()
         {
             if (Package.GetGlobalService(typeof(SVsShell)) is IVsShell shell)
             {
