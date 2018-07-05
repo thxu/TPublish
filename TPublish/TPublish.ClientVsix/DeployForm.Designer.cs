@@ -39,6 +39,7 @@
             this.radioFullPush = new System.Windows.Forms.RadioButton();
             this.radioPartPush = new System.Windows.Forms.RadioButton();
             this.txtRemark = new System.Windows.Forms.TextBox();
+            this.btnDeploy = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -144,11 +145,22 @@
             this.txtRemark.Size = new System.Drawing.Size(311, 80);
             this.txtRemark.TabIndex = 10;
             // 
+            // btnDeploy
+            // 
+            this.btnDeploy.Location = new System.Drawing.Point(131, 324);
+            this.btnDeploy.Name = "btnDeploy";
+            this.btnDeploy.Size = new System.Drawing.Size(75, 23);
+            this.btnDeploy.TabIndex = 11;
+            this.btnDeploy.Text = "发布";
+            this.btnDeploy.UseVisualStyleBackColor = true;
+            this.btnDeploy.Click += new System.EventHandler(this.btnDeploy_Click);
+            // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(454, 468);
+            this.ClientSize = new System.Drawing.Size(454, 376);
+            this.Controls.Add(this.btnDeploy);
             this.Controls.Add(this.txtRemark);
             this.Controls.Add(this.radioPartPush);
             this.Controls.Add(this.radioFullPush);
@@ -161,7 +173,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "DeployForm";
-            this.Text = "DeployForm";
+            this.Text = "应用程序信息";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -180,5 +192,6 @@
         private System.Windows.Forms.RadioButton radioFullPush;
         private System.Windows.Forms.RadioButton radioPartPush;
         private System.Windows.Forms.TextBox txtRemark;
+        private System.Windows.Forms.Button btnDeploy;
     }
 }
