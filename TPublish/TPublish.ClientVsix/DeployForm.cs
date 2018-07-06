@@ -12,7 +12,9 @@ namespace TPublish.ClientVsix
     public partial class DeployForm : Form
     {
         protected ProjModel _projModel;
+
         private List<AppView> _appViews = new List<AppView>();
+        private List<DirSimpleName> _dirSimpleNames;
 
         public DeployForm()
         {
@@ -21,29 +23,29 @@ namespace TPublish.ClientVsix
         public void Ini(ProjModel projModel)
         {
             _projModel = projModel;
+            _dirSimpleNames = projModel.ToDirSimpleNames();
 
             if (_projModel.ProjType == "Library")
             {
                 lbAppType.Text = "IIS";
                 _appViews = TPublishService.GetAllIISAppNames();
-                foreach (AppView appView in _appViews)
-                {
-                    cbAppName.Items.Add(appView.AppName);
-                }
-
-                //lbAppPath.Text = _appViews[0].AppPhysicalPath;
-                showAppPath(_appViews[0].AppPhysicalPath);
             }
             else
             {
                 lbAppType.Text = "Exe";
                 AppView view = TPublishService.GetExeAppView(_projModel.LibName);
                 _appViews.Add(view);
-                cbAppName.Items.Add(view?.AppName ?? string.Empty);
-                //lbAppPath.Text = view?.AppPhysicalPath ?? string.Empty;
-                showAppPath(view?.AppPhysicalPath ?? string.Empty);
             }
-            cbAppName.SelectedIndex = -1;
+            cbAppName.DataSource = _appViews;
+            cbAppName.DisplayMember = "AppName";
+            cbAppName.ValueMember = "AppPhysicalPath";
+            cbAppName.SelectedValue = _projModel.LastChooseInfo.LastChooseAppName;
+            showAppPath((cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
+
+            cbAppPublishDir.DataSource = _dirSimpleNames;
+            cbAppPublishDir.DisplayMember = "Name";
+            cbAppPublishDir.ValueMember = "FullName";
+            cbAppPublishDir.SelectedValue = new DirectoryInfo(_projModel.LastChooseInfo.LastChoosePublishDir).Name;
         }
 
         private void showAppPath(string path)
@@ -60,8 +62,7 @@ namespace TPublish.ClientVsix
 
         private void cbAppName_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            //lbAppPath.Text = _appViews[cbAppName.SelectedIndex].AppPhysicalPath;
-            showAppPath(_appViews[cbAppName.SelectedIndex].AppPhysicalPath);
+            showAppPath((cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
         }
 
         private void btnDeploy_Click(object sender, System.EventArgs e)
@@ -142,7 +143,7 @@ namespace TPublish.ClientVsix
 
             NameValueCollection dic = new NameValueCollection();
             dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
-            dic.Add("AppName", cbAppName.SelectedItem.ToString());
+            dic.Add("AppName", (cbAppName.SelectedItem as AppView)?.AppName);
 
             string url = $"{TPublishService.GetSettingPage().GetApiUrl()}/UploadZip";
             lbStatus.Text = "文件上传中。。。";

@@ -42,6 +42,8 @@
             this.btnDeploy = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.lbStatus = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cbAppPublishDir = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -56,7 +58,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(58, 68);
+            this.label2.Location = new System.Drawing.Point(58, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 12);
             this.label2.TabIndex = 1;
@@ -65,7 +67,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(58, 110);
+            this.label3.Location = new System.Drawing.Point(58, 124);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 2;
@@ -74,7 +76,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(58, 151);
+            this.label4.Location = new System.Drawing.Point(58, 224);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 3;
@@ -83,7 +85,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(82, 191);
+            this.label5.Location = new System.Drawing.Point(82, 274);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(41, 12);
             this.label5.TabIndex = 4;
@@ -102,7 +104,7 @@
             // 
             this.cbAppName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbAppName.FormattingEnabled = true;
-            this.cbAppName.Location = new System.Drawing.Point(131, 65);
+            this.cbAppName.Location = new System.Drawing.Point(129, 71);
             this.cbAppName.Name = "cbAppName";
             this.cbAppName.Size = new System.Drawing.Size(311, 20);
             this.cbAppName.TabIndex = 6;
@@ -111,7 +113,7 @@
             // lbAppPath
             // 
             this.lbAppPath.AutoSize = true;
-            this.lbAppPath.Location = new System.Drawing.Point(131, 110);
+            this.lbAppPath.Location = new System.Drawing.Point(131, 124);
             this.lbAppPath.Name = "lbAppPath";
             this.lbAppPath.Size = new System.Drawing.Size(11, 12);
             this.lbAppPath.TabIndex = 7;
@@ -121,7 +123,7 @@
             // 
             this.radioFullPush.AutoSize = true;
             this.radioFullPush.Checked = true;
-            this.radioFullPush.Location = new System.Drawing.Point(131, 149);
+            this.radioFullPush.Location = new System.Drawing.Point(129, 222);
             this.radioFullPush.Name = "radioFullPush";
             this.radioFullPush.Size = new System.Drawing.Size(47, 16);
             this.radioFullPush.TabIndex = 8;
@@ -132,16 +134,16 @@
             // radioPartPush
             // 
             this.radioPartPush.AutoSize = true;
-            this.radioPartPush.Location = new System.Drawing.Point(182, 149);
+            this.radioPartPush.Location = new System.Drawing.Point(180, 222);
             this.radioPartPush.Name = "radioPartPush";
-            this.radioPartPush.Size = new System.Drawing.Size(47, 16);
+            this.radioPartPush.Size = new System.Drawing.Size(59, 16);
             this.radioPartPush.TabIndex = 9;
-            this.radioPartPush.Text = "增量";
+            this.radioPartPush.Text = "自定义";
             this.radioPartPush.UseVisualStyleBackColor = true;
             // 
             // txtRemark
             // 
-            this.txtRemark.Location = new System.Drawing.Point(131, 188);
+            this.txtRemark.Location = new System.Drawing.Point(129, 271);
             this.txtRemark.Multiline = true;
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(311, 80);
@@ -149,7 +151,7 @@
             // 
             // btnDeploy
             // 
-            this.btnDeploy.Location = new System.Drawing.Point(131, 324);
+            this.btnDeploy.Location = new System.Drawing.Point(129, 434);
             this.btnDeploy.Name = "btnDeploy";
             this.btnDeploy.Size = new System.Drawing.Size(75, 23);
             this.btnDeploy.TabIndex = 11;
@@ -160,7 +162,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(82, 283);
+            this.label6.Location = new System.Drawing.Point(82, 378);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 12;
@@ -169,17 +171,37 @@
             // lbStatus
             // 
             this.lbStatus.AutoSize = true;
-            this.lbStatus.Location = new System.Drawing.Point(137, 283);
+            this.lbStatus.Location = new System.Drawing.Point(127, 378);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(11, 12);
             this.lbStatus.TabIndex = 13;
             this.lbStatus.Text = "-";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(58, 174);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 12);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "程序位置：";
+            // 
+            // cbAppPublishDir
+            // 
+            this.cbAppPublishDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAppPublishDir.FormattingEnabled = true;
+            this.cbAppPublishDir.Location = new System.Drawing.Point(129, 171);
+            this.cbAppPublishDir.Name = "cbAppPublishDir";
+            this.cbAppPublishDir.Size = new System.Drawing.Size(311, 20);
+            this.cbAppPublishDir.TabIndex = 15;
+            // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(454, 376);
+            this.ClientSize = new System.Drawing.Size(454, 502);
+            this.Controls.Add(this.cbAppPublishDir);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btnDeploy);
@@ -217,5 +239,7 @@
         private System.Windows.Forms.Button btnDeploy;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lbStatus;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox cbAppPublishDir;
     }
 }

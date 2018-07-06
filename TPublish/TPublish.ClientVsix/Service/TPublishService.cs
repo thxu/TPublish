@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -51,7 +53,6 @@ namespace TPublish.ClientVsix.Service
 
             Regex regex = new Regex(@"<PropertyGroup(\s|\S)*?>(\s|\S)*?</PropertyGroup>");
             var regexRes = regex.Matches(txt);
-            bool canAdd = false;
             foreach (Match match in regexRes)
             {
                 if (match.Value.Contains("Debug|AnyCPU"))
@@ -87,13 +88,80 @@ namespace TPublish.ClientVsix.Service
                 }
             }
 
+            DirectoryInfo dir = new DirectoryInfo(model.LibDebugPath);
+            dir = dir.Parent;
+            if (dir != null)
+            {
+                if (model.ProjType == "Library")
+                {
+                    model.PublishDir.Add(dir.FullName);
+                }
+                else
+                {
+                    model.PublishDir.Add(model.LibDebugPath);
+                    model.PublishDir.Add(model.LibReleasePath);
+                }
+                var propDir = dir.GetDirectories("Properties");
+                if (propDir.Any())
+                {
+                    propDir = propDir[0].GetDirectories("PublishProfiles");
+                    if (propDir.Any())
+                    {
+                        var files = propDir[0].GetFiles("*.pubxml");
+                        foreach (FileInfo file in files)
+                        {
+                            var str = GetFilePath(file.FullName, dir.FullName);
+                            if (str != null && !model.PublishDir.Contains(str))
+                            {
+                                model.PublishDir.Add(str);
+                            }
+                        }
+                    }
+                }
+            }
+
+            string lastChooseSetting = Path.Combine(model.LibDebugPath, "TPublish.setting");
+            DirectoryInfo settingDir = new DirectoryInfo(lastChooseSetting);
+            if (settingDir.Exists)
+            {
+                try
+                {
+                    model.LastChooseInfo = File.ReadAllText(lastChooseSetting).DeserializeObject<LastChooseInfo>();
+                }
+                catch (Exception e)
+                {
+                    model.LastChooseInfo = null;
+                }
+            }
+
             return model;
+        }
+
+        private static string GetFilePath(string xmlPath, string basePath)
+        {
+            string res = null;
+            XElement root = XElement.Load(xmlPath);
+            var propGroupElement = root.Elements().FirstOrDefault(n => n.Name.LocalName == "PropertyGroup");
+            var providerElement = propGroupElement?.Elements().FirstOrDefault(n => n.Name.LocalName == "PublishProvider");
+            if (providerElement != null && providerElement.Value == "FileSystem")
+            {
+                var pathElement = propGroupElement?.Elements().FirstOrDefault(n => n.Name.LocalName == "publishUrl");
+                if (pathElement != null)
+                {
+                    res = !pathElement.Value.Contains(":") ? Path.Combine(basePath, pathElement.Value) : pathElement.Value;
+                    DirectoryInfo dir = new DirectoryInfo(res);
+                    if (!dir.Exists)
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            return res;
         }
 
         public static List<AppView> GetAllIISAppNames()
         {
-            //var res  = ThreadHelper.JoinableTaskFactory.Run();
-
             try
             {
                 OptionPageGrid setting = GetSettingPage();
