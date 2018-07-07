@@ -126,8 +126,8 @@ namespace TPublish.ClientVsix.Service
             }
 
             string lastChooseSetting = Path.Combine(model.LibDebugPath, "TPublish.setting");
-            DirectoryInfo settingDir = new DirectoryInfo(lastChooseSetting);
-            if (settingDir.Exists)
+            FileInfo settingFile = new FileInfo(lastChooseSetting);
+            if (settingFile.Exists)
             {
                 try
                 {

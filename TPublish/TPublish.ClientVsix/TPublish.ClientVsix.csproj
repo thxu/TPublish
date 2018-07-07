@@ -65,10 +65,17 @@
     <Compile Include="Model\Result.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Push.cs" />
+    <Compile Include="PushFilesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PushFilesForm.Designer.cs">
+      <DependentUpon>PushFilesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="PushPackage.cs" />
     <Compile Include="Service\HttpHelper.cs" />
     <Compile Include="Service\SerializerExtension.cs" />
     <Compile Include="Service\TPublishService.cs" />
+    <Compile Include="Service\TreeViewCheck.cs" />
     <Compile Include="Service\ZipHelper.cs" />
     <Compile Include="Setting\OptionPageGrid.cs">
       <SubType>Component</SubType>
@@ -216,6 +223,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DeployForm.resx">
       <DependentUpon>DeployForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PushFilesForm.resx">
+      <DependentUpon>PushFilesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Setting\TPublishSettingControl.resx">
       <DependentUpon>TPublishSettingControl.cs</DependentUpon>

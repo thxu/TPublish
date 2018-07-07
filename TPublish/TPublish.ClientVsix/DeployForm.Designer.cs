@@ -44,6 +44,8 @@
             this.lbStatus = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.cbAppPublishDir = new System.Windows.Forms.ComboBox();
+            this.linklbChooseFiles = new System.Windows.Forms.LinkLabel();
+            this.lbChoosedFiles = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -58,34 +60,34 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(58, 74);
+            this.label2.Location = new System.Drawing.Point(16, 74);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 12);
+            this.label2.Size = new System.Drawing.Size(101, 12);
             this.label2.TabIndex = 1;
-            this.label2.Text = "程序名称：";
+            this.label2.Text = "服务器程序名称：";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(58, 124);
+            this.label3.Location = new System.Drawing.Point(16, 124);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 12);
+            this.label3.Size = new System.Drawing.Size(101, 12);
             this.label3.TabIndex = 2;
-            this.label3.Text = "程序路径：";
+            this.label3.Text = "服务器程序路径：";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(58, 224);
+            this.label4.Location = new System.Drawing.Point(52, 224);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 3;
-            this.label4.Text = "部署方式：";
+            this.label4.Text = "部署文件：";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(82, 274);
+            this.label5.Location = new System.Drawing.Point(76, 274);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(41, 12);
             this.label5.TabIndex = 4;
@@ -123,23 +125,25 @@
             // 
             this.radioFullPush.AutoSize = true;
             this.radioFullPush.Checked = true;
-            this.radioFullPush.Location = new System.Drawing.Point(129, 222);
+            this.radioFullPush.Location = new System.Drawing.Point(332, 474);
             this.radioFullPush.Name = "radioFullPush";
             this.radioFullPush.Size = new System.Drawing.Size(47, 16);
             this.radioFullPush.TabIndex = 8;
             this.radioFullPush.TabStop = true;
             this.radioFullPush.Text = "全量";
             this.radioFullPush.UseVisualStyleBackColor = true;
+            this.radioFullPush.Visible = false;
             // 
             // radioPartPush
             // 
             this.radioPartPush.AutoSize = true;
-            this.radioPartPush.Location = new System.Drawing.Point(180, 222);
+            this.radioPartPush.Location = new System.Drawing.Point(383, 474);
             this.radioPartPush.Name = "radioPartPush";
             this.radioPartPush.Size = new System.Drawing.Size(59, 16);
             this.radioPartPush.TabIndex = 9;
             this.radioPartPush.Text = "自定义";
             this.radioPartPush.UseVisualStyleBackColor = true;
+            this.radioPartPush.Visible = false;
             this.radioPartPush.Click += new System.EventHandler(this.radioPartPush_Click);
             // 
             // txtRemark
@@ -152,7 +156,7 @@
             // 
             // btnDeploy
             // 
-            this.btnDeploy.Location = new System.Drawing.Point(129, 434);
+            this.btnDeploy.Location = new System.Drawing.Point(129, 463);
             this.btnDeploy.Name = "btnDeploy";
             this.btnDeploy.Size = new System.Drawing.Size(75, 23);
             this.btnDeploy.TabIndex = 11;
@@ -163,7 +167,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(82, 378);
+            this.label6.Location = new System.Drawing.Point(76, 378);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 12;
@@ -181,11 +185,11 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(58, 174);
+            this.label7.Location = new System.Drawing.Point(28, 174);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(65, 12);
+            this.label7.Size = new System.Drawing.Size(89, 12);
             this.label7.TabIndex = 14;
-            this.label7.Text = "程序位置：";
+            this.label7.Text = "本机程序位置：";
             // 
             // cbAppPublishDir
             // 
@@ -195,12 +199,35 @@
             this.cbAppPublishDir.Name = "cbAppPublishDir";
             this.cbAppPublishDir.Size = new System.Drawing.Size(311, 20);
             this.cbAppPublishDir.TabIndex = 15;
+            this.cbAppPublishDir.SelectedIndexChanged += new System.EventHandler(this.cbAppPublishDir_SelectedIndexChanged);
+            // 
+            // linklbChooseFiles
+            // 
+            this.linklbChooseFiles.AutoSize = true;
+            this.linklbChooseFiles.Location = new System.Drawing.Point(127, 224);
+            this.linklbChooseFiles.Name = "linklbChooseFiles";
+            this.linklbChooseFiles.Size = new System.Drawing.Size(53, 12);
+            this.linklbChooseFiles.TabIndex = 16;
+            this.linklbChooseFiles.TabStop = true;
+            this.linklbChooseFiles.Text = "选择文件";
+            this.linklbChooseFiles.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linklbChooseFiles_LinkClicked);
+            // 
+            // lbChoosedFiles
+            // 
+            this.lbChoosedFiles.AutoSize = true;
+            this.lbChoosedFiles.Location = new System.Drawing.Point(180, 224);
+            this.lbChoosedFiles.Name = "lbChoosedFiles";
+            this.lbChoosedFiles.Size = new System.Drawing.Size(11, 12);
+            this.lbChoosedFiles.TabIndex = 17;
+            this.lbChoosedFiles.Text = "-";
             // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(454, 502);
+            this.Controls.Add(this.lbChoosedFiles);
+            this.Controls.Add(this.linklbChooseFiles);
             this.Controls.Add(this.cbAppPublishDir);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.lbStatus);
@@ -242,5 +269,7 @@
         private System.Windows.Forms.Label lbStatus;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbAppPublishDir;
+        private System.Windows.Forms.LinkLabel linklbChooseFiles;
+        private System.Windows.Forms.Label lbChoosedFiles;
     }
 }
