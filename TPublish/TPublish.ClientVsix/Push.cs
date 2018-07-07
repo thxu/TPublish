@@ -124,8 +124,15 @@ namespace TPublish.ClientVsix
                 }
 
                 var form = new DeployForm();
-                form.Ini(projModel);
-                form.Show();
+                var iniRes = form.Ini(projModel);
+                if (iniRes.IsSucceed)
+                {
+                    form.Show();
+                }
+                else
+                {
+                    MessageBox.Show(iniRes.Message);
+                }
             }
             catch (Exception exception)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace TPublish.ClientVsix.Model
 {
@@ -19,18 +20,22 @@ namespace TPublish.ClientVsix.Model
 
         public LastChooseInfo LastChooseInfo { get; set; }
 
-        public List<DirSimpleName> ToDirSimpleNames()
+        public static List<DirSimpleName> ToDirSimpleNames(List<string> files)
         {
             List<DirSimpleName> res = new List<DirSimpleName>();
-            foreach (string path in LastChooseInfo.LastChoosePublishFiles)
+            if (files != null && files.Any())
             {
-                DirectoryInfo dir = new DirectoryInfo(path);
-                res.Add(new DirSimpleName
+                foreach (string path in files)
                 {
-                    Name = dir.Name,
-                    FullName = dir.FullName,
-                });
+                    DirectoryInfo dir = new DirectoryInfo(path);
+                    res.Add(new DirSimpleName
+                    {
+                        Name = dir.Name,
+                        FullName = dir.FullName,
+                    });
+                }
             }
+            
             return res;
         }
     }

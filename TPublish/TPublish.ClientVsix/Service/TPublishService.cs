@@ -48,6 +48,11 @@ namespace TPublish.ClientVsix.Service
             {
                 Key = Guid.NewGuid().ToString(),
                 LibName = Path.GetFileNameWithoutExtension(projName),
+                PublishDir = new List<string>(),
+                LastChooseInfo = new LastChooseInfo(),
+                LibDebugPath = string.Empty,
+                LibReleasePath = string.Empty,
+                ProjType = string.Empty,
             };
             string txt = File.ReadAllText(projName);
 

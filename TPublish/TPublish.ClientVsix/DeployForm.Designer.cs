@@ -140,6 +140,7 @@
             this.radioPartPush.TabIndex = 9;
             this.radioPartPush.Text = "自定义";
             this.radioPartPush.UseVisualStyleBackColor = true;
+            this.radioPartPush.Click += new System.EventHandler(this.radioPartPush_Click);
             // 
             // txtRemark
             // 

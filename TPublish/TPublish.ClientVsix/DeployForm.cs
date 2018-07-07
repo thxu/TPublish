@@ -15,49 +15,68 @@ namespace TPublish.ClientVsix
 
         private List<AppView> _appViews = new List<AppView>();
         private List<DirSimpleName> _dirSimpleNames;
+        private List<string> _partPushFiles = new List<string>();
 
         public DeployForm()
         {
             InitializeComponent();
         }
-        public void Ini(ProjModel projModel)
+        public Result Ini(ProjModel projModel)
         {
-            _projModel = projModel;
-            _dirSimpleNames = projModel.ToDirSimpleNames();
-
-            if (_projModel.ProjType == "Library")
+            Result res = new Result();
+            try
             {
-                lbAppType.Text = "IIS";
-                _appViews = TPublishService.GetAllIISAppNames();
-            }
-            else
-            {
-                lbAppType.Text = "Exe";
-                AppView view = TPublishService.GetExeAppView(_projModel.LibName);
-                _appViews.Add(view);
-            }
-            cbAppName.DataSource = _appViews;
-            cbAppName.DisplayMember = "AppName";
-            cbAppName.ValueMember = "AppPhysicalPath";
-            cbAppName.SelectedValue = _projModel.LastChooseInfo.LastChooseAppName;
-            showAppPath((cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
+                _projModel = projModel;
+                _dirSimpleNames = ProjModel.ToDirSimpleNames(projModel.PublishDir);
 
-            cbAppPublishDir.DataSource = _dirSimpleNames;
-            cbAppPublishDir.DisplayMember = "Name";
-            cbAppPublishDir.ValueMember = "FullName";
-            cbAppPublishDir.SelectedValue = new DirectoryInfo(_projModel.LastChooseInfo.LastChoosePublishDir).Name;
+                if (_projModel.ProjType == "Library")
+                {
+                    lbAppType.Text = "IIS";
+                    _appViews = TPublishService.GetAllIISAppNames();
+                }
+                else
+                {
+                    lbAppType.Text = "Exe";
+                    cbAppName.Enabled = false;
+                    cbAppPublishDir.Enabled = false;
+                    AppView view = TPublishService.GetExeAppView(_projModel.LibName);
+                    if (string.IsNullOrWhiteSpace(view?.AppName))
+                    {
+                        throw new Exception("未找到该进程");
+                    }
+                    _appViews.Add(view);
+                }
+                cbAppName.DataSource = _appViews;
+                cbAppName.DisplayMember = "AppName";
+                cbAppName.ValueMember = "AppPhysicalPath";
+                cbAppName.SelectedIndex = cbAppName.FindString(_projModel.LastChooseInfo.LastChooseAppName ?? _appViews[0].AppName);
+                showAppPath((cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
+
+                cbAppPublishDir.DataSource = _dirSimpleNames;
+                cbAppPublishDir.DisplayMember = "Name";
+                cbAppPublishDir.ValueMember = "FullName";
+                cbAppPublishDir.SelectedIndex = cbAppPublishDir.FindString(_dirSimpleNames.Count > 0 ? new DirectoryInfo(_projModel.LastChooseInfo.LastChoosePublishDir ?? _dirSimpleNames[0].FullName).Name : string.Empty);
+
+                res.IsSucceed = true;
+            }
+            catch (Exception e)
+            {
+                res.Message = e.Message;
+            }
+
+            return res;
         }
 
         private void showAppPath(string path)
         {
             lbAppPath.Text = path;
-            int rowNum = 500;
-            float fontWidth = (float)lbAppPath.Width / lbAppPath.Text.Length;
-            int RowHeight = 15;
-            int colNum = (path.Length - (path.Length / rowNum) * rowNum) == 0 ? (path.Length / rowNum) : (path.Length / rowNum) + 1;
-            lbAppPath.AutoSize = false;
-            lbAppPath.Width = (int)(fontWidth * 10.0);
-            lbAppPath.Height = RowHeight * colNum;
+            //int rowNum = 500;
+            //float fontWidth = (float)lbAppPath.Width / lbAppPath.Text.Length;
+            //int RowHeight = 15;
+            //int colNum = (path.Length - (path.Length / rowNum) * rowNum) == 0 ? (path.Length / rowNum) : (path.Length / rowNum) + 1;
+            //lbAppPath.AutoSize = false;
+            //lbAppPath.Width = (int)(fontWidth * 10.0);
+            //lbAppPath.Height = RowHeight * colNum;
         }
 
         private void cbAppName_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -151,6 +170,11 @@ namespace TPublish.ClientVsix
             var uploadRes = uploadResStr.DeserializeObject<Result>();
             lbStatus.Text = $"版本切换{(uploadRes.IsSucceed ? "成功" : "失败")} {uploadRes.Message}";
             return uploadRes;
+        }
+
+        private void radioPartPush_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

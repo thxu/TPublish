@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using TPublish.Common;
 using TPublish.Common.Model;
 
@@ -16,7 +17,12 @@ namespace TPublish.TestExe
     {
         static void Main(string[] args)
         {
-            var tmp = GetExeAppView("TcpService");
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
+
+           
+            //var tmp = GetExeAppView("TcpService");
             //ZipTest1();
             //UploadTest();
             Console.Out.WriteLine("hello");
