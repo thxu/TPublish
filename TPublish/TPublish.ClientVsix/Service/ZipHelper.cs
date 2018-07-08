@@ -271,26 +271,26 @@ namespace TPublish.ClientVsix.Service
                     s.SetLevel(6);
                     foreach (string fileOrDir in folderOrFileList)
                     {
+                        string parentPath = "";
+                        if (fileOrDir.StartsWith(baseDir))
+                        {
+                            var parentPaths = GetParentPaths(fileOrDir, baseDir);
+                            while (parentPaths.Count > 0)
+                            {
+                                string path = parentPaths.Pop();
+                                AddEmptyDir(path, s, parentPath);
+                                parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                            }
+                        }
                         //是文件夹
                         if (Directory.Exists(fileOrDir))
                         {
-                            string parentPath = "";
-                            if (fileOrDir.StartsWith(baseDir))
-                            {
-                                var parentPaths = GetParentPaths(fileOrDir, baseDir);
-                                while (parentPaths.Count > 0)
-                                {
-                                    string path = parentPaths.Pop();
-                                    AddEmptyDir(path, s, parentPath);
-                                    parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
-                                }
-                            }
                             res = ZipFileDictory(fileOrDir, s, parentPath);
                         }
                         else
                         {
                             //文件
-                            res = ZipFileWithStream(fileOrDir, s);
+                            res = ZipFileWithStream(fileOrDir, s, parentPath);
                         }
                     }
                     s.Finish();
@@ -298,6 +298,49 @@ namespace TPublish.ClientVsix.Service
                     return res;
                 }
             }));
+        }
+
+        /// <summary>
+        /// 压缩多个目录或文件
+        /// </summary>
+        /// <param name="folderOrFileList">待压缩的文件夹或者文件，全路径格式,是一个集合</param>
+        /// <param name="zipedFile">压缩后的文件名，全路径格式</param>
+        /// <param name="baseDir"></param>
+        /// <returns></returns>
+        public static bool ZipManyFilesOrDictorys(IEnumerable<string> folderOrFileList, string zipedFile, string baseDir = "")
+        {
+            bool res = true;
+            using (var s = new ZipOutputStream(File.Create(zipedFile)))
+            {
+                s.SetLevel(6);
+                foreach (string fileOrDir in folderOrFileList)
+                {
+                    string parentPath = "";
+                    if (fileOrDir.StartsWith(baseDir))
+                    {
+                        var parentPaths = GetParentPaths(fileOrDir, baseDir);
+                        while (parentPaths.Count > 0)
+                        {
+                            string path = parentPaths.Pop();
+                            AddEmptyDir(path, s, parentPath);
+                            parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                        }
+                    }
+                    //是文件夹
+                    if (Directory.Exists(fileOrDir))
+                    {
+                        res = ZipFileDictory(fileOrDir, s, parentPath);
+                    }
+                    else
+                    {
+                        //文件
+                        res = ZipFileWithStream(fileOrDir, s, parentPath);
+                    }
+                }
+                s.Finish();
+                s.Close();
+                return res;
+            }
         }
 
         private static Stack<string> GetParentPaths(string file, string baseDir)
@@ -337,8 +380,9 @@ namespace TPublish.ClientVsix.Service
         /// </summary>
         /// <param name="fileToZip">要进行压缩的文件名</param>
         /// <param name="zipStream"></param>
+        /// <param name="parentFolderName"></param>
         /// <returns></returns>
-        private static bool ZipFileWithStream(string fileToZip, ZipOutputStream zipStream)
+        private static bool ZipFileWithStream(string fileToZip, ZipOutputStream zipStream, string parentFolderName)
         {
             //如果文件没有找到，则报错
             if (!File.Exists(fileToZip))
@@ -355,7 +399,7 @@ namespace TPublish.ClientVsix.Service
                 byte[] buffer = new byte[zipFile.Length];
                 zipFile.Read(buffer, 0, buffer.Length);
                 zipFile.Close();
-                zipEntry = new ZipEntry(Path.GetFileName(fileToZip));
+                zipEntry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(fileToZip)));
                 zipStream.PutNextEntry(zipEntry);
                 zipStream.Write(buffer, 0, buffer.Length);
             }

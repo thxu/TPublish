@@ -39,7 +39,7 @@ namespace TPublish.TestExe
             pathList.Add(@"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi\WCFConfig");
             pathList.Add(@"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi\Web.config");
 
-            var zipRes = new ZipHelper().ZipManyFilesOrDictorys(pathList, @"E:\1.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi");
+            var zipRes = ZipHelper.ZipManyFilesOrDictorys(pathList, @"E:\1.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\WebApi");
         }
 
         public static void ZipTest1()
@@ -64,7 +64,7 @@ namespace TPublish.TestExe
             //    pathList.Add(entry.Key.ToString());
             //}
 
-            var zipRes = new ZipHelper().ZipManyFilesOrDictorys(pathList, @"E:\2.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
+            var zipRes = ZipHelper.ZipManyFilesOrDictorys(pathList, @"E:\2.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
         }
 
         public static void UnZipTest()
@@ -72,7 +72,7 @@ namespace TPublish.TestExe
             string zipPath = @"E:\1\1.zip";
             string unZipPath = @"E:\1";
 
-            new ZipHelper().UnZip(zipPath, unZipPath);
+            ZipHelper.UnZip(zipPath, unZipPath);
         }
 
         public static AppView GetExeAppView(string appName)

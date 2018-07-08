@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -15,7 +16,7 @@ namespace TPublish.Common
         /// <param name="dirToZip"></param>
         /// <param name="zipedFileName"></param>
         /// <param name="compressionLevel">压缩率0（无压缩）9（压缩率最高）</param>
-        public void ZipDir(string dirToZip, string zipedFileName, int compressionLevel = 9)
+        public static void ZipDir(string dirToZip, string zipedFileName, int compressionLevel = 9)
         {
             if (Path.GetExtension(zipedFileName) != ".zip")
             {
@@ -51,7 +52,7 @@ namespace TPublish.Common
         /// 获取所有文件  
         /// </summary>  
         /// <returns></returns>  
-        public Hashtable GetAllFies(string dir)
+        public static Hashtable GetAllFies(string dir)
         {
             Hashtable filesList = new Hashtable();
             DirectoryInfo fileDire = new DirectoryInfo(dir);
@@ -70,7 +71,7 @@ namespace TPublish.Common
         /// </summary>  
         /// <param name="dirs"></param>  
         /// <param name="filesList"></param>  
-        public void GetAllDirsFiles(IEnumerable<DirectoryInfo> dirs, Hashtable filesList)
+        public static void GetAllDirsFiles(IEnumerable<DirectoryInfo> dirs, Hashtable filesList)
         {
             foreach (DirectoryInfo dir in dirs)
             {
@@ -101,7 +102,7 @@ namespace TPublish.Common
         /// <param name="zipFilePath">压缩文件路径</param>  
         /// <param name="unZipDir">解压文件存放路径,为空时默认与压缩文件同一级目录下，跟压缩文件同名的文件夹</param>  
         /// <returns>解压是否成功</returns>  
-        public void UnZip(string zipFilePath, string unZipDir)
+        public static void UnZip(string zipFilePath, string unZipDir)
         {
             if (zipFilePath == string.Empty)
             {
@@ -160,7 +161,7 @@ namespace TPublish.Common
         /// <param name="filePath">被压缩的文件名称(包含文件路径)，文件的全路径</param>
         /// <param name="zipedFileName">压缩后的文件名称(包含文件路径)，保存的文件名称</param>
         /// <param name="compressionLevel">压缩率0（无压缩）到 9（压缩率最高）</param>
-        public void ZipFile(string filePath, string zipedFileName, int compressionLevel = 9)
+        public static void ZipFile(string filePath, string zipedFileName, int compressionLevel = 9)
         {
             // 如果文件没有找到，则报错 
             if (!File.Exists(filePath))
@@ -220,7 +221,7 @@ namespace TPublish.Common
         /// </summary> 
         /// <param name="fileToZip">要进行压缩的文件名，全路径</param> 
         /// <param name="zipedFile">压缩后生成的压缩文件名,全路径</param> 
-        public void ZipFile(string fileToZip, string zipedFile)
+        public static void ZipFile(string fileToZip, string zipedFile)
         {
             // 如果文件没有找到，则报错 
             if (!File.Exists(fileToZip))
@@ -260,16 +261,15 @@ namespace TPublish.Common
         /// <param name="zipedFile">压缩后的文件名，全路径格式</param>
         /// <param name="baseDir"></param>
         /// <returns></returns>
-        public bool ZipManyFilesOrDictorys(IEnumerable<string> folderOrFileList, string zipedFile, string baseDir = "")
+        public static async Task<bool> ZipManyFilesOrDictorysAsync(IEnumerable<string> folderOrFileList, string zipedFile, string baseDir = "")
         {
-            bool res = true;
-            using (var s = new ZipOutputStream(File.Create(zipedFile)))
+            return await Task.Run((() =>
             {
-                s.SetLevel(6);
-                foreach (string fileOrDir in folderOrFileList)
+                bool res = true;
+                using (var s = new ZipOutputStream(File.Create(zipedFile)))
                 {
-                    //是文件夹
-                    if (Directory.Exists(fileOrDir))
+                    s.SetLevel(6);
+                    foreach (string fileOrDir in folderOrFileList)
                     {
                         string parentPath = "";
                         if (fileOrDir.StartsWith(baseDir))
@@ -282,12 +282,59 @@ namespace TPublish.Common
                                 parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
                             }
                         }
+                        //是文件夹
+                        if (Directory.Exists(fileOrDir))
+                        {
+                            res = ZipFileDictory(fileOrDir, s, parentPath);
+                        }
+                        else
+                        {
+                            //文件
+                            res = ZipFileWithStream(fileOrDir, s, parentPath);
+                        }
+                    }
+                    s.Finish();
+                    s.Close();
+                    return res;
+                }
+            }));
+        }
+
+        /// <summary>
+        /// 压缩多个目录或文件
+        /// </summary>
+        /// <param name="folderOrFileList">待压缩的文件夹或者文件，全路径格式,是一个集合</param>
+        /// <param name="zipedFile">压缩后的文件名，全路径格式</param>
+        /// <param name="baseDir"></param>
+        /// <returns></returns>
+        public static bool ZipManyFilesOrDictorys(IEnumerable<string> folderOrFileList, string zipedFile, string baseDir = "")
+        {
+            bool res = true;
+            using (var s = new ZipOutputStream(File.Create(zipedFile)))
+            {
+                s.SetLevel(6);
+                foreach (string fileOrDir in folderOrFileList)
+                {
+                    string parentPath = "";
+                    if (fileOrDir.StartsWith(baseDir))
+                    {
+                        var parentPaths = GetParentPaths(fileOrDir, baseDir);
+                        while (parentPaths.Count > 0)
+                        {
+                            string path = parentPaths.Pop();
+                            AddEmptyDir(path, s, parentPath);
+                            parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                        }
+                    }
+                    //是文件夹
+                    if (Directory.Exists(fileOrDir))
+                    {
                         res = ZipFileDictory(fileOrDir, s, parentPath);
                     }
                     else
                     {
                         //文件
-                        res = ZipFileWithStream(fileOrDir, s);
+                        res = ZipFileWithStream(fileOrDir, s, parentPath);
                     }
                 }
                 s.Finish();
@@ -296,7 +343,7 @@ namespace TPublish.Common
             }
         }
 
-        private Stack<string> GetParentPaths(string file, string baseDir)
+        private static Stack<string> GetParentPaths(string file, string baseDir)
         {
             Stack<string> res = new Stack<string>();
             var path = file;
@@ -314,7 +361,7 @@ namespace TPublish.Common
             return res;
         }
 
-        private void AddEmptyDir(string folderToZip, ZipOutputStream s, string parentFolderName)
+        private static void AddEmptyDir(string folderToZip, ZipOutputStream s, string parentFolderName)
         {
             try
             {
@@ -333,8 +380,9 @@ namespace TPublish.Common
         /// </summary>
         /// <param name="fileToZip">要进行压缩的文件名</param>
         /// <param name="zipStream"></param>
+        /// <param name="parentFolderName"></param>
         /// <returns></returns>
-        private bool ZipFileWithStream(string fileToZip, ZipOutputStream zipStream)
+        private static bool ZipFileWithStream(string fileToZip, ZipOutputStream zipStream, string parentFolderName)
         {
             //如果文件没有找到，则报错
             if (!File.Exists(fileToZip))
@@ -351,7 +399,7 @@ namespace TPublish.Common
                 byte[] buffer = new byte[zipFile.Length];
                 zipFile.Read(buffer, 0, buffer.Length);
                 zipFile.Close();
-                zipEntry = new ZipEntry(Path.GetFileName(fileToZip));
+                zipEntry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(fileToZip)));
                 zipStream.PutNextEntry(zipEntry);
                 zipStream.Write(buffer, 0, buffer.Length);
             }
@@ -382,7 +430,7 @@ namespace TPublish.Common
         /// <param name="folderToZip"></param>
         /// <param name="s"></param>
         /// <param name="parentFolderName"></param>
-        private bool ZipFileDictory(string folderToZip, ZipOutputStream s, string parentFolderName)
+        private static bool ZipFileDictory(string folderToZip, ZipOutputStream s, string parentFolderName)
         {
             bool res = true;
             ZipEntry entry = null;

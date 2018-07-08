@@ -65,7 +65,7 @@ namespace TPublish.ClientVsix
         private bool AddAllFiles(DirectoryInfo root, TreeNodeCollection nodes)
         {
             bool res = false;
-            foreach (FileInfo file in root.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.ToLower().EndsWith("pdb")))
+            foreach (FileInfo file in root.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.ToLower().EndsWith("pdb") && !n.Name.Equals("TPublish.setting")))
             {
                 TreeNode nodeTmp = new TreeNode
                 {

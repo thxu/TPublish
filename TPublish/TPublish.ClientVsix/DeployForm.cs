@@ -53,7 +53,7 @@ namespace TPublish.ClientVsix
                 string lastChooseAppName = _projModel.LastChooseInfo.LastChooseAppName ?? _appViews[0].AppName;
                 _projModel.LastChooseInfo.LastChooseAppName = lastChooseAppName;
                 cbAppName.SelectedIndex = cbAppName.FindString(lastChooseAppName);
-                showAppPath((cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
+                showLbText(lbAppPath, (cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
 
                 cbAppPublishDir.DataSource = _dirSimpleNames;
                 cbAppPublishDir.DisplayMember = "Name";
@@ -77,20 +77,13 @@ namespace TPublish.ClientVsix
             return res;
         }
 
-        private void showAppPath(string path)
+        private void showLbText(Label lb, string text)
         {
-            if (path.Length >= 50)
+            if (text.Length >= 50)
             {
-                path = new string(path.Take(15).ToArray()) + "....." + new string(path.Skip(path.Length - 20).ToArray());
+                text = new string(text.Take(15).ToArray()) + "....." + new string(text.Skip(text.Length - 20).ToArray());
             }
-            lbAppPath.Text = path;
-            //int rowNum = 500;
-            //float fontWidth = (float)lbAppPath.Width / lbAppPath.Text.Length;
-            //int RowHeight = 15;
-            //int colNum = (path.Length - (path.Length / rowNum) * rowNum) == 0 ? (path.Length / rowNum) : (path.Length / rowNum) + 1;
-            //lbAppPath.AutoSize = false;
-            //lbAppPath.Width = (int)(fontWidth * 10.0);
-            //lbAppPath.Height = RowHeight * colNum;
+            lb.Text = text;
         }
 
         private void cbAppName_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -99,7 +92,7 @@ namespace TPublish.ClientVsix
             {
                 return;
             }
-            showAppPath((cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
+            showLbText(lbAppPath, (cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
             _projModel.LastChooseInfo.LastChooseAppName = (cbAppName.SelectedItem as AppView)?.AppName;
         }
 
@@ -121,51 +114,12 @@ namespace TPublish.ClientVsix
                     writer.Flush();
                 }
 
-                List<string> paths = new List<string>();
-                //DirectoryInfo dir = new DirectoryInfo(_projModel.LibDebugPath);
-                //if (radioFullPush.Checked)
-                //{
-                //    if (_projModel.ProjType == "Library")
-                //    {
-                //        dir = dir.Parent;
-                //        // iis的全量，仅仅部署bin,content,view三个文件夹
-                //        foreach (DirectoryInfo subDir in dir.GetDirectories())
-                //        {
-                //            if (subDir.Name.ToLower().Contains("bin")
-                //                || subDir.Name.ToLower().Contains("content")
-                //                || subDir.Name.ToLower().Contains("scripts")
-                //                || subDir.Name.ToLower().Contains("view"))
-                //            {
-                //                paths.Add(subDir.FullName);
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        // exe的全量，仅仅部署后缀为.dll .pdb .exe格式
-                //        foreach (FileInfo fileInfo in dir.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.ToLower().EndsWith("pdb")))
-                //        {
-                //            paths.Add(fileInfo.FullName);
-                //        }
-                //        //foreach (FileInfo fileInfo in dir.GetFiles("*.pdb"))
-                //        //{
-                //        //    paths.Add(fileInfo.FullName);
-                //        //}
-                //        //foreach (FileInfo fileInfo in dir.GetFiles("*.exe"))
-                //        //{
-                //        //    paths.Add(fileInfo.FullName);
-                //        //}
-                //    }
-                //}
-                //else
-                //{
-
-                //}
-
                 if (_projModel.LastChooseInfo.LastChoosePublishFiles == null || !_projModel.LastChooseInfo.LastChoosePublishFiles.Any())
                 {
                     MessageBox.Show("请选择要部署的文件");
                 }
+
+                bwUploadZip.RunWorkerAsync();
 
                 //var uploadRes = ZipAndUpload(_projModel.LastChooseInfo.LastChoosePublishFiles);
                 //MessageBox.Show(uploadRes.IsSucceed ? "推送成功" : $"推送失败:{uploadRes.Message}");
@@ -203,19 +157,6 @@ namespace TPublish.ClientVsix
             return uploadRes;
         }
 
-        private void radioPartPush_Click(object sender, EventArgs e)
-        {
-            PushFilesForm form = new PushFilesForm();
-            form.Ini(_projModel.LastChooseInfo.LastChoosePublishDir, _projModel.LastChooseInfo.LastChoosePublishFiles);
-            form.Show();
-
-            PushFilesForm.FileSaveEvent = list =>
-            {
-                _projModel.LastChooseInfo.LastChoosePublishFiles = list;
-                lbChoosedFiles.Text = $"(已选择{_projModel.LastChooseInfo.LastChoosePublishFiles.Count}个文件)";
-            };
-        }
-
         private void cbAppPublishDir_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isIni)
@@ -236,6 +177,61 @@ namespace TPublish.ClientVsix
                 _projModel.LastChooseInfo.LastChoosePublishFiles = list;
                 lbChoosedFiles.Text = $"(已选择{_projModel?.LastChooseInfo?.LastChoosePublishFiles?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)";
             };
+        }
+
+        private void bwUploadZip_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            string pathTmp = _projModel.LibDebugPath;
+            if (_projModel.ProjType == "Library")
+            {
+                pathTmp = new DirectoryInfo(pathTmp).Parent?.FullName ?? pathTmp;
+            }
+            string zipFullPath = Path.Combine(pathTmp, _projModel.LibName + ".zip");
+
+            if (bwUploadZip.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+            bwUploadZip.ReportProgress(50, "压缩文件中...");
+
+            ZipHelper.ZipManyFilesOrDictorys(_projModel.LastChooseInfo.LastChoosePublishFiles, zipFullPath, _projModel.LastChooseInfo.LastChoosePublishDir);
+
+            NameValueCollection dic = new NameValueCollection();
+            dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
+            dic.Add("AppName", _projModel.LastChooseInfo.LastChooseAppName);
+
+            if (bwUploadZip.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+            bwUploadZip.ReportProgress(90, "文件上传中...");
+
+            string url = $"{TPublishService.GetSettingPage().GetApiUrl()}/UploadZip";
+            string uploadResStr = HttpHelper.HttpPostData(url, 30000, _projModel.LibName + ".zip", zipFullPath, dic);
+            var uploadRes = uploadResStr.DeserializeObject<Result>();
+            string msg = uploadRes.IsSucceed ? "部署成功" : "部署失败：" + uploadRes.Message;
+            bwUploadZip.ReportProgress(100, msg);
+        }
+
+        private void bwUploadZip_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            pbUpload.Value = e.ProgressPercentage;
+            showLbText(lbStatus, e.UserState.ToString());
+        }
+
+        private void bwUploadZip_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+                showLbText(lbStatus, "任务取消");
+            else if (e.Error != null)
+                showLbText(lbStatus, "异常:" + e.Error);
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            bwUploadZip.CancelAsync();
         }
     }
 }

@@ -103,7 +103,7 @@ namespace TPublish.Web.Controllers
             string newVersionPath = appName.CopyIISAppToNewDir();
             string zipPath = Path.Combine(newVersionPath, fileName);
             fileInfo.SaveAs(zipPath);
-            new ZipHelper().UnZip(zipPath, Directory.GetParent(zipPath).FullName);
+            ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
             var changeRes = appName.ChangeIISAppVersion(newVersionPath);
             return changeRes;
         }
@@ -125,7 +125,7 @@ namespace TPublish.Web.Controllers
                 string zipPath = Path.Combine(newAppPath, fileName);
                 appPath.CopyDirectoryTo(newAppPath);
                 fileInfo.SaveAs(zipPath);
-                new ZipHelper().UnZip(zipPath, Directory.GetParent(zipPath).FullName);
+                ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
                 res.IsSucceed = true;
             }
             catch (Exception e)

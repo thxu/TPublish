@@ -32,13 +32,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.lbAppType = new System.Windows.Forms.Label();
             this.cbAppName = new System.Windows.Forms.ComboBox();
             this.lbAppPath = new System.Windows.Forms.Label();
-            this.radioFullPush = new System.Windows.Forms.RadioButton();
-            this.radioPartPush = new System.Windows.Forms.RadioButton();
-            this.txtRemark = new System.Windows.Forms.TextBox();
             this.btnDeploy = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.lbStatus = new System.Windows.Forms.Label();
@@ -46,6 +42,9 @@
             this.cbAppPublishDir = new System.Windows.Forms.ComboBox();
             this.linklbChooseFiles = new System.Windows.Forms.LinkLabel();
             this.lbChoosedFiles = new System.Windows.Forms.Label();
+            this.bwUploadZip = new System.ComponentModel.BackgroundWorker();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.pbUpload = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // label1
@@ -84,15 +83,6 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "部署文件：";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(76, 274);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 12);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "备注：";
-            // 
             // lbAppType
             // 
             this.lbAppType.AutoSize = true;
@@ -121,42 +111,9 @@
             this.lbAppPath.TabIndex = 7;
             this.lbAppPath.Text = "-";
             // 
-            // radioFullPush
-            // 
-            this.radioFullPush.AutoSize = true;
-            this.radioFullPush.Checked = true;
-            this.radioFullPush.Location = new System.Drawing.Point(332, 474);
-            this.radioFullPush.Name = "radioFullPush";
-            this.radioFullPush.Size = new System.Drawing.Size(47, 16);
-            this.radioFullPush.TabIndex = 8;
-            this.radioFullPush.TabStop = true;
-            this.radioFullPush.Text = "全量";
-            this.radioFullPush.UseVisualStyleBackColor = true;
-            this.radioFullPush.Visible = false;
-            // 
-            // radioPartPush
-            // 
-            this.radioPartPush.AutoSize = true;
-            this.radioPartPush.Location = new System.Drawing.Point(383, 474);
-            this.radioPartPush.Name = "radioPartPush";
-            this.radioPartPush.Size = new System.Drawing.Size(59, 16);
-            this.radioPartPush.TabIndex = 9;
-            this.radioPartPush.Text = "自定义";
-            this.radioPartPush.UseVisualStyleBackColor = true;
-            this.radioPartPush.Visible = false;
-            this.radioPartPush.Click += new System.EventHandler(this.radioPartPush_Click);
-            // 
-            // txtRemark
-            // 
-            this.txtRemark.Location = new System.Drawing.Point(129, 271);
-            this.txtRemark.Multiline = true;
-            this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(311, 80);
-            this.txtRemark.TabIndex = 10;
-            // 
             // btnDeploy
             // 
-            this.btnDeploy.Location = new System.Drawing.Point(129, 463);
+            this.btnDeploy.Location = new System.Drawing.Point(129, 357);
             this.btnDeploy.Name = "btnDeploy";
             this.btnDeploy.Size = new System.Drawing.Size(75, 23);
             this.btnDeploy.TabIndex = 11;
@@ -167,7 +124,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(76, 378);
+            this.label6.Location = new System.Drawing.Point(76, 272);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 12;
@@ -176,7 +133,7 @@
             // lbStatus
             // 
             this.lbStatus.AutoSize = true;
-            this.lbStatus.Location = new System.Drawing.Point(127, 378);
+            this.lbStatus.Location = new System.Drawing.Point(127, 315);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(11, 12);
             this.lbStatus.TabIndex = 13;
@@ -221,11 +178,38 @@
             this.lbChoosedFiles.TabIndex = 17;
             this.lbChoosedFiles.Text = "-";
             // 
+            // bwUploadZip
+            // 
+            this.bwUploadZip.WorkerReportsProgress = true;
+            this.bwUploadZip.WorkerSupportsCancellation = true;
+            this.bwUploadZip.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwUploadZip_DoWork);
+            this.bwUploadZip.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwUploadZip_ProgressChanged);
+            this.bwUploadZip.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwUploadZip_RunWorkerCompleted);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(247, 357);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 18;
+            this.btnCancel.Text = "取消";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // pbUpload
+            // 
+            this.pbUpload.Location = new System.Drawing.Point(129, 267);
+            this.pbUpload.Name = "pbUpload";
+            this.pbUpload.Size = new System.Drawing.Size(311, 23);
+            this.pbUpload.TabIndex = 19;
+            // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(454, 502);
+            this.ClientSize = new System.Drawing.Size(454, 399);
+            this.Controls.Add(this.pbUpload);
+            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.lbChoosedFiles);
             this.Controls.Add(this.linklbChooseFiles);
             this.Controls.Add(this.cbAppPublishDir);
@@ -233,13 +217,9 @@
             this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btnDeploy);
-            this.Controls.Add(this.txtRemark);
-            this.Controls.Add(this.radioPartPush);
-            this.Controls.Add(this.radioFullPush);
             this.Controls.Add(this.lbAppPath);
             this.Controls.Add(this.cbAppName);
             this.Controls.Add(this.lbAppType);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -257,13 +237,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lbAppType;
         private System.Windows.Forms.ComboBox cbAppName;
         private System.Windows.Forms.Label lbAppPath;
-        private System.Windows.Forms.RadioButton radioFullPush;
-        private System.Windows.Forms.RadioButton radioPartPush;
-        private System.Windows.Forms.TextBox txtRemark;
         private System.Windows.Forms.Button btnDeploy;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lbStatus;
@@ -271,5 +247,8 @@
         private System.Windows.Forms.ComboBox cbAppPublishDir;
         private System.Windows.Forms.LinkLabel linklbChooseFiles;
         private System.Windows.Forms.Label lbChoosedFiles;
+        private System.ComponentModel.BackgroundWorker bwUploadZip;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.ProgressBar pbUpload;
     }
 }
