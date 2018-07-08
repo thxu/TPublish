@@ -39,7 +39,7 @@ namespace TPublish.ClientVsix
                 {
                     lbAppType.Text = "Exe";
                     cbAppName.Enabled = false;
-                    cbAppPublishDir.Enabled = false;
+                    //cbAppPublishDir.Enabled = false;
                     AppView view = TPublishService.GetExeAppView(_projModel.LibName);
                     if (string.IsNullOrWhiteSpace(view?.AppName))
                     {
@@ -170,7 +170,7 @@ namespace TPublish.ClientVsix
         {
             PushFilesForm form = new PushFilesForm();
             form.Ini(_projModel.LastChooseInfo.LastChoosePublishDir, _projModel.LastChooseInfo.LastChoosePublishFiles);
-            form.Show();
+            form.ShowDialog();
 
             PushFilesForm.FileSaveEvent = list =>
             {

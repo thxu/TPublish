@@ -66,9 +66,10 @@ namespace TPublish.ClientVsix.Service
                     var typeMatch = reg.Match(match.Value);
                     if (typeMatch.Success)
                     {
+                        string val = typeMatch.Groups["Word"].Value.TrimEnd('\\');
                         model.LibDebugPath = typeMatch.Value.Contains(":")
-                            ? typeMatch.Groups["Word"].Value
-                            : Path.Combine(Path.GetDirectoryName(projName) ?? string.Empty, typeMatch.Groups["Word"].Value);
+                            ? val
+                            : Path.Combine(Path.GetDirectoryName(projName) ?? string.Empty, val);
                     }
                 }
                 if (match.Value.Contains("Release|AnyCPU"))
@@ -77,9 +78,10 @@ namespace TPublish.ClientVsix.Service
                     var typeMatch = reg.Match(match.Value);
                     if (typeMatch.Success)
                     {
+                        string val = typeMatch.Groups["Word"].Value.TrimEnd('\\');
                         model.LibReleasePath = typeMatch.Value.Contains(":")
-                            ? typeMatch.Groups["Word"].Value
-                            : Path.Combine(Path.GetDirectoryName(projName) ?? string.Empty, typeMatch.Groups["Word"].Value);
+                            ? val
+                            : Path.Combine(Path.GetDirectoryName(projName) ?? string.Empty, val);
                     }
                 }
                 if (match.Value.Contains("OutputType"))

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using Microsoft.Web.Administration;
 using TPublish.Common;
 using TPublish.Common.Model;
@@ -126,6 +127,33 @@ namespace TPublish.Web.Controllers
                 appPath.CopyDirectoryTo(newAppPath);
                 fileInfo.SaveAs(zipPath);
                 ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
+
+                // 关闭进程守护
+                var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
+                if (mgeProcess == null)
+                {
+                    throw new Exception("未找到守护进程");
+                }
+                string mgeProcessFileName = mgeProcess.MainModule.FileName;
+                string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
+                mgeProcess.Kill();
+
+                // 更新版本号
+                XElement element = XElement.Load(processMgeXmlFullName);
+                var appProcessXml = element.Elements().FirstOrDefault(n => n.Attribute("Name")?.Value == appName + ".exe");
+                if (appProcessXml == null)
+                {
+                    throw new Exception("该进程未纳入到守护进程中，无法自动部署");
+                }
+                appProcessXml.Attribute("Path").Value = newAppPath;
+                element.Save(processMgeXmlFullName);
+
+                // 关闭源程序
+                appProcess.Kill();
+
+                // 启动进程守护
+                System.Diagnostics.Process.Start(mgeProcessFileName);
+
                 res.IsSucceed = true;
             }
             catch (Exception e)
@@ -136,6 +164,6 @@ namespace TPublish.Web.Controllers
             return res;
         }
 
-
+        
     }
 }
