@@ -73,6 +73,10 @@ namespace TPublish.ClientVsix
                     Tag = file.FullName,
                     Checked = SelectedFiels.Exists(n => n == file.FullName)
                 };
+                if (file.Extension.ToLower() == ".config" || file.Extension.ToLower() == ".manifest" || file.Extension.ToLower() == ".asax")
+                {
+                    nodeTmp.ForeColor = Color.Red;
+                }
                 if (nodeTmp.Checked)
                 {
                     res = true;

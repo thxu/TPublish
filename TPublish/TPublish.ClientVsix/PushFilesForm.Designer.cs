@@ -58,6 +58,9 @@
             this.ClientSize = new System.Drawing.Size(351, 524);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tvPushFiles);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "PushFilesForm";
             this.Text = "部署文件选择";
             this.ResumeLayout(false);
