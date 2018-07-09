@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -45,6 +46,7 @@
             this.bwUploadZip = new System.ComponentModel.BackgroundWorker();
             this.btnCancel = new System.Windows.Forms.Button();
             this.pbUpload = new System.Windows.Forms.ProgressBar();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -250,5 +252,6 @@
         private System.ComponentModel.BackgroundWorker bwUploadZip;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.ProgressBar pbUpload;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

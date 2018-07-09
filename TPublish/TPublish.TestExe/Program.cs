@@ -19,11 +19,11 @@ namespace TPublish.TestExe
     {
         static void Main(string[] args)
         {
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
 
-            var tmp = ChangeAndRestartExeApp("TcpService", @"E:\EXE\GroundingResistance\1.0.0.1");
+            //var tmp = ChangeAndRestartExeApp("TcpService", @"E:\EXE\GroundingResistance\1.0.0.1");
 
             //var tmp = GetExeAppView("TcpService");
             //ZipTest1();

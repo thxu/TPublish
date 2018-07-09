@@ -183,20 +183,20 @@ namespace TPublish.ClientVsix.Service
             }
         }
 
-        public static AppView GetExeAppView(string appName)
+        public static List<AppView> GetExeAppView(string appName)
         {
             try
             {
                 OptionPageGrid setting = GetSettingPage();
                 string url = $"{setting.GetApiUrl()}/GetExeAppView?appName={appName}";
 
-                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 3000);
+                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 5000);
 
-                return res.DeserializeObject<AppView>();
+                return res.DeserializeObject<List<AppView>>();
             }
             catch (Exception e)
             {
-                return null;
+                return new List<AppView>();
             }
         }
     }

@@ -34,25 +34,31 @@ namespace TPublish.ClientVsix
                 {
                     lbAppType.Text = "IIS";
                     _appViews = TPublishService.GetAllIISAppNames();
+                    if (_appViews == null || !_appViews.Any())
+                    {
+                        throw new Exception("未连接到可用的IIS服务");
+                    }
                 }
                 else
                 {
                     lbAppType.Text = "Exe";
-                    cbAppName.Enabled = false;
+                    //cbAppName.Enabled = false;
                     //cbAppPublishDir.Enabled = false;
-                    AppView view = TPublishService.GetExeAppView(_projModel.LibName);
-                    if (string.IsNullOrWhiteSpace(view?.AppName))
+                    _appViews = TPublishService.GetExeAppView(_projModel.LibName);
+                    if (_appViews == null || !_appViews.Any())
                     {
                         throw new Exception("未找到该进程");
                     }
-                    _appViews.Add(view);
                 }
                 cbAppName.DataSource = _appViews;
                 cbAppName.DisplayMember = "AppName";
                 cbAppName.ValueMember = "AppPhysicalPath";
-                string lastChooseAppName = _projModel.LastChooseInfo.LastChooseAppName ?? _appViews[0].AppName;
-                _projModel.LastChooseInfo.LastChooseAppName = lastChooseAppName;
-                cbAppName.SelectedIndex = cbAppName.FindString(lastChooseAppName);
+
+                cbAppName.SelectedIndex = _appViews.FindIndex(n => n.Id == _projModel.LastChooseInfo.LastChooseAppName);
+
+                //string lastChooseAppName = _projModel.LastChooseInfo.LastChooseAppName ?? _appViews[0].AppName;
+                //_projModel.LastChooseInfo.LastChooseAppName = lastChooseAppName;
+                //cbAppName.SelectedIndex = cbAppName.FindString(lastChooseAppName);
                 showLbText(lbAppPath, (cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
 
                 cbAppPublishDir.DataSource = _dirSimpleNames;
@@ -79,9 +85,16 @@ namespace TPublish.ClientVsix
 
         private void showLbText(Label lb, string text)
         {
-            if (text.Length >= 50)
+            toolTip1.InitialDelay = 300;
+            toolTip1.SetToolTip(lb, text);
+            if (text.Length >= 100)
             {
-                text = new string(text.Take(15).ToArray()) + "....." + new string(text.Skip(text.Length - 20).ToArray());
+                text = new string(text.Take(5).ToArray()) + "....." + new string(text.Skip(text.Length - 90).Take(40).ToArray()) + Environment.NewLine + new string(text.Skip(text.Length - 50).ToArray());
+            }
+            else if (text.Length >= 50)
+            {
+                //text = new string(text.Take(15).ToArray()) + "....." + new string(text.Skip(text.Length - 20).ToArray());
+                text = new string(text.Take(50).ToArray()) + Environment.NewLine + new string(text.Skip(text.Length - 50).ToArray());
             }
             lb.Text = text;
         }
@@ -93,15 +106,15 @@ namespace TPublish.ClientVsix
                 return;
             }
             showLbText(lbAppPath, (cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
-            _projModel.LastChooseInfo.LastChooseAppName = (cbAppName.SelectedItem as AppView)?.AppName;
+            _projModel.LastChooseInfo.LastChooseAppName = (cbAppName.SelectedItem as AppView)?.Id;
         }
 
         private void btnDeploy_Click(object sender, System.EventArgs e)
         {
             try
             {
-                string appName = (cbAppName.SelectedItem as AppView)?.AppName;
-                if (string.IsNullOrWhiteSpace(appName))
+                var view = cbAppName.SelectedItem as AppView;
+                if (string.IsNullOrWhiteSpace(view?.AppName))
                 {
                     MessageBox.Show("请选择要发布的项目");
                     return;
@@ -117,9 +130,10 @@ namespace TPublish.ClientVsix
                 if (_projModel.LastChooseInfo.LastChoosePublishFiles == null || !_projModel.LastChooseInfo.LastChoosePublishFiles.Any())
                 {
                     MessageBox.Show("请选择要部署的文件");
+                    return;
                 }
 
-                bwUploadZip.RunWorkerAsync();
+                bwUploadZip.RunWorkerAsync(view.Id);
 
                 //var uploadRes = ZipAndUpload(_projModel.LastChooseInfo.LastChoosePublishFiles);
                 //MessageBox.Show(uploadRes.IsSucceed ? "推送成功" : $"推送失败:{uploadRes.Message}");
@@ -170,13 +184,13 @@ namespace TPublish.ClientVsix
         {
             PushFilesForm form = new PushFilesForm();
             form.Ini(_projModel.LastChooseInfo.LastChoosePublishDir, _projModel.LastChooseInfo.LastChoosePublishFiles);
-            form.ShowDialog();
 
             PushFilesForm.FileSaveEvent = list =>
             {
                 _projModel.LastChooseInfo.LastChoosePublishFiles = list;
                 lbChoosedFiles.Text = $"(已选择{_projModel?.LastChooseInfo?.LastChoosePublishFiles?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)";
             };
+            form.ShowDialog();
         }
 
         private void bwUploadZip_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -199,7 +213,7 @@ namespace TPublish.ClientVsix
 
             NameValueCollection dic = new NameValueCollection();
             dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
-            dic.Add("AppName", _projModel.LastChooseInfo.LastChooseAppName);
+            dic.Add("AppId", e.Argument.ToString());
 
             if (bwUploadZip.CancellationPending)
             {

@@ -11,17 +11,17 @@ namespace TPublish.Common
         /// <summary>
         /// 切换iis程序版本并回收应用程序池
         /// </summary>
-        /// <param name="appName">app名称</param>
+        /// <param name="appId">appId</param>
         /// <param name="path">app物理路径（全路径）</param>
         /// <returns></returns>
-        public static Result ChangeIISAppVersion(this string appName, string path)
+        public static Result ChangeIISAppVersion(this string appId, string path)
         {
             Result res = new Result();
             try
             {
                 using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
                 {
-                    var site = mgr.Sites.FirstOrDefault(n => n.Name == appName);
+                    var site = mgr.Sites.FirstOrDefault(n => n.Id.ToString() == appId);
                     if (site == null)
                     {
                         throw new Exception("该应用程序不存在");
@@ -30,7 +30,7 @@ namespace TPublish.Common
                     site.Applications["/"].VirtualDirectories["/"].PhysicalPath = path;
                     mgr.CommitChanges();
 
-                    var appPool = mgr.ApplicationPools[appName];
+                    var appPool = mgr.ApplicationPools[site.Name];
                     if (appPool == null)
                     {
                         throw new Exception("该应用程序池不存在");
@@ -59,13 +59,13 @@ namespace TPublish.Common
         /// <summary>
         /// 复制文件夹到新版本（版本号自动加1）
         /// </summary>
-        /// <param name="appName">应用程序名称</param>
+        /// <param name="appId">appId</param>
         /// <returns>新文件夹路径</returns>
-        public static string CopyIISAppToNewDir(this string appName)
+        public static string CopyIISAppToNewDir(this string appId)
         {
             using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
             {
-                var site = mgr.Sites.FirstOrDefault(n => n.Name == appName);
+                var site = mgr.Sites.FirstOrDefault(n => n.Id.ToString() == appId);
                 if (site == null)
                 {
                     throw new Exception("该应用程序不存在");
@@ -94,6 +94,8 @@ namespace TPublish.Common
                         {
                             AppName = site.Name,
                             AppPhysicalPath = site.Applications["/"]?.VirtualDirectories["/"]?.PhysicalPath ?? string.Empty,
+                            AppAlias = site.Name,
+                            Id = site.Id.ToString()
                         });
                     }
                 }

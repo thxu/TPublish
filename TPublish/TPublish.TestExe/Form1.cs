@@ -22,19 +22,20 @@ namespace TPublish.TestExe
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.Add("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+            comboBox1.Items.Add("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
             comboBox1.Items.Add("22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
             comboBox1.Items.Add("33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333");
             comboBox1.Items.Add("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
             comboBox1.Items.Add("55555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555");
             comboBox1.Items.Add("66666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666");
 
+            comboBox1.SelectedIndex = 0;
 
-            string path = @"E:\IIS\GroundingResistance\1.0.0.6";
-            DirectoryInfo root = new DirectoryInfo(path);
+            //string path = @"E:\IIS\GroundingResistance\1.0.0.6";
+            //DirectoryInfo root = new DirectoryInfo(path);
 
-            AddAllDirs(root.GetDirectories(), treeView1.Nodes);
-            AddAllFiles(root, treeView1.Nodes);
+            //AddAllDirs(root.GetDirectories(), treeView1.Nodes);
+            //AddAllFiles(root, treeView1.Nodes);
         }
 
         private void AddAllFiles(DirectoryInfo root, TreeNodeCollection nodes)
@@ -69,7 +70,8 @@ namespace TPublish.TestExe
         {
             if (path.Length >= 30)
             {
-                path = new string(path.Take(5).ToArray()) + "....." + new string(path.Skip(path.Length - 10).ToArray());
+                //path = new string(path.Take(5).ToArray()) + "....." + new string(path.Skip(path.Length - 10).ToArray());
+                path = new string(path.Take(30).ToArray()) + Environment.NewLine + new string(path.Skip(path.Length - 30).ToArray());
             }
             label1.Text = path;
             //int rowNum = 5000;
@@ -84,6 +86,7 @@ namespace TPublish.TestExe
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             showAppPath(comboBox1.Text);
+            toolTip1.SetToolTip(label1, comboBox1.Text);
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -125,12 +128,15 @@ namespace TPublish.TestExe
             backgroundWorker1.RunWorkerAsync();
         }
 
+        private int index = 0;
         private void button2_Click(object sender, EventArgs e)
         {
+            index++;
+            comboBox1.SelectedIndex = index;
             //backgroundWorker1.CancelAsync();
-            List<string> tmp = new List<string>();
-            getAllTreeNode(treeView1.Nodes, tmp);
-            var a = tmp.Count;
+            //List<string> tmp = new List<string>();
+            //getAllTreeNode(treeView1.Nodes, tmp);
+            //var a = tmp.Count;
         }
 
         private void getAllTreeNode(TreeNodeCollection nodes, List<string> paths)
