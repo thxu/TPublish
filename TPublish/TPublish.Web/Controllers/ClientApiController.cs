@@ -46,7 +46,7 @@ namespace TPublish.Web.Controllers
                 {
                     AppView view = new AppView
                     {
-                        AppName = processElement.Attribute("Name")?.Value ?? string.Empty,
+                        AppName = processElement.Attribute("Desc")?.Value ?? string.Empty,
                         Id = processElement.Attribute("ID")?.Value ?? string.Empty,
                         AppPhysicalPath = processElement.Attribute("Path")?.Value ?? string.Empty,
                         AppAlias = processElement.Attribute("Desc")?.Value ?? string.Empty
