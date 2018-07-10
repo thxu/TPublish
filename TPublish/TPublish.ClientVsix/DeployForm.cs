@@ -89,12 +89,12 @@ namespace TPublish.ClientVsix
             toolTip1.SetToolTip(lb, text);
             if (text.Length >= 100)
             {
-                text = new string(text.Take(5).ToArray()) + "....." + new string(text.Skip(text.Length - 90).Take(40).ToArray()) + Environment.NewLine + new string(text.Skip(text.Length - 50).ToArray());
+                text = new string(text.Take(15).ToArray()) + "....." + new string(text.Skip(20).ToArray());
             }
-            else if (text.Length >= 50)
+            if (text.Length >= 50)
             {
                 //text = new string(text.Take(15).ToArray()) + "....." + new string(text.Skip(text.Length - 20).ToArray());
-                text = new string(text.Take(50).ToArray()) + Environment.NewLine + new string(text.Skip(text.Length - 50).ToArray());
+                text = new string(text.Take(50).ToArray()) + Environment.NewLine + new string(text.Skip(50).ToArray());
             }
             lb.Text = text;
         }
