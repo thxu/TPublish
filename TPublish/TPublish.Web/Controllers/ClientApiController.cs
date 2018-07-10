@@ -14,6 +14,9 @@ namespace TPublish.Web.Controllers
 {
     public class ClientApiController : Controller
     {
+
+        public static string MgeProcessFullName = "";
+
         public string Index()
         {
             return "hello";
@@ -37,10 +40,18 @@ namespace TPublish.Web.Controllers
                 var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
                 if (mgeProcess == null)
                 {
-                    throw new Exception("未找到守护进程");
+                    if (!string.IsNullOrWhiteSpace(MgeProcessFullName))
+                    {
+                        mgeProcess = Process.Start(MgeProcessFullName);
+                    }
+                    else
+                    {
+                        throw new Exception("未找到守护进程");
+                    }
                 }
                 string mgeProcessFileName = mgeProcess.MainModule.FileName;
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
+                MgeProcessFullName = processMgeXmlFullName;
                 XElement element = XElement.Load(processMgeXmlFullName);
                 foreach (XElement processElement in element.Elements().Where(n => n.Attribute("Name").Value.StartsWith(appName)))
                 {
@@ -153,7 +164,14 @@ namespace TPublish.Web.Controllers
                 var mgeProcess = allProcesses.FirstOrDefault(n => String.Equals(n.ProcessName, "ProcessManageApplication", StringComparison.CurrentCultureIgnoreCase));
                 if (mgeProcess == null)
                 {
-                    throw new Exception("未找到守护进程");
+                    if (!string.IsNullOrWhiteSpace(MgeProcessFullName))
+                    {
+                        mgeProcess = Process.Start(MgeProcessFullName);
+                    }
+                    else
+                    {
+                        throw new Exception("未找到守护进程");
+                    }
                 }
                 string mgeProcessFileName = mgeProcess.MainModule.FileName;
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
