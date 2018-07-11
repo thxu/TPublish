@@ -118,7 +118,7 @@ namespace TPublish.ClientVsix
         private void btnSave_Click(object sender, System.EventArgs e)
         {
             List<string> selectedFiles = new List<string>();
-            GetAllTreeNode(tvPushFiles.TopNode.Nodes, selectedFiles);
+            GetAllTreeNode(tvPushFiles.Nodes, selectedFiles);
             if (!selectedFiles.Any())
             {
                 MessageBox.Show("请选择要发布的文件");
