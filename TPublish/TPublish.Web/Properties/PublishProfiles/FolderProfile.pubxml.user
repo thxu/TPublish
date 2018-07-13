@@ -187,16 +187,16 @@
       <publishTime>02/01/2018 12:20:56</publishTime>
     </File>
     <File Include="bin/TPublish.Common.dll">
-      <publishTime>07/10/2018 09:04:22</publishTime>
+      <publishTime>07/13/2018 12:47:03</publishTime>
     </File>
     <File Include="bin/TPublish.Common.pdb">
-      <publishTime>07/10/2018 09:04:22</publishTime>
+      <publishTime>07/13/2018 12:47:03</publishTime>
     </File>
     <File Include="bin/TPublish.Web.dll">
-      <publishTime>07/10/2018 10:01:21</publishTime>
+      <publishTime>07/13/2018 14:02:57</publishTime>
     </File>
     <File Include="bin/TPublish.Web.pdb">
-      <publishTime>07/10/2018 10:01:21</publishTime>
+      <publishTime>07/13/2018 14:02:57</publishTime>
     </File>
     <File Include="bin/zh-Hans/System.Web.Helpers.resources.dll">
       <publishTime>02/01/2018 12:21:00</publishTime>

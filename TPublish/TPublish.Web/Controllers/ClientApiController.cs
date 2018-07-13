@@ -6,16 +6,87 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
-using Microsoft.Web.Administration;
 using TPublish.Common;
 using TPublish.Common.Model;
+using TPublish.Web.Models;
 
 namespace TPublish.Web.Controllers
 {
     public class ClientApiController : Controller
     {
 
-        public static string MgeProcessFullName = "";
+        private static string _MgeProcessFullName = "";
+
+        public static string GetMgeProcessFullName()
+        {
+            try
+            {
+                // 如果有了就直接返回
+                if (!string.IsNullOrWhiteSpace(_MgeProcessFullName))
+                {
+                    return _MgeProcessFullName;
+                }
+
+                // 如果没有则先查询配置文件中保存的信息
+
+                string settingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TPublish.Setting");
+                if (System.IO.File.Exists(settingPath))
+                {
+                    var str = System.IO.File.ReadAllText(settingPath);
+                    SettingView view = str.DeserializeObject<SettingView>();
+                    _MgeProcessFullName = view?.MgeProcessFullName ?? string.Empty;
+                    if (!string.IsNullOrWhiteSpace(_MgeProcessFullName) && System.IO.File.Exists(_MgeProcessFullName))
+                    {
+                        return _MgeProcessFullName;
+                    }
+                }
+
+
+                // 配置文件也没有保存则从进程中读取信息
+
+                var allProcesses = Process.GetProcesses();
+                var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
+                if (mgeProcess == null)
+                {
+                    throw new Exception("未找到守护进程");
+                }
+                _MgeProcessFullName = mgeProcess.MainModule.FileName;
+                SetMgeProcessFullName(_MgeProcessFullName);
+                return _MgeProcessFullName;
+
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "读取进程守护路径异常");
+            }
+
+            throw new Exception("未找到守护进程");
+        }
+
+        public static void SetMgeProcessFullName(string fullName)
+        {
+            try
+            {
+                SettingView view = new SettingView();
+                string settingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TPublish.Setting");
+                if (System.IO.File.Exists(settingPath))
+                {
+                    var str = System.IO.File.ReadAllText(settingPath);
+                    view = str.DeserializeObject<SettingView>() ?? new SettingView();
+                }
+
+                view.MgeProcessFullName = fullName;
+                using (StreamWriter writer = System.IO.File.CreateText(settingPath))
+                {
+                    writer.WriteLine(view.SerializeObject());
+                    writer.Flush();
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "保存进程守护路径异常,信息：" + fullName);
+            }
+        }
 
         public string Index()
         {
@@ -31,27 +102,35 @@ namespace TPublish.Web.Controllers
             return IISHelper.GetAllIISAppName().SerializeObject();
         }
 
+        /// <summary>
+        /// 获取所有EXE程序信息
+        /// </summary>
+        /// <param name="appName"></param>
+        /// <returns></returns>
         public string GetExeAppView(string appName)
         {
             List<AppView> res = new List<AppView>();
             try
             {
-                var allProcesses = Process.GetProcesses();
-                var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
-                if (mgeProcess == null)
-                {
-                    if (!string.IsNullOrWhiteSpace(MgeProcessFullName))
-                    {
-                        mgeProcess = Process.Start(MgeProcessFullName);
-                    }
-                    else
-                    {
-                        throw new Exception("未找到守护进程");
-                    }
-                }
-                string mgeProcessFileName = mgeProcess.MainModule.FileName;
+                //var allProcesses = Process.GetProcesses();
+                //var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
+                //if (mgeProcess == null)
+                //{
+                //    if (!string.IsNullOrWhiteSpace(MgeProcessFullName))
+                //    {
+                //        mgeProcess = Process.Start(MgeProcessFullName);
+                //    }
+                //    else
+                //    {
+                //        throw new Exception("未找到守护进程");
+                //    }
+                //}
+                //string mgeProcessFileName = mgeProcess.MainModule.FileName;
+                //string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
+                //MgeProcessFullName = processMgeXmlFullName;
+
+                string mgeProcessFileName = GetMgeProcessFullName();
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
-                MgeProcessFullName = processMgeXmlFullName;
                 XElement element = XElement.Load(processMgeXmlFullName);
                 foreach (XElement processElement in element.Elements().Where(n => n.Attribute("Name").Value.StartsWith(appName)))
                 {
@@ -87,13 +166,16 @@ namespace TPublish.Web.Controllers
             }
             catch (Exception e)
             {
-
+                TxtLogService.WriteLog(e, "获取所有EXE程序信息异常，信息：" + appName);
             }
             return res.SerializeObject();
         }
 
         public string UploadZip()
         {
+            string type = string.Empty;
+            string appId = string.Empty;
+            string fileName = string.Empty;
             Result res = new Result();
             try
             {
@@ -106,7 +188,7 @@ namespace TPublish.Web.Controllers
                 {
                     throw new Exception("文件已损坏");
                 }
-                var fileName = Path.GetFileName(fileInfo.FileName);
+                fileName = Path.GetFileName(fileInfo.FileName);
                 if (string.IsNullOrWhiteSpace(fileName))
                 {
                     throw new Exception("文件名无法读取");
@@ -117,8 +199,8 @@ namespace TPublish.Web.Controllers
                     throw new Exception("缺少参数");
                 }
 
-                string type = Request["Type"].TrimEnd('\r', '\n');
-                string appId = Request["AppId"].TrimEnd('\r', '\n');
+                type = Request["Type"].TrimEnd('\r', '\n');
+                appId = Request["AppId"].TrimEnd('\r', '\n');
 
                 switch (type.ToUpper())
                 {
@@ -136,6 +218,7 @@ namespace TPublish.Web.Controllers
             }
             catch (Exception e)
             {
+                TxtLogService.WriteLog(e, "上传并自动切版本异常,信息：" + new { type, appId, fileName });
                 res.Message = e.Message;
             }
 
@@ -158,22 +241,10 @@ namespace TPublish.Web.Controllers
             try
             {
 
-                var allProcesses = System.Diagnostics.Process.GetProcesses();
+                var allProcesses = Process.GetProcesses();
 
                 // 读取进程守护信息
-                var mgeProcess = allProcesses.FirstOrDefault(n => String.Equals(n.ProcessName, "ProcessManageApplication", StringComparison.CurrentCultureIgnoreCase));
-                if (mgeProcess == null)
-                {
-                    if (!string.IsNullOrWhiteSpace(MgeProcessFullName))
-                    {
-                        mgeProcess = Process.Start(MgeProcessFullName);
-                    }
-                    else
-                    {
-                        throw new Exception("未找到守护进程");
-                    }
-                }
-                string mgeProcessFileName = mgeProcess.MainModule.FileName;
+                string mgeProcessFileName = GetMgeProcessFullName();
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
                 XElement element = XElement.Load(processMgeXmlFullName);
                 var appProcessXml = element.Elements().FirstOrDefault(n => n.Attribute("ID")?.Value == appId);
@@ -196,7 +267,8 @@ namespace TPublish.Web.Controllers
                 ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
 
                 // 关闭进程守护
-                mgeProcess.Kill();
+                var mgeProcess = allProcesses.FirstOrDefault(n => String.Equals(n.ProcessName, "ProcessManageApplication", StringComparison.CurrentCultureIgnoreCase));
+                mgeProcess?.Kill();
 
                 // 更新版本号
                 appProcessXml.Attribute("Path").Value = newAppPath;
@@ -206,12 +278,13 @@ namespace TPublish.Web.Controllers
                 appProcess.Kill();
 
                 // 启动进程守护
-                System.Diagnostics.Process.Start(mgeProcessFileName);
+                Process.Start(mgeProcessFileName);
 
                 res.IsSucceed = true;
             }
             catch (Exception e)
             {
+                TxtLogService.WriteLog(e, "切换exe版本异常，信息:" + new { appId, fileName });
                 res.Message = e.Message;
             }
 

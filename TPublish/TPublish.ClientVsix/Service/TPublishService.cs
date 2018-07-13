@@ -190,7 +190,7 @@ namespace TPublish.ClientVsix.Service
                 OptionPageGrid setting = GetSettingPage();
                 string url = $"{setting.GetApiUrl()}/GetExeAppView?appName={appName}";
 
-                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 5000);
+                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
 
                 return res.DeserializeObject<List<AppView>>();
             }

@@ -50,6 +50,7 @@ namespace TPublish.Common
             }
             catch (Exception e)
             {
+                TxtLogService.WriteLog(e, "切换IIS版本、回收程序池异常，信息:" + new { appId, path });
                 res.Message = e.Message;
             }
 
@@ -102,6 +103,7 @@ namespace TPublish.Common
             }
             catch (Exception e)
             {
+                TxtLogService.WriteLog(e, "获取所有iis应用程序名称异常");
             }
             return res;
         }
