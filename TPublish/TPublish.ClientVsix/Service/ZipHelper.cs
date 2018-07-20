@@ -268,7 +268,7 @@ namespace TPublish.ClientVsix.Service
                 bool res = true;
                 using (var s = new ZipOutputStream(File.Create(zipedFile)))
                 {
-                    s.SetLevel(6);
+                    s.SetLevel(1);
                     foreach (string fileOrDir in folderOrFileList)
                     {
                         string parentPath = "";
@@ -312,7 +312,7 @@ namespace TPublish.ClientVsix.Service
             bool res = true;
             using (var s = new ZipOutputStream(File.Create(zipedFile)))
             {
-                s.SetLevel(6);
+                s.SetLevel(1);
                 foreach (string fileOrDir in folderOrFileList)
                 {
                     string parentPath = "";
