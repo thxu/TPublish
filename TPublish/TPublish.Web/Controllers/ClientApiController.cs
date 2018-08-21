@@ -12,7 +12,7 @@ using TPublish.Web.Models;
 
 namespace TPublish.Web.Controllers
 {
-    public class ClientApiController : Controller
+    public class ClientApiController : BaseController
     {
 
         private static string _MgeProcessFullName = "";
@@ -28,19 +28,12 @@ namespace TPublish.Web.Controllers
                 }
 
                 // 如果没有则先查询配置文件中保存的信息
-
-                string settingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TPublish.Setting");
-                if (System.IO.File.Exists(settingPath))
+                SettingView view = GetSettingView();
+                _MgeProcessFullName = view?.MgeProcessFullName ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(_MgeProcessFullName) && System.IO.File.Exists(_MgeProcessFullName))
                 {
-                    var str = System.IO.File.ReadAllText(settingPath);
-                    SettingView view = str.DeserializeObject<SettingView>();
-                    _MgeProcessFullName = view?.MgeProcessFullName ?? string.Empty;
-                    if (!string.IsNullOrWhiteSpace(_MgeProcessFullName) && System.IO.File.Exists(_MgeProcessFullName))
-                    {
-                        return _MgeProcessFullName;
-                    }
+                    return _MgeProcessFullName;
                 }
-
 
                 // 配置文件也没有保存则从进程中读取信息
 
@@ -63,30 +56,7 @@ namespace TPublish.Web.Controllers
             throw new Exception("未找到守护进程");
         }
 
-        public static void SetMgeProcessFullName(string fullName)
-        {
-            try
-            {
-                SettingView view = new SettingView();
-                string settingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TPublish.Setting");
-                if (System.IO.File.Exists(settingPath))
-                {
-                    var str = System.IO.File.ReadAllText(settingPath);
-                    view = str.DeserializeObject<SettingView>() ?? new SettingView();
-                }
 
-                view.MgeProcessFullName = fullName;
-                using (StreamWriter writer = System.IO.File.CreateText(settingPath))
-                {
-                    writer.WriteLine(view.SerializeObject());
-                    writer.Flush();
-                }
-            }
-            catch (Exception e)
-            {
-                TxtLogService.WriteLog(e, "保存进程守护路径异常,信息：" + fullName);
-            }
-        }
 
         public string Index()
         {
@@ -103,7 +73,7 @@ namespace TPublish.Web.Controllers
         }
 
         /// <summary>
-        /// 获取所有EXE程序信息
+        /// 获取EXE程序信息
         /// </summary>
         /// <param name="appName"></param>
         /// <returns></returns>
@@ -112,23 +82,6 @@ namespace TPublish.Web.Controllers
             List<AppView> res = new List<AppView>();
             try
             {
-                //var allProcesses = Process.GetProcesses();
-                //var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
-                //if (mgeProcess == null)
-                //{
-                //    if (!string.IsNullOrWhiteSpace(MgeProcessFullName))
-                //    {
-                //        mgeProcess = Process.Start(MgeProcessFullName);
-                //    }
-                //    else
-                //    {
-                //        throw new Exception("未找到守护进程");
-                //    }
-                //}
-                //string mgeProcessFileName = mgeProcess.MainModule.FileName;
-                //string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
-                //MgeProcessFullName = processMgeXmlFullName;
-
                 string mgeProcessFileName = GetMgeProcessFullName();
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
                 XElement element = XElement.Load(processMgeXmlFullName);
@@ -143,30 +96,41 @@ namespace TPublish.Web.Controllers
                     };
                     res.Add(view);
                 }
-
-                /**********************************************/
-                //var allProcesses = Process.GetProcesses();
-                //var appProcess = allProcesses.Where(n => String.Equals(n.ProcessName, appName, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                //if (!appProcess.Any())
-                //{
-                //    throw new Exception("未找到该进程");
-                //}
-
-                //foreach (Process process in appProcess)
-                //{
-                //    AppView view = new AppView
-                //    {
-                //        AppName = appName,
-                //        AppPhysicalPath = process.MainModule.FileName,
-                //        AppAlias = new DirectoryInfo(process.MainModule.FileName)?.Parent?.Name ?? string.Empty,
-                //        Pid = process.Id,
-                //    };
-                //    res.Add(view);
-                //}
             }
             catch (Exception e)
             {
                 TxtLogService.WriteLog(e, "获取所有EXE程序信息异常，信息：" + appName);
+            }
+            return res.SerializeObject();
+        }
+
+        /// <summary>
+        /// 获取所有EXE程序信息
+        /// </summary>
+        /// <returns></returns>
+        public string GetAllExeAppView()
+        {
+            List<AppView> res = new List<AppView>();
+            try
+            {
+                string mgeProcessFileName = GetMgeProcessFullName();
+                string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
+                XElement element = XElement.Load(processMgeXmlFullName);
+                foreach (XElement processElement in element.Elements())
+                {
+                    AppView view = new AppView
+                    {
+                        AppName = processElement.Attribute("Desc")?.Value ?? string.Empty,
+                        Id = processElement.Attribute("ID")?.Value ?? string.Empty,
+                        AppPhysicalPath = processElement.Attribute("Path")?.Value ?? string.Empty,
+                        AppAlias = processElement.Attribute("Desc")?.Value ?? string.Empty
+                    };
+                    res.Add(view);
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "获取所有EXE程序信息异常");
             }
             return res.SerializeObject();
         }
