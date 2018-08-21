@@ -58,6 +58,52 @@ namespace TPublish.Common
         }
 
         /// <summary>
+        /// IIS程序版本回退
+        /// </summary>
+        /// <param name="appId">appId</param>
+        /// <returns>回退结果</returns>
+        public static Result RollBackIISAppVersion(this string appId)
+        {
+            Result res = new Result();
+            try
+            {
+                using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
+                {
+                    var site = mgr.Sites.FirstOrDefault(n => n.Id.ToString() == appId);
+                    if (site == null)
+                    {
+                        throw new Exception("该应用程序不存在");
+                    }
+                    var lastVersionPath = site.Applications["/"].VirtualDirectories["/"].PhysicalPath;
+                    string oldVersion = lastVersionPath.SubVersion();
+                    site.Applications["/"].VirtualDirectories["/"].PhysicalPath = oldVersion;
+                    mgr.CommitChanges();
+
+                    var appPool = mgr.ApplicationPools[site.Name];
+                    if (appPool == null)
+                    {
+                        throw new Exception("该应用程序池不存在");
+                    }
+                    if (appPool.State == ObjectState.Stopped)
+                    {
+                        appPool.Start();
+                    }
+                    else
+                    {
+                        appPool.Recycle();
+                    }
+                    mgr.CommitChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                res.Message = e.Message;
+                TxtLogService.WriteLog(e, "回退iis版本异常，信息:" + appId);
+            }
+            return res;
+        }
+
+        /// <summary>
         /// 复制文件夹到新版本（版本号自动加1）
         /// </summary>
         /// <param name="appId">appId</param>

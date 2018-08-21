@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="ExeHelper.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="IISHelper.cs" />
     <Compile Include="Model\AppView.cs" />

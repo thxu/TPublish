@@ -61,6 +61,23 @@ namespace TPublish.Common
         }
 
         /// <summary>
+        /// 版本号自动减1
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public static string SubVersion(this string version)
+        {
+            if (string.IsNullOrWhiteSpace(version))
+            {
+                return "1.0.0.1";
+            }
+            string[] tmp = version.Split('.');
+            int val = Convert.ToInt32(tmp[tmp.Length - 1]) - 1;
+            tmp[tmp.Length - 1] = val.ToString();
+            return string.Join(".", tmp);
+        }
+
+        /// <summary>
         /// 带参数的文件上传
         /// </summary>
         /// <param name="url">服务器url</param>
