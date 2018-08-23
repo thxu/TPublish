@@ -8,6 +8,8 @@ namespace TPublish.Web.Models
     {
         public string MgeProcessFullName { get; set; }
 
-        public List<KeyValuePair<string, KeyValuePair<string, string>>> RemotePublishAppList { get; set; }
+        public List<AppSerListMap> RemoteAppList { get; set; }
+
+        public List<ServiceGroup> ServiceGroups { get; set; }
     }
 }

@@ -98,6 +98,8 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Service.cs" />
+    <Compile Include="Controllers\SettingLogic.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
