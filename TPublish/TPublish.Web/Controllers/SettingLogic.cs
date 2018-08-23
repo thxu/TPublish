@@ -11,6 +11,7 @@ namespace TPublish.Web.Controllers
     {
         private static SettingView _setting = new SettingView();
         private static string settingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TPublish.Setting");
+        private static object _objLock = new object();
 
         static SettingLogic()
         {
@@ -38,43 +39,50 @@ namespace TPublish.Web.Controllers
 
         public static void SaveSetting()
         {
-            try
+            lock (_objLock)
             {
-                using (StreamWriter writer = File.CreateText(settingPath))
+                try
                 {
-                    writer.WriteLine(_setting.SerializeObject());
-                    writer.Flush();
+
+                    using (StreamWriter writer = File.CreateText(settingPath))
+                    {
+                        writer.WriteLine(_setting.SerializeObject());
+                        writer.Flush();
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                TxtLogService.WriteLog(e, "写入配置文件异常,信息：" + _setting.SerializeObject());
+                catch (Exception e)
+                {
+                    TxtLogService.WriteLog(e, "写入配置文件异常,信息：" + _setting.SerializeObject());
+                }
             }
         }
 
         public static string GetMgeProcessFullName()
         {
-            return _setting.MgeProcessFullName;
+            return _setting.MgeProcessFullName.DeepCopy();
         }
 
         public static void SetMgeProcessFullName(string name)
         {
             try
             {
-                _setting.MgeProcessFullName = name;
-
-                SettingView view = _setting;
-                if (File.Exists(settingPath))
+                lock (_objLock)
                 {
-                    var str = File.ReadAllText(settingPath);
-                    view = str.DeserializeObject<SettingView>() ?? new SettingView();
-                    view.MgeProcessFullName = name;
-                }
+                    _setting.MgeProcessFullName = name;
 
-                using (StreamWriter writer = File.CreateText(settingPath))
-                {
-                    writer.WriteLine(view.SerializeObject());
-                    writer.Flush();
+                    SettingView view = _setting;
+                    if (File.Exists(settingPath))
+                    {
+                        var str = File.ReadAllText(settingPath);
+                        view = str.DeserializeObject<SettingView>() ?? new SettingView();
+                        view.MgeProcessFullName = name;
+                    }
+
+                    using (StreamWriter writer = File.CreateText(settingPath))
+                    {
+                        writer.WriteLine(view.SerializeObject());
+                        writer.Flush();
+                    }
                 }
             }
             catch (Exception e)
@@ -87,7 +95,7 @@ namespace TPublish.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(appId))
             {
-                return _setting.RemoteAppList;
+                return _setting.RemoteAppList.DeepCopy();
             }
             return _setting.RemoteAppList.Where(n => n.AppId == appId).ToList();
         }
@@ -96,56 +104,115 @@ namespace TPublish.Web.Controllers
         {
             try
             {
-                _setting.RemoteAppList = data;
-
-                SettingView view = _setting;
-                if (File.Exists(settingPath))
+                lock (_objLock)
                 {
-                    var str = File.ReadAllText(settingPath);
-                    view = str.DeserializeObject<SettingView>() ?? new SettingView();
-                    view.RemoteAppList = data;
-                }
+                    _setting.RemoteAppList = data;
 
-                using (StreamWriter writer = File.CreateText(settingPath))
-                {
-                    writer.WriteLine(view.SerializeObject());
-                    writer.Flush();
+                    SettingView view = _setting;
+                    if (File.Exists(settingPath))
+                    {
+                        var str = File.ReadAllText(settingPath);
+                        view = str.DeserializeObject<SettingView>() ?? new SettingView();
+                        view.RemoteAppList = data;
+                    }
+
+                    using (StreamWriter writer = File.CreateText(settingPath))
+                    {
+                        writer.WriteLine(view.SerializeObject());
+                        writer.Flush();
+                    }
                 }
             }
             catch (Exception e)
             {
-                TxtLogService.WriteLog(e, "保存进程守护路径异常，信息：" + data.SerializeObject());
+                TxtLogService.WriteLog(e, "保存远程服务器信息异常，信息：" + data.SerializeObject());
             }
         }
 
         public static List<ServiceGroup> GetServiceGroups()
         {
-            return _setting.ServiceGroups;
+            return _setting.ServiceGroups.DeepCopy();
         }
 
         public static void SetServiceGroups(List<ServiceGroup> data)
         {
             try
             {
-                _setting.ServiceGroups = data;
-
-                SettingView view = _setting;
-                if (File.Exists(settingPath))
+                lock (_objLock)
                 {
-                    var str = File.ReadAllText(settingPath);
-                    view = str.DeserializeObject<SettingView>() ?? new SettingView();
-                    view.ServiceGroups = data;
-                }
+                    _setting.ServiceGroups = data;
 
-                using (StreamWriter writer = File.CreateText(settingPath))
-                {
-                    writer.WriteLine(view.SerializeObject());
-                    writer.Flush();
+                    SettingView view = _setting;
+                    if (File.Exists(settingPath))
+                    {
+                        var str = File.ReadAllText(settingPath);
+                        view = str.DeserializeObject<SettingView>() ?? new SettingView();
+                        view.ServiceGroups = data;
+                    }
+
+                    using (StreamWriter writer = File.CreateText(settingPath))
+                    {
+                        writer.WriteLine(view.SerializeObject());
+                        writer.Flush();
+                    }
                 }
             }
             catch (Exception e)
             {
-                TxtLogService.WriteLog(e, "保存进程守护路径异常，信息：" + data.SerializeObject());
+                TxtLogService.WriteLog(e, "保存服务器组异常，信息：" + data.SerializeObject());
+            }
+        }
+
+        public static string GetAppZipFilePath(string key)
+        {
+            if (_setting.AppZipFileMap.ContainsKey(key))
+            {
+                return _setting.AppZipFileMap[key];
+            }
+
+            return null;
+        }
+
+        public static void SetAppZipFilePath(string key, string val)
+        {
+            try
+            {
+                lock (_objLock)
+                {
+                    if (_setting.AppZipFileMap.ContainsKey(key))
+                    {
+                        _setting.AppZipFileMap[key] = val;
+                    }
+                    else
+                    {
+                        _setting.AppZipFileMap.Add(key, val);
+                    }
+
+                    SettingView view = _setting;
+                    if (File.Exists(settingPath))
+                    {
+                        var str = File.ReadAllText(settingPath);
+                        view = str.DeserializeObject<SettingView>() ?? new SettingView();
+                        if (_setting.AppZipFileMap.ContainsKey(key))
+                        {
+                            _setting.AppZipFileMap[key] = val;
+                        }
+                        else
+                        {
+                            _setting.AppZipFileMap.Add(key, val);
+                        }
+                    }
+
+                    using (StreamWriter writer = File.CreateText(settingPath))
+                    {
+                        writer.WriteLine(view.SerializeObject());
+                        writer.Flush();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "保存app程序zip文件路径异常，信息：" + new { key, val }.SerializeObject());
             }
         }
     }

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.TestExe", "TPublis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.ClientVsix", "TPublish.ClientVsix\TPublish.ClientVsix.csproj", "{60008894-F764-49A4-84D9-D159F16A89DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.CommonTests", "TPublish.CommonTests\TPublish.CommonTests.csproj", "{03D5379F-9426-4163-A3DA-DF99F7B47741}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{60008894-F764-49A4-84D9-D159F16A89DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60008894-F764-49A4-84D9-D159F16A89DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60008894-F764-49A4-84D9-D159F16A89DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -131,6 +131,17 @@ namespace TPublish.Web.Controllers
             string newVersionPath = appId.CopyIISAppToNewDir();
             string zipPath = Path.Combine(newVersionPath, fileName);
             fileInfo.SaveAs(zipPath);
+
+            // 复制一份压缩包到本网站目录，部署外网的时候就直接从网站目录里面拿取压缩包了。
+            string zipBackDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ZipFiles");
+            if (!Directory.Exists(zipBackDir))
+            {
+                Directory.CreateDirectory(zipBackDir);
+            }
+            string zipBackPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+            fileInfo.SaveAs(zipBackPath);
+            SettingLogic.SetAppZipFilePath($"IIS-{appId.GetIISAppNameById().AppName}", zipBackPath);
+
             ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
             var changeRes = appId.ChangeIISAppVersion(newVersionPath);
             return changeRes;
@@ -165,6 +176,17 @@ namespace TPublish.Web.Controllers
                 string zipPath = Path.Combine(newAppPath, fileName);
                 appPath.CopyDirectoryTo(newAppPath);
                 fileInfo.SaveAs(zipPath);
+
+                // 复制一份压缩包到本网站目录，部署外网的时候就直接从网站目录里面拿取压缩包了。
+                string zipBackDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ZipFiles");
+                if (!Directory.Exists(zipBackDir))
+                {
+                    Directory.CreateDirectory(zipBackDir);
+                }
+                string zipBackPath = Path.Combine(zipBackDir, fileName);
+                fileInfo.SaveAs(zipBackPath);
+                SettingLogic.SetAppZipFilePath($"EXE-{appId}", zipBackPath);
+
                 ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
 
                 // 关闭进程守护

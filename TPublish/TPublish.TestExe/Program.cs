@@ -20,16 +20,16 @@ namespace TPublish.TestExe
     {
         static void Main(string[] args)
         {
-            ZipTest();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            //ZipTest();
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new Form1());
 
             //var tmp = ChangeAndRestartExeApp("TcpService", @"E:\EXE\GroundingResistance\1.0.0.1");
 
             //var tmp = GetExeAppView("TcpService");
             //ZipTest1();
-            //UploadTest();
+            UploadTest();
             Console.Out.WriteLine("hello");
             Console.ReadKey();
 
@@ -217,7 +217,7 @@ namespace TPublish.TestExe
 
             NameValueCollection dic = new NameValueCollection();
             dic.Add("Type", "exe");
-            dic.Add("AppName", "TcpService");
+            dic.Add("AppId", "20180708235207453");
             var res = Common.Common.HttpPostData(url, 100000, "1.zip", path, dic).DeserializeObject<Result>();
         }
 

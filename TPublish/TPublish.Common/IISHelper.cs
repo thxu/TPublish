@@ -153,5 +153,36 @@ namespace TPublish.Common
             }
             return res;
         }
+
+        /// <summary>
+        /// 获取所有iis应用程序名称
+        /// </summary>
+        /// <returns>应用程序信息</returns>
+        public static AppView GetIISAppNameById(this string id)
+        {
+            AppView res = new AppView();
+            try
+            {
+                using (var mgr = new ServerManager(@"C:\Windows\System32\inetsrv\config\applicationHost.config"))
+                {
+                    var site = mgr.Sites.FirstOrDefault(n => n.Id.ToString() == id);
+                    if (site != null)
+                    {
+                        res = new AppView
+                        {
+                            AppName = site.Name,
+                            AppPhysicalPath = site.Applications["/"]?.VirtualDirectories["/"]?.PhysicalPath ?? string.Empty,
+                            AppAlias = site.Name,
+                            Id = site.Id.ToString()
+                        };
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "获取指定iis应用程序名称异常,id=" + id);
+            }
+            return res;
+        }
     }
 }

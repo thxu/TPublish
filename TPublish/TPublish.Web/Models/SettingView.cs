@@ -11,5 +11,7 @@ namespace TPublish.Web.Models
         public List<AppSerListMap> RemoteAppList { get; set; }
 
         public List<ServiceGroup> ServiceGroups { get; set; }
+
+        public Dictionary<string, string> AppZipFileMap { get; set; }
     }
 }

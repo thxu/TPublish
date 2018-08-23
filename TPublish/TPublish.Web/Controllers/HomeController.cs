@@ -74,11 +74,13 @@ namespace TPublish.Web.Controllers
                 }
 
                 var map = SettingLogic.GetRemoteAppList().FirstOrDefault(n => n.AppId == appId && n.SerGroupId == serGroupId);
-                if (map == null || map.ServiceAdressList == null || !map.ServiceAdressList.Any())
+                if (map?.ServiceAdressList == null || !map.ServiceAdressList.Any())
                 {
                     res.Message = "请先配置服务器信息";
                     return new MyJsonResult { Data = res };
                 }
+
+                // 读取压缩文件
             }
             catch (Exception e)
             {
@@ -113,7 +115,7 @@ namespace TPublish.Web.Controllers
                 }
 
                 var map = SettingLogic.GetRemoteAppList().FirstOrDefault(n => n.AppId == appId && n.SerGroupId == serGroupId);
-                if (map == null || map.ServiceAdressList == null || !map.ServiceAdressList.Any())
+                if (map?.ServiceAdressList == null || !map.ServiceAdressList.Any())
                 {
                     res.Message = "请先配置服务器信息";
                     return new MyJsonResult { Data = res };
@@ -140,8 +142,8 @@ namespace TPublish.Web.Controllers
             catch (Exception e)
             {
                 res.IsSucceed = false;
-                res.Message = "批量部署失败";
-                TxtLogService.WriteLog(e, "批量部署异常，信息：" + new { appId, serGroupId }.SerializeObject());
+                res.Message = "批量回退失败";
+                TxtLogService.WriteLog(e, "批量回退异常，信息：" + new { appId, serGroupId }.SerializeObject());
             }
 
             return new MyJsonResult { Data = res };

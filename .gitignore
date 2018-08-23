@@ -13,3 +13,7 @@
 /TPublish/TPublish.TestExe/bin/Debug
 /TPublish/TPublish.ClientVsix/obj/Debug
 /TPublish/TPublish.ClientVsix/bin/Debug
+/TPublish/TPublish.CommonTests/obj/Debug
+/TPublish/TPublish.CommonTests/bin/Debug
+/TPublish/TPublish.Web/Logs/ExceptionLog/20180823
+/TPublish/TPublish.Web/ZipFiles
