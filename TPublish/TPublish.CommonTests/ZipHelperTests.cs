@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 namespace TPublish.Common.Tests
 {
     [TestClass()]
-    public class IISHelperTests
+    public class ZipHelperTests
     {
         [TestMethod()]
-        public void GetAllIISAppNameTest()
+        public void ZipDirectoryTest()
         {
-            var res = IISHelper.GetAllIISAppInfo();
+            string dir = @"E:\EXE\GroundingResistance\1.0.0.4";
+            string zipName = @"E:\3.zip";
+            ZipHelper.ZipDirectory(dir, zipName);
+            ZipHelper.ZipDir(dir, @"E:\4.zip");
             Assert.Fail();
         }
     }

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -20,6 +21,8 @@ namespace TPublish.TestExe
     {
         static void Main(string[] args)
         {
+            //ExeHelper.GetAllExeAppInfo();
+            //ZipFileReadThread();
             //ZipTest();
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
@@ -28,8 +31,8 @@ namespace TPublish.TestExe
             //var tmp = ChangeAndRestartExeApp("TcpService", @"E:\EXE\GroundingResistance\1.0.0.1");
 
             //var tmp = GetExeAppView("TcpService");
-            //ZipTest1();
-            UploadTest();
+            ZipTest1();
+            //UploadTest();
             Console.Out.WriteLine("hello");
             Console.ReadKey();
 
@@ -161,7 +164,7 @@ namespace TPublish.TestExe
             List<string> pathList = new List<string>();
             //pathList.Add(@"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
 
-            DirectoryInfo fileDire = new DirectoryInfo(@"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
+            DirectoryInfo fileDire = new DirectoryInfo(@"E:\EXE\GroundingResistance\1.0.0.4");
 
             foreach (var directory in fileDire.GetDirectories())
             {
@@ -178,7 +181,7 @@ namespace TPublish.TestExe
             //    pathList.Add(entry.Key.ToString());
             //}
 
-            var zipRes = ZipHelper.ZipManyFilesOrDictorys(pathList, @"E:\2.zip", @"E:\Code\C#\Git\GroundingResistance\WebApi\TcpService\bin\Debug");
+            var zipRes = ZipHelper.ZipManyFilesOrDictorys(pathList, @"E:\2.zip", @"E:\EXE\GroundingResistance\1.0.0.4");
         }
 
         public static void UnZipTest()
@@ -286,6 +289,50 @@ namespace TPublish.TestExe
                 res.Message = e.Message;
             }
             return res;
+        }
+
+        private static void ZipFileReadThread()
+        {
+            string zipFile = @"E:\2.zip";
+            FileInfo file = new FileInfo(zipFile);
+            Console.Out.WriteLine(file.Name);
+            Console.Out.WriteLine(file.FullName);
+
+            List<Task<bool>> allTasks = new List<Task<bool>>();
+            for (int i = 0; i < 5; i++)
+            {
+                var tmp = ReadZipFile(zipFile);
+                allTasks.Add(tmp);
+            }
+
+            Task.WaitAll(allTasks.ToArray());
+            Console.Out.WriteLine("aaa");
+        }
+
+        private static async Task<bool> ReadZipFile(string path)
+        {
+            return await Task.Run((() =>
+            {
+                try
+                {
+                    //FileStream stream = new FileInfo(path).OpenRead();
+                    using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    {
+                        Byte[] buffer = new Byte[stream.Length];
+                        Thread.Sleep(5000);
+                        //从流中读取字节块并将该数据写入给定缓冲区buffer中
+                        var tmp = stream.Read(buffer, 0, Convert.ToInt32(stream.Length));
+
+                        Console.Out.WriteLine(Thread.CurrentThread.ManagedThreadId + "==== " + tmp);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e + Environment.NewLine + Thread.CurrentThread.ManagedThreadId.ToString());
+                }
+
+                return true;
+            }));
         }
     }
 }

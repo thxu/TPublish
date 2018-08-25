@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip;
@@ -16,7 +17,7 @@ namespace TPublish.Common
         /// <param name="dirToZip"></param>
         /// <param name="zipedFileName"></param>
         /// <param name="compressionLevel">压缩率0（无压缩）9（压缩率最高）</param>
-        public static void ZipDir(string dirToZip, string zipedFileName, int compressionLevel = 9)
+        public static void ZipDir(string dirToZip, string zipedFileName, int compressionLevel = 5)
         {
             if (Path.GetExtension(zipedFileName) != ".zip")
             {
@@ -75,8 +76,16 @@ namespace TPublish.Common
         {
             foreach (DirectoryInfo dir in dirs)
             {
-                foreach (FileInfo file in dir.GetFiles("*.*"))
+                if (dir.Name.ToLower().Contains("log") || dir.Name.ToLower().Contains("wcfconfig"))
                 {
+                    continue;
+                }
+                foreach (FileInfo file in dir.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.Equals("TPublish.setting")))
+                {
+                    if (file.Extension.ToLower() == ".config" || file.Extension.ToLower() == ".manifest" || file.Extension.ToLower() == ".asax")
+                    {
+                        continue;
+                    }
                     filesList.Add(file.FullName, file.LastWriteTime);
                 }
                 GetAllDirsFiles(dir.GetDirectories(), filesList);
@@ -90,8 +99,12 @@ namespace TPublish.Common
         /// <param name="filesList">文件列表HastTable</param>  
         public static void GetAllDirFiles(DirectoryInfo dir, Hashtable filesList)
         {
-            foreach (FileInfo file in dir.GetFiles("*.*"))
+            foreach (FileInfo file in dir.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.Equals("TPublish.setting")))
             {
+                if (file.Extension.ToLower() == ".config" || file.Extension.ToLower() == ".manifest" || file.Extension.ToLower() == ".asax")
+                {
+                    continue;
+                }
                 filesList.Add(file.FullName, file.LastWriteTime);
             }
         }
@@ -485,6 +498,46 @@ namespace TPublish.Common
                     return false;
                 }
             }
+            return res;
+        }
+
+        /// <summary>
+        /// 压缩文件夹
+        /// </summary>
+        /// <param name="dir">文件夹</param>
+        /// <param name="zipName">压缩后的文件名称</param>
+        /// <returns>压缩结果</returns>
+        public static bool ZipDirectory(string dir, string zipName)
+        {
+            bool res = false;
+            try
+            {
+                List<string> pathList = new List<string>();
+                DirectoryInfo fileDire = new DirectoryInfo(dir);
+
+                foreach (var directory in fileDire.GetDirectories())
+                {
+                    if (directory.Name.ToLower().Contains("log") || directory.Name.ToLower().Contains("wcfconfig"))
+                    {
+                        continue;
+                    }
+                    pathList.Add(directory.FullName);
+                }
+                foreach (FileInfo file in fileDire.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.Equals("TPublish.setting")))
+                {
+                    if (file.Extension.ToLower() == ".config" || file.Extension.ToLower() == ".manifest" || file.Extension.ToLower() == ".asax")
+                    {
+                        continue;
+                    }
+                    pathList.Add(file.FullName);
+                }
+                res = ZipManyFilesOrDictorys(pathList, zipName, dir);
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "压缩文件夹异常，信息：" + new { dir, zipName }.SerializeObject());
+            }
+
             return res;
         }
     }

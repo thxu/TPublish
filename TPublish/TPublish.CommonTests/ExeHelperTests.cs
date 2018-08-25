@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace TPublish.Common.Tests
 {
     [TestClass()]
-    public class IISHelperTests
+    public class ExeHelperTests
     {
         [TestMethod()]
-        public void GetAllIISAppNameTest()
+        public void GetAllExeAppViewTest()
         {
-            var res = IISHelper.GetAllIISAppInfo();
+            var res = ExeHelper.GetAllExeAppInfo();
             Assert.Fail();
         }
     }

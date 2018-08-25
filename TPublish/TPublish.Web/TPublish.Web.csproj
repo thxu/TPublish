@@ -99,13 +99,9 @@
     <Compile Include="Controllers\ClientApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Service.cs" />
-    <Compile Include="Controllers\SettingLogic.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\MyJsonResult.cs" />
-    <Compile Include="Models\ServiceGroup.cs" />
-    <Compile Include="Models\SettingView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TPublish.Common\TPublish.Common.csproj">

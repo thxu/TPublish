@@ -2,9 +2,8 @@
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using TPublish.Common;
 
-namespace TPublish.Web.Models
+namespace TPublish.Common.Model
 {
     /// <summary>
     /// json

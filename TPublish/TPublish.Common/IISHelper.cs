@@ -62,7 +62,7 @@ namespace TPublish.Common
         /// </summary>
         /// <param name="appId">appId</param>
         /// <returns>回退结果</returns>
-        public static Result RollBackIISAppVersion(this string appId)
+        public static Result IISAppVersionRollBack(this string appId)
         {
             Result res = new Result();
             try
@@ -128,7 +128,7 @@ namespace TPublish.Common
         /// 获取所有iis应用程序名称
         /// </summary>
         /// <returns>应用程序名称集合</returns>
-        public static List<AppView> GetAllIISAppName()
+        public static List<AppView> GetAllIISAppInfo()
         {
             List<AppView> res = new List<AppView>();
             try
@@ -142,7 +142,8 @@ namespace TPublish.Common
                             AppName = site.Name,
                             AppPhysicalPath = site.Applications["/"]?.VirtualDirectories["/"]?.PhysicalPath ?? string.Empty,
                             AppAlias = site.Name,
-                            Id = site.Id.ToString()
+                            Id = site.Id.ToString(),
+                            Status = site.State == ObjectState.Started ? 0 : 1,
                         });
                     }
                 }
@@ -158,7 +159,7 @@ namespace TPublish.Common
         /// 获取所有iis应用程序名称
         /// </summary>
         /// <returns>应用程序信息</returns>
-        public static AppView GetIISAppNameById(this string id)
+        public static AppView GetIISAppInfoById(this string id)
         {
             AppView res = new AppView();
             try
@@ -173,7 +174,8 @@ namespace TPublish.Common
                             AppName = site.Name,
                             AppPhysicalPath = site.Applications["/"]?.VirtualDirectories["/"]?.PhysicalPath ?? string.Empty,
                             AppAlias = site.Name,
-                            Id = site.Id.ToString()
+                            Id = site.Id.ToString(),
+                            Status = site.State == ObjectState.Started ? 0 : 1,
                         };
                     }
                 }

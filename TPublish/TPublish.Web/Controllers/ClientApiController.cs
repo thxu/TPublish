@@ -4,11 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using System.Xml.Linq;
 using TPublish.Common;
 using TPublish.Common.Model;
-using TPublish.Web.Models;
 
 namespace TPublish.Web.Controllers
 {
@@ -25,7 +23,7 @@ namespace TPublish.Web.Controllers
         /// <returns>应用程序名称集合</returns>
         public string GetAllIISAppView()
         {
-            return IISHelper.GetAllIISAppName().SerializeObject();
+            return IISHelper.GetAllIISAppInfo().SerializeObject();
         }
 
         /// <summary>
@@ -35,29 +33,7 @@ namespace TPublish.Web.Controllers
         /// <returns></returns>
         public string GetExeAppView(string appName)
         {
-            List<AppView> res = new List<AppView>();
-            try
-            {
-                string mgeProcessFileName = GetMgeProcessFullName();
-                string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
-                XElement element = XElement.Load(processMgeXmlFullName);
-                foreach (XElement processElement in element.Elements().Where(n => n.Attribute("Name").Value.StartsWith(appName)))
-                {
-                    AppView view = new AppView
-                    {
-                        AppName = processElement.Attribute("Desc")?.Value ?? string.Empty,
-                        Id = processElement.Attribute("ID")?.Value ?? string.Empty,
-                        AppPhysicalPath = processElement.Attribute("Path")?.Value ?? string.Empty,
-                        AppAlias = processElement.Attribute("Name")?.Value ?? string.Empty
-                    };
-                    res.Add(view);
-                }
-            }
-            catch (Exception e)
-            {
-                TxtLogService.WriteLog(e, "获取所有EXE程序信息异常，信息：" + appName);
-            }
-            return res.SerializeObject();
+            return ExeHelper.GetExeAppInfoByName(appName).SerializeObject();
         }
 
         /// <summary>
@@ -66,7 +42,7 @@ namespace TPublish.Web.Controllers
         /// <returns></returns>
         public string GetAllExeAppView()
         {
-            return BaseController.GetAllExeAppView().SerializeObject();
+            return ExeHelper.GetAllExeAppInfo().SerializeObject();
         }
 
         public string UploadZip()
@@ -140,7 +116,7 @@ namespace TPublish.Web.Controllers
             }
             string zipBackPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
             fileInfo.SaveAs(zipBackPath);
-            SettingLogic.SetAppZipFilePath($"IIS-{appId.GetIISAppNameById().AppName}", zipBackPath);
+            SettingLogic.SetAppZipFilePath($"IIS-{appId}", zipBackPath);
 
             ZipHelper.UnZip(zipPath, Directory.GetParent(zipPath).FullName);
             var changeRes = appId.ChangeIISAppVersion(newVersionPath);
@@ -152,11 +128,10 @@ namespace TPublish.Web.Controllers
             Result res = new Result();
             try
             {
-
                 var allProcesses = Process.GetProcesses();
 
                 // 读取进程守护信息
-                string mgeProcessFileName = GetMgeProcessFullName();
+                string mgeProcessFileName = SettingLogic.GetMgeProcessFullName();
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
                 XElement element = XElement.Load(processMgeXmlFullName);
                 var appProcessXml = element.Elements().FirstOrDefault(n => n.Attribute("ID")?.Value == appId);
@@ -229,12 +204,12 @@ namespace TPublish.Web.Controllers
                 {
                     case "IIS":
                         {
-                            res = appId.RollBackIISAppVersion();
+                            res = appId.IISAppVersionRollBack();
                             break;
                         }
                     case "EXE":
                         {
-                            res = ExeRollBack(appId);
+                            res = appId.ExeAppVersionRollBack();
                             break;
                         }
                     default:
@@ -247,56 +222,6 @@ namespace TPublish.Web.Controllers
                 TxtLogService.WriteLog(e, "版本回退异常，信息:" + new { appId, type }.SerializeObject());
             }
             return res.SerializeObject();
-        }
-
-        private Result ExeRollBack(string appId)
-        {
-            Result res = new Result();
-            try
-            {
-                var allProcesses = Process.GetProcesses();
-
-                // 读取进程守护信息
-                string mgeProcessFileName = GetMgeProcessFullName();
-                string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
-                XElement element = XElement.Load(processMgeXmlFullName);
-                var appProcessXml = element.Elements().FirstOrDefault(n => n.Attribute("ID")?.Value == appId);
-                if (appProcessXml == null)
-                {
-                    throw new Exception("该进程未纳入到守护进程中，无法自动部署");
-                }
-
-                var appProcess = allProcesses.FirstOrDefault(n => n.Id.ToString() == appProcessXml.Attribute("PID").Value);
-                if (appProcess == null)
-                {
-                    throw new Exception("未找到该进程");
-                }
-                string appFullPath = appProcess.MainModule.FileName;
-                string appPath = Directory.GetParent(appFullPath).FullName;
-                string newAppPath = appPath.SubVersion();
-
-                // 关闭进程守护
-                var mgeProcess = allProcesses.FirstOrDefault(n => String.Equals(n.ProcessName, "ProcessManageApplication", StringComparison.CurrentCultureIgnoreCase));
-                mgeProcess?.Kill();
-
-                // 更新版本号
-                appProcessXml.Attribute("Path").Value = newAppPath;
-                element.Save(processMgeXmlFullName);
-
-                // 关闭源程序
-                appProcess.Kill();
-
-                // 启动进程守护
-                Process.Start(mgeProcessFileName);
-
-                res.IsSucceed = true;
-            }
-            catch (Exception e)
-            {
-                res.Message = e.Message;
-                TxtLogService.WriteLog(e, "Exe程序版本回退异常，信息：" + appId);
-            }
-            return res;
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using TPublish.Common;
-using TPublish.Web.Models;
+using TPublish.Common.Model;
 
-namespace TPublish.Web.Controllers
+namespace TPublish.Common
 {
     public class SettingLogic
     {
@@ -59,7 +59,29 @@ namespace TPublish.Web.Controllers
 
         public static string GetMgeProcessFullName()
         {
-            return _setting.MgeProcessFullName.DeepCopy();
+            string res = null;
+            try
+            {
+                res = _setting.MgeProcessFullName.DeepCopy();
+                if (string.IsNullOrWhiteSpace(res))
+                {
+                    // 从进程中读取信息
+                    var allProcesses = Process.GetProcesses();
+                    var mgeProcess = allProcesses.FirstOrDefault(n => n.ProcessName == "ProcessManageApplication");
+                    if (mgeProcess == null)
+                    {
+                        throw new Exception("未找到守护进程");
+                    }
+                    res = mgeProcess.MainModule.FileName;
+                    SetMgeProcessFullName(res);
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e,"读取进程守护路径异常");
+            }
+            
+            return res;
         }
 
         public static void SetMgeProcessFullName(string name)

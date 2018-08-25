@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using TPublish.Common;
 using TPublish.Common.Model;
-using TPublish.Web.Models;
 
 namespace TPublish.Web.Controllers
 {
@@ -33,11 +30,11 @@ namespace TPublish.Web.Controllers
             {
                 case "IIS":
                     // iis
-                    res = IISHelper.GetAllIISAppName();
+                    res = IISHelper.GetAllIISAppInfo();
                     break;
                 case "EXE":
                     // exe
-                    res = GetAllExeAppView();
+                    res = ExeHelper.GetAllExeAppInfo();
                     break;
                 default:
                     break;
@@ -59,7 +56,7 @@ namespace TPublish.Web.Controllers
 
         public ActionResult BatchDeploy(string appId, string serGroupId)
         {
-            Result res = new Result();
+            Result<List<Result<string>>> res = new Result<List<Result<string>>>();
             try
             {
                 if (string.IsNullOrWhiteSpace(appId))
@@ -80,7 +77,32 @@ namespace TPublish.Web.Controllers
                     return new MyJsonResult { Data = res };
                 }
 
-                // 读取压缩文件
+                // 读取压缩文件路径
+                string key = $"{map.AppType}-{map.AppId}";
+                var zipFile = SettingLogic.GetAppZipFilePath(key);
+                if (string.IsNullOrWhiteSpace(zipFile))
+                {
+                    var appInfo = new Service().GetAppInfoById(map.AppId, map.AppType);
+                    zipFile = appInfo.AppName + ".zip";
+                    ZipHelper.ZipDir(appInfo.AppPhysicalPath, zipFile);
+                }
+
+                Task<Result<string>>[] allTasks = new Task<Result<string>>[map.ServiceAdressList.Count];
+                for (int i = 0; i < map.ServiceAdressList.Count; i++)
+                {
+                    var task = new Service().DeployAsync(map.ServiceAdressList[i].AppId, map.ServiceAdressList[i].AppType, map.ServiceAdressList[i].ServiceAdress, zipFile);
+                    allTasks[i] = task;
+                }
+
+                Task.WaitAll(allTasks);
+                List<Result<string>> opRes = new List<Result<string>>();
+                foreach (var task in allTasks)
+                {
+                    opRes.Add(task.Result);
+                }
+                res.IsSucceed = opRes.Exists(n => n.IsSucceed == false);
+                res.Message = !res.IsSucceed ? "部分程序版本切换失败" : "";
+                res.Data = opRes;
             }
             catch (Exception e)
             {

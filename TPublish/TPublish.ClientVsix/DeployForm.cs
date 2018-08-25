@@ -42,8 +42,6 @@ namespace TPublish.ClientVsix
                 else
                 {
                     lbAppType.Text = "Exe";
-                    //cbAppName.Enabled = false;
-                    //cbAppPublishDir.Enabled = false;
                     _appViews = TPublishService.GetExeAppView(_projModel.LibName);
                     if (_appViews == null || !_appViews.Any())
                     {
@@ -51,14 +49,11 @@ namespace TPublish.ClientVsix
                     }
                 }
                 cbAppName.DataSource = _appViews;
-                cbAppName.DisplayMember = "AppName";
+                cbAppName.DisplayMember = "AppAlias";
                 cbAppName.ValueMember = "AppPhysicalPath";
 
                 cbAppName.SelectedIndex = _appViews.FindIndex(n => n.Id == _projModel.LastChooseInfo.LastChooseAppName);
 
-                //string lastChooseAppName = _projModel.LastChooseInfo.LastChooseAppName ?? _appViews[0].AppName;
-                //_projModel.LastChooseInfo.LastChooseAppName = lastChooseAppName;
-                //cbAppName.SelectedIndex = cbAppName.FindString(lastChooseAppName);
                 showLbText(lbAppPath, (cbAppName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
 
                 cbAppPublishDir.DataSource = _dirSimpleNames;
@@ -114,7 +109,7 @@ namespace TPublish.ClientVsix
             try
             {
                 var view = cbAppName.SelectedItem as AppView;
-                if (string.IsNullOrWhiteSpace(view?.AppName))
+                if (string.IsNullOrWhiteSpace(view?.AppAlias))
                 {
                     MessageBox.Show("请选择要发布的项目");
                     return;
@@ -142,33 +137,6 @@ namespace TPublish.ClientVsix
             {
                 MessageBox.Show(exception.Message);
             }
-        }
-
-        private Result ZipAndUpload(List<string> paths)
-        {
-            string pathTmp = _projModel.LibDebugPath;
-            if (_projModel.ProjType == "Library")
-            {
-                pathTmp = new DirectoryInfo(pathTmp).Parent?.FullName ?? pathTmp;
-            }
-            string zipFullPath = Path.Combine(pathTmp, _projModel.LibName + ".zip");
-            lbStatus.Text = "压缩文件中...";
-            var tmp = ThreadHelper.JoinableTaskFactory.Run((() =>
-            {
-                var zipRes = ZipHelper.ZipManyFilesOrDictorysAsync(paths, zipFullPath, pathTmp);
-                return zipRes;
-            }));
-
-            NameValueCollection dic = new NameValueCollection();
-            dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
-            dic.Add("AppName", (cbAppName.SelectedItem as AppView)?.AppName);
-
-            string url = $"{TPublishService.GetSettingPage().GetApiUrl()}/UploadZip";
-            lbStatus.Text = "文件上传中。。。";
-            string uploadResStr = HttpHelper.HttpPostData(url, 30000, _projModel.LibName + ".zip", zipFullPath, dic);
-            var uploadRes = uploadResStr.DeserializeObject<Result>();
-            lbStatus.Text = $"版本切换{(uploadRes.IsSucceed ? "成功" : "失败")} {uploadRes.Message}";
-            return uploadRes;
         }
 
         private void cbAppPublishDir_SelectedIndexChanged(object sender, EventArgs e)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TPublish.Web.Models
+namespace TPublish.Common.Model
 {
     [Serializable]
     public class SettingView

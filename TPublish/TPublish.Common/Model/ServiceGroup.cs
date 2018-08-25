@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 
-namespace TPublish.Web.Models
+namespace TPublish.Common.Model
 {
     /// <summary>
     /// 服务器组信息
@@ -21,6 +22,8 @@ namespace TPublish.Web.Models
     public class AppSerListMap
     {
         public string AppId { get; set; }
+
+        public string AppName { get; set; }
 
         public string AppType { get; set; }
 
