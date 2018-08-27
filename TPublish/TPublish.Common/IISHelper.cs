@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Web.Administration;
 using TPublish.Common.Model;
 
@@ -183,6 +184,30 @@ namespace TPublish.Common
             catch (Exception e)
             {
                 TxtLogService.WriteLog(e, "获取指定iis应用程序名称异常,id=" + id);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 获取远程服务器负载程序信息
+        /// </summary>
+        /// <param name="remoteAppId">appid</param>
+        /// <param name="serAdress">负载服务器地址</param>
+        /// <returns>程序信息</returns>
+        public static AppView GetRemoteIISAppInfoById(this string remoteAppId, string serAdress)
+        {
+            AppView res = new AppView();
+            try
+            {
+                string url = $"{serAdress}/GetIISAppViewByAppId?appId={remoteAppId}";
+
+                var appInfo = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
+
+                return appInfo.DeserializeObject<AppView>();
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "查询远程服务器IIS负载程序信息异常，信息：" + new { remoteAppId, serAdress }.SerializeObject());
             }
             return res;
         }

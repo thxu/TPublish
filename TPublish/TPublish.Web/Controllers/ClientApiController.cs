@@ -27,13 +27,32 @@ namespace TPublish.Web.Controllers
         }
 
         /// <summary>
+        /// 获取iis应用程序名称
+        /// </summary>
+        /// <returns>应用程序名称</returns>
+        public string GetIISAppViewByAppId(string appId)
+        {
+            return appId.GetIISAppInfoById().SerializeObject();
+        }
+
+        /// <summary>
         /// 获取EXE程序信息
         /// </summary>
         /// <param name="appName"></param>
         /// <returns></returns>
         public string GetExeAppView(string appName)
         {
-            return ExeHelper.GetExeAppInfoByName(appName).SerializeObject();
+            return appName.GetExeAppInfoByName().SerializeObject();
+        }
+
+        /// <summary>
+        /// 获取EXE程序信息
+        /// </summary>
+        /// <param name="appId"></param>
+        /// <returns></returns>
+        public string GetExeAppViewByAppId(string appId)
+        {
+            return appId.GetExeAppInfoById().SerializeObject();
         }
 
         /// <summary>

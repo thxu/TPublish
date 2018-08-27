@@ -66,6 +66,48 @@ namespace TPublish.Web.Controllers
             return new MyJsonResult { Data = res };
         }
 
+        /// <summary>
+        /// 查询指定服务器组所有负载程序信息
+        /// </summary>
+        /// <param name="appId">本地程序appid</param>
+        /// <param name="type">类型</param>
+        /// <param name="groupId">服务器组id</param>
+        /// <returns>程序信息集合</returns>
+        public ActionResult QueryRemoteAppInfoList(string appId, string type, string groupId)
+        {
+            List<AppView> res = new List<AppView>();
+            try
+            {
+                var serList = SettingLogic.GetRemoteAppList(appId).FirstOrDefault(n => n.SerGroupId == groupId);
+                if (serList != null)
+                {
+                    foreach (var appSerListMap in serList.ServiceAdressList)
+                    {
+                        var remoteAppInfo = new Service().GetRemoteAppInfoById(appSerListMap.AppId, appSerListMap.AppType, appSerListMap.ServiceAdress);
+                        res.Add(remoteAppInfo);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "查询指定服务器组上所有负载程序信息异常，信息：" + new { appId, type, groupId }.SerializeObject());
+            }
+            return new MyJsonResult { Data = res };
+        }
+
+        /// <summary>
+        /// 获取远程服务器负载程序信息
+        /// </summary>
+        /// <param name="remoteAppId">负载程序appid</param>
+        /// <param name="type">类型</param>
+        /// <param name="serAdress">远程服务器地址</param>
+        /// <returns></returns>
+        public ActionResult QueryRemoteAppInfo(string remoteAppId, string type, string serAdress)
+        {
+            AppView appInfo = new Service().GetRemoteAppInfoById(remoteAppId, type, serAdress);
+            return new MyJsonResult { Data = appInfo };
+        }
+
         public ActionResult BatchDeploy(string appId, string serGroupId)
         {
             Result<List<Result<string>>> res = new Result<List<Result<string>>>();
@@ -186,29 +228,29 @@ namespace TPublish.Web.Controllers
         /// <summary>
         /// 单个程序回退
         /// </summary>
-        /// <param name="appId">远程服务器上的appid</param>
+        /// <param name="remoteAppId">远程服务器上的appid</param>
         /// <param name="type">远程服务器上的type</param>
         /// <param name="serAdress">远程服务器地址</param>
         /// <returns></returns>
-        public ActionResult RollBack(string appId, string type, string serAdress)
+        public ActionResult RollBack(string remoteAppId, string type, string serAdress)
         {
             Result<string> res = new Result<string>();
             try
             {
-                if (string.IsNullOrWhiteSpace(appId))
+                if (string.IsNullOrWhiteSpace(remoteAppId))
                 {
                     res.Message = "请选择要回退的程序";
                     return new MyJsonResult { Data = res };
                 }
 
-                var rollbackRes = new Service().RollBackAsync(appId, type, serAdress).Result;
+                var rollbackRes = new Service().RollBackAsync(remoteAppId, type, serAdress).Result;
                 res = rollbackRes;
             }
             catch (Exception e)
             {
-                TxtLogService.WriteLog(e, "回退单个程序异常，信息：" + new { appId, type, serAdress }.SerializeObject());
+                TxtLogService.WriteLog(e, "回退单个程序异常，信息：" + new { remoteAppId, type, serAdress }.SerializeObject());
             }
-            
+
             return new MyJsonResult { Data = res };
         }
 

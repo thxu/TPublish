@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using TPublish.Common.Model;
 
@@ -123,6 +124,30 @@ namespace TPublish.Common
             catch (Exception e)
             {
                 TxtLogService.WriteLog(e, "获取EXE程序信息异常，信息：" + id);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 获取远程服务器负载EXE程序信息
+        /// </summary>
+        /// <param name="remoteAppId"></param>
+        /// <param name="serAdress">负载服务器地址</param>
+        /// <returns></returns>
+        public static AppView GetRemoteExeAppInfoById(this string remoteAppId, string serAdress)
+        {
+            AppView res = new AppView();
+            try
+            {
+                string url = $"{serAdress}/GetExeAppViewByAppId?appId={remoteAppId}";
+
+                var appInfo = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
+
+                return appInfo.DeserializeObject<AppView>();
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "查询远程服务器EXE负载程序信息异常，信息：" + new { remoteAppId, serAdress }.SerializeObject());
             }
             return res;
         }

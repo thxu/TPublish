@@ -105,5 +105,32 @@ namespace TPublish.Web.Controllers
             }
             return res;
         }
+
+        /// <summary>
+        /// 获取远程负载服务器app信息
+        /// </summary>
+        /// <param name="remoteAppId">appid</param>
+        /// <param name="type">app类型</param>
+        /// <param name="serAdress">负载服务器地址</param>
+        /// <returns>app信息</returns>
+        public AppView GetRemoteAppInfoById(string remoteAppId, string type, string serAdress)
+        {
+            AppView res = new AppView();
+            try
+            {
+                switch (type.ToUpper())
+                {
+                    case "IIS":
+                        return remoteAppId.GetRemoteIISAppInfoById(serAdress);
+                    case "EXE":
+                        return remoteAppId.GetRemoteExeAppInfoById(serAdress);
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "获取远程负载服务器app信息异常，信息：" + new { remoteAppId, type }.SerializeObject());
+            }
+            return res;
+        }
     }
 }
