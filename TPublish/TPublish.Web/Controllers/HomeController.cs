@@ -48,9 +48,21 @@ namespace TPublish.Web.Controllers
         /// <param name="appId"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public ActionResult QuerySerGroupByApp()
+        public ActionResult QuerySerGroupByApp(string appId, string type)
         {
-            var res = SettingLogic.GetServiceGroups();
+            var groups = SettingLogic.GetServiceGroups();
+            List<AppServiceGroupView> res = new List<AppServiceGroupView>();
+            foreach (var item in groups)
+            {
+                var serList = SettingLogic.GetRemoteAppList(appId).Where(n => n.SerGroupId == item.Guid);
+                res.Add(new AppServiceGroupView
+                {
+                    AppId = appId,
+                    GroupName = item.GroupName,
+                    Guid = item.GroupName,
+                    ServiceCount = serList.Count(),
+                });
+            }
             return new MyJsonResult { Data = res };
         }
 
@@ -127,7 +139,7 @@ namespace TPublish.Web.Controllers
             {
                 if (string.IsNullOrWhiteSpace(appId))
                 {
-                    res.Message = "请选择要部署的程序";
+                    res.Message = "请选择要回退的程序";
                     return new MyJsonResult { Data = res };
                 }
                 if (string.IsNullOrWhiteSpace(serGroupId))
@@ -158,7 +170,7 @@ namespace TPublish.Web.Controllers
                     opRes.Add(task.Result);
                 }
                 res.IsSucceed = opRes.Exists(n => n.IsSucceed == false);
-                res.Message = !res.IsSucceed ? "部分程序版本切换失败" : "";
+                res.Message = !res.IsSucceed ? "部分程序版本回退失败" : "";
                 res.Data = opRes;
             }
             catch (Exception e)
@@ -168,6 +180,35 @@ namespace TPublish.Web.Controllers
                 TxtLogService.WriteLog(e, "批量回退异常，信息：" + new { appId, serGroupId }.SerializeObject());
             }
 
+            return new MyJsonResult { Data = res };
+        }
+
+        /// <summary>
+        /// 单个程序回退
+        /// </summary>
+        /// <param name="appId">远程服务器上的appid</param>
+        /// <param name="type">远程服务器上的type</param>
+        /// <param name="serAdress">远程服务器地址</param>
+        /// <returns></returns>
+        public ActionResult RollBack(string appId, string type, string serAdress)
+        {
+            Result<string> res = new Result<string>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(appId))
+                {
+                    res.Message = "请选择要回退的程序";
+                    return new MyJsonResult { Data = res };
+                }
+
+                var rollbackRes = new Service().RollBackAsync(appId, type, serAdress).Result;
+                res = rollbackRes;
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "回退单个程序异常，信息：" + new { appId, type, serAdress }.SerializeObject());
+            }
+            
             return new MyJsonResult { Data = res };
         }
 
