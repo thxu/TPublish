@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
 
 namespace TPublish.Common.Model
 {
@@ -10,7 +9,7 @@ namespace TPublish.Common.Model
     [Serializable]
     public class ServiceGroup
     {
-        public string Guid { get; set; }
+        public string GroupGuid { get; set; }
 
         public string GroupName { get; set; }
     }
@@ -43,5 +42,18 @@ namespace TPublish.Common.Model
         public string AppType { get; set; }
 
         public string AppId { get; set; }
+    }
+
+    public class AppSerView
+    {
+        public string AppId { get; set; }
+
+        public string AppType { get; set; }
+
+        public string GroupGuid { get; set; }
+
+        public string ServiceAdress { get; set; }
+
+        public AppView RemoteAppView { get; set; }
     }
 }

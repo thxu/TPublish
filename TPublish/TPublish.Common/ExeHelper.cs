@@ -153,6 +153,30 @@ namespace TPublish.Common
         }
 
         /// <summary>
+        /// 获取远程服务器负载EXE程序信息
+        /// </summary>
+        /// <param name="remoteAppId"></param>
+        /// <param name="serAdress">负载服务器地址</param>
+        /// <returns></returns>
+        public static List<AppView> GetRemoteExeAppInfoByName(this string remoteAppName, string serAdress)
+        {
+            List<AppView> res = new List<AppView>();
+            try
+            {
+                string url = $"{serAdress}/GetExeAppView?appName={remoteAppName}";
+
+                var appInfo = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
+
+                return appInfo.DeserializeObject<List<AppView>>();
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "查询远程服务器EXE负载程序信息异常，信息：" + new { remoteAppName, serAdress }.SerializeObject());
+            }
+            return res;
+        }
+
+        /// <summary>
         /// 获取所有EXE程序信息
         /// </summary>
         /// <returns></returns>

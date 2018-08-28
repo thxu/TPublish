@@ -54,7 +54,7 @@ namespace TPublish.Web.Controllers
             List<AppServiceGroupView> res = new List<AppServiceGroupView>();
             foreach (var item in groups)
             {
-                var serList = SettingLogic.GetRemoteAppList(appId).Where(n => n.SerGroupId == item.Guid);
+                var serList = SettingLogic.GetRemoteAppList(appId).Where(n => n.SerGroupId == item.GroupGuid);
                 res.Add(new AppServiceGroupView
                 {
                     AppId = appId,
@@ -75,7 +75,7 @@ namespace TPublish.Web.Controllers
         /// <returns>程序信息集合</returns>
         public ActionResult QueryRemoteAppInfoList(string appId, string type, string groupId)
         {
-            List<AppView> res = new List<AppView>();
+            List<AppSerView> res = new List<AppSerView>();
             try
             {
                 var serList = SettingLogic.GetRemoteAppList(appId).FirstOrDefault(n => n.SerGroupId == groupId);
@@ -84,7 +84,14 @@ namespace TPublish.Web.Controllers
                     foreach (var appSerListMap in serList.ServiceAdressList)
                     {
                         var remoteAppInfo = new Service().GetRemoteAppInfoById(appSerListMap.AppId, appSerListMap.AppType, appSerListMap.ServiceAdress);
-                        res.Add(remoteAppInfo);
+                        res.Add(new AppSerView
+                        {
+                            AppId = appId,
+                            AppType = type,
+                            GroupGuid = groupId,
+                            RemoteAppView = remoteAppInfo,
+                            ServiceAdress = appSerListMap.ServiceAdress,
+                        });
                     }
                 }
             }
@@ -102,7 +109,7 @@ namespace TPublish.Web.Controllers
         /// <param name="type">类型</param>
         /// <param name="serAdress">远程服务器地址</param>
         /// <returns></returns>
-        public ActionResult QueryRemoteAppInfo(string remoteAppId, string type, string serAdress)
+        public ActionResult QueryRemoteAppInfoByRemoteAppId(string remoteAppId, string type, string serAdress)
         {
             AppView appInfo = new Service().GetRemoteAppInfoById(remoteAppId, type, serAdress);
             return new MyJsonResult { Data = appInfo };
@@ -258,9 +265,32 @@ namespace TPublish.Web.Controllers
         #endregion
 
         #region 管理
+        /// <summary>
+        /// 查询远程服务器上的应用程序信息
+        /// </summary>
+        /// <param name="appName">app程序名称</param>
+        /// <param name="type">类型</param>
+        /// <param name="serAdress">远程服务器地址</param>
+        /// <returns>应用程序信息</returns>
+        public ActionResult QueryRemoteAppInfoByName(string appName, string type, string serAdress)
+        {
+            List<AppView> res = new List<AppView>();
+            switch (type.ToUpper())
+            {
+                case "IIS":
+                    res = IISHelper.GetAllRemoteIISAppInfo(serAdress);
+                    break;
+                case "EXE":
+                    res = ExeHelper.GetRemoteExeAppInfoByName(appName, serAdress);
+                    break;
+            }
+            return new MyJsonResult { Data = res };
+        }
 
-
-
+        public ActionResult AddOrUpdateRemoteAppInfo()
+        {
+            return null;
+        }
         #endregion
     }
 }

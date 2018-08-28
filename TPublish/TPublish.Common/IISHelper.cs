@@ -211,5 +211,30 @@ namespace TPublish.Common
             }
             return res;
         }
+
+        /// <summary>
+        /// 获取指定远程服务上的所有iis程序信息
+        /// </summary>
+        /// <param name="serAdress">远程服务器地址</param>
+        /// <returns>iis程序信息</returns>
+        public static List<AppView> GetAllRemoteIISAppInfo(string serAdress)
+        {
+            List<AppView> res = new List<AppView>();
+            try
+            {
+                string url = $"{serAdress}/GetAllIISAppView";
+
+                List<AppView> appInfos = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000).DeserializeObject<List<AppView>>();
+                if (appInfos != null && !appInfos.Any())
+                {
+                    res.AddRange(appInfos);
+                }
+            }
+            catch (Exception e)
+            {
+                TxtLogService.WriteLog(e, "获取远程服务器上所有iis程序异常，信息：" + serAdress);
+            }
+            return res;
+        }
     }
 }
