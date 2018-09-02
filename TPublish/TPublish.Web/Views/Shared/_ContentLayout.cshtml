@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动部署111</title>
+
+    <link href="~/Content/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+
+    <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/style-responsive.css" rel="stylesheet" type="text/css" />
+    @RenderSection("Header", false)
+</head>
+<body>
+    <section id="container">
+        <section id="main-content">
+            <section class="wrapper">
+                <div class="row">
+                    @RenderBody()
+                </div>
+            </section>
+        </section>
+        <footer class="site-footer">
+            <div class="text-center">
+                <a href="#" class="go-top">
+                    <i class="fa fa-angle-up"></i>
+                </a>
+            </div>
+        </footer>
+    </section>
+</body>
+</html>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="~/Scripts/jquery.dcjqaccordion.2.7.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.scrollTo.min.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.nicescroll.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.sparkline.js"></script>
+<script type="text/javascript" src="~/Scripts/common-scripts.js"></script>
+@RenderSection("Footer", false)
