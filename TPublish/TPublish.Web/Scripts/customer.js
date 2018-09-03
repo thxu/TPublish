@@ -231,3 +231,11 @@
         //		}
     };
 })(jQuery);
+
+function autoSizeIframe() {
+    $("#iframe0").height = document.documentElement.clientHeight + 30;
+}
+
+window.onresize = function () {
+    autoSizeIframe();
+}

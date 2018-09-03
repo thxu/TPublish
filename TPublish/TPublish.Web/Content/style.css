@@ -399,7 +399,7 @@ ul.sidebar-menu li a.active i {
 
 /* MAIN CONTENT CONFIGURATION */
 #main-content {
-    margin-left: 210px;
+    margin-left: 120px;
 }
 
 .header, .footer {
@@ -421,7 +421,7 @@ ul.sidebar-menu li a.active i {
 
 .wrapper {
     display: inline-block;
-    margin-top: 60px;
+    margin-top: 30px;
     padding-left: 15px;
     padding-right: 15px;
     padding-bottom: 15px;

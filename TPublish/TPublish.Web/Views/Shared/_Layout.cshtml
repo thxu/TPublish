@@ -46,8 +46,8 @@
                             <span>UI Elements</span>
                         </a>
                         <ul class="sub">
-                            <li><a href="/Home/Default" target="iframe0">General</a></li>
-                            <li><a href="/Home/Default" target="iframe0">Buttons</a></li>
+                            <li><a href="/Home/LocalAppListView" target="iframe0">所有app列表</a></li>
+                            <li><a href="/Home/LocalAppListView" target="iframe0">Buttons</a></li>
                             <li><a href="/Home/Default" target="iframe0">Panels</a></li>
                             <li><a href="/Home/Default" target="iframe0">Font Awesome</a></li>
                         </ul>
@@ -149,7 +149,7 @@
     <section id="main-content">
         <section class="wrapper">
             <div class="row">
-                <iframe class="J_iframe" name="iframe0" id="iframe0" style="width: 100%; height: 100%; border: 0;" src="@Url.Action("Default", "Home")" seamless="seamless"></iframe>
+                <iframe class="J_iframe" name="iframe0" id="iframe0" style="width: 100%; height: 1000px; border: 0;" src="@Url.Action("Default", "Home")" seamless="seamless" onload="autoSizeIframe()"></iframe>
             </div>
         </section>
     </section>
@@ -157,7 +157,7 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="~/Scripts/jquery.dcjqaccordion.2.7.js"></script>
+    <script type="text/javascript" src="~/Scripts/customer.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.scrollTo.min.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.nicescroll.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.sparkline.js"></script>

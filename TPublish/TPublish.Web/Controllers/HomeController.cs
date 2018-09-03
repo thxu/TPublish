@@ -20,6 +20,11 @@ namespace TPublish.Web.Controllers
             return View();
         }
 
+        public ActionResult LocalAppListView()
+        {
+            return View();
+        }
+
         #region 部署
 
         /// <summary>
