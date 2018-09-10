@@ -33,7 +33,6 @@ a, a:hover, a:focus {
     outline: none;
 }
 ::selection {
-
     background: #4ECDC4;
     color: #fff;
 }
@@ -365,7 +364,7 @@ ul.sidebar-menu li a{
     transition: all 0.3s ease;
 }
 
-ul.sidebar-menu li a.active, ul.sidebar-menu li a:hover, ul.sidebar-menu li a:focus {
+ul.sidebar-menu li a.active, ul.sidebar-menu li a:hover {
     background: #4ECDC4;
     color: #fff;
     display: block;
@@ -3323,6 +3322,8 @@ ul.chat-available-user li a:hover {
     background: #4ECDC4;
     color: #fff;
     padding: 15px 0;
+    bottom: 0;
+    position: fixed;
 }
 
 .site-footer p {

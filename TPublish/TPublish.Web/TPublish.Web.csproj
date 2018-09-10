@@ -128,6 +128,21 @@
     <Content Include="Scripts\jquery.treetable.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\Views\Home\LocalAppListView.js" />
+    <Content Include="Scripts\Views\widget\common.js" />
+    <Content Include="Scripts\Views\widget\commonExtend.js" />
+    <Content Include="Scripts\Views\widget\jquery.tmpl.min.js" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\demo.html" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\extend\layer.ext.js" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\layer.js" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\default\icon-ext.png" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\default\icon.png" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\default\loading-0.gif" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\default\loading-1.gif" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\default\loading-2.gif" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\layer.css" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\layer.ext.css" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\layer\skin\moon\style.css" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\更新日志.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +170,9 @@
     <Content Include="Views\Shared\_ContentLayout.cshtml" />
     <Content Include="Views\Home\Default.cshtml" />
     <Content Include="Views\Home\LocalAppListView.cshtml" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\doc\jquery下载.url" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\doc\layer交流.url" />
+    <Content Include="Scripts\Views\widget\layer-v2.1\doc\layer官网.url" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

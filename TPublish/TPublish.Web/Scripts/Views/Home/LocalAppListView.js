@@ -1,4 +1,5 @@
 ﻿$(function () {
+    window.event.cancelBubble = true;
     var index = 10;
     $("#tableId").treetable({
         expandable: true,
@@ -17,20 +18,34 @@
     $("#tableId").treetable("expandAll", "");
 });
 
-function ExpandOrCollapsById(id) {
-    var isCollapsed = $("#" + id).hasClass("collapsed");
-    if (isCollapsed === true) {
-        $("#tableId").treetable("expandNode", id);
-    } else {
-        $("#tableId").treetable("collapseNode", id);
-    }
-}
+//function ExpandOrCollapsById(id) {
+//    var isCollapsed = $("#" + id).hasClass("collapsed");
+//    if (isCollapsed === true) {
+//        $("#tableId").treetable("expandNode", id);
+//    } else {
+//        $("#tableId").treetable("collapseNode", id);
+//    }
+//}
 
 function ExpandOrCollaps(obj) {
+
     var isCollapsed = obj.classList.contains("collapsed");
     if (isCollapsed === true) {
         $("#tableId").treetable("expandNode", obj.id);
     } else {
         $("#tableId").treetable("collapseNode", obj.id);
     }
+}
+
+function test() {
+    window.event.cancelBubble = true;
+    alert("hello");
+}
+
+function queryAllApps(type, name) {
+    var url = "/Home/QueryAllApp";
+    var data = JSON.stringify({ "type": type, "appName": name });
+    operationAction(url, data, function(res) {
+        alert(res.length);
+    });
 }
