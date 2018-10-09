@@ -292,7 +292,12 @@ namespace TPublish.Common
                             {
                                 string path = parentPaths.Pop();
                                 AddEmptyDir(path, s, parentPath);
-                                parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                                var fileName = Path.GetFileName(path);
+                                if (string.IsNullOrWhiteSpace(fileName))
+                                {
+                                    throw new InvalidOperationException();
+                                }
+                                parentPath = Path.Combine(parentPath, fileName);
                             }
                         }
                         //是文件夹
@@ -336,7 +341,12 @@ namespace TPublish.Common
                         {
                             string path = parentPaths.Pop();
                             AddEmptyDir(path, s, parentPath);
-                            parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                            var fileName = Path.GetFileName(path);
+                            if (string.IsNullOrWhiteSpace(fileName))
+                            {
+                                throw new InvalidOperationException();
+                            }
+                            parentPath = Path.Combine(parentPath, fileName);
                         }
                     }
                     //是文件夹

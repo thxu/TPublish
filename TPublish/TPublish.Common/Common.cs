@@ -153,8 +153,12 @@ namespace TPublish.Common
 
             var httpWebResponse = (HttpWebResponse)webRequest.GetResponse();
 
-            using (var httpStreamReader = new StreamReader(httpWebResponse.GetResponseStream() ?? throw new InvalidOperationException(),
-                                                            Encoding.GetEncoding("utf-8")))
+            var httpResStream = httpWebResponse.GetResponseStream();
+            if (httpResStream == null)
+            {
+                throw new InvalidOperationException();
+            }
+            using (var httpStreamReader = new StreamReader(httpResStream, Encoding.GetEncoding("utf-8")))
             {
                 responseContent = httpStreamReader.ReadToEnd();
             }
