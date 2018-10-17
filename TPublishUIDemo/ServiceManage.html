@@ -1,9 +1,9 @@
 <!-- import Vue before Element -->
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="js/vue.js"></script>
 <!-- 引入样式 -->
-<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="css/index.css">
 <!-- 引入组件库 -->
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="js/index.js"></script>
 <!-- <script src="js/jquery-1.10.2.js"></script> -->
 
 
@@ -62,49 +62,52 @@
 
         <el-container>
             <el-main>
-                <el-tabs>
-                    <el-tab-pane label="IIS应用程序">
-                        <el-collapse-transition>
-                            <div v-show="show">
-                                <el-form :inline="true" :model="formIISQuery" class="demo-form-inline">
-                                    <el-form-item label="IP/别名">
-                                        <el-input v-model="formIISQuery.Content" placeholder="服务器IP地址或别名"></el-input>
-                                    </el-form-item>
-                                    <el-form-item>
-                                        <el-button type="primary" @click="">查询</el-button>
-                                    </el-form-item>
-                                </el-form>
+                <el-collapse-transition>
+                    <div v-show="show">
+                        <h1>服务器列表</h1>
+                        <el-form :inline="true" :model="formIISQuery" class="demo-form-inline">
+                            <el-form-item label="IP/别名">
+                                <el-input v-model="formIISQuery.Content" placeholder="服务器IP地址或别名"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
+                                <el-button type="primary" icon="el-icon-plus" @click="openAddDialog()">添加服务器</el-button>
+                            </el-form-item>
+                        </el-form>
 
-                                <el-table :data="tableIISServiceData" height="auto" max-height="800">
-                                    <el-table-column label="序号" width="80">
-                                        <template slot-scope="scope">
-                                            <span style="margin-left:10px">{{scope.$index}}</span>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column prop="ip" label="服务器IP" width="160">
-                                    </el-table-column>
-                                    <el-table-column prop="alias" label="服务器别名" width="220">
-                                    </el-table-column>
-                                    <el-table-column label="操作" fixed="right">
-                                        <template slot-scope="scope">
-                                            <el-button-group>
-                                                <el-button size="mini" icon="el-icon-plus" @click="openAddDialog()">添加</el-button>
-                                                <el-button size="mini" icon="el-icon-edit" @click="updateService(scope.$index)">修改</el-button>
-                                                <el-button size="mini" icon="el-icon-info" @click="show = !show">详情</el-button>
-                                            </el-button-group>
-                                        </template>
-                                    </el-table-column>
-                                </el-table>
-                            </div>
-                        </el-collapse-transition>
-                        <el-collapse-transition>
-                            <div v-show="notShow">
+                        <el-table :data="tableIISServiceData" height="auto" max-height="800">
+                            <el-table-column label="序号" width="80">
+                                <template slot-scope="scope">
+                                    <span style="margin-left:10px">{{scope.$index}}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="ip" label="服务器IP" width="160">
+                            </el-table-column>
+                            <el-table-column prop="alias" label="服务器别名" width="220">
+                            </el-table-column>
+                            <el-table-column label="操作" fixed="right">
+                                <template slot-scope="scope">
+                                    <el-button-group>
+                                        <el-button size="mini" icon="el-icon-edit" @click="updateService(scope.$index)">修改</el-button>
+                                        <el-button size="mini" icon="el-icon-info" @click="show = !show">详情</el-button>
+                                    </el-button-group>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </el-collapse-transition>
+                <el-collapse-transition>
+                    <div v-show="notShow">
+                        <h1>应用程序列表</h1>
+                        <el-tabs>
+                            <el-tab-pane label="IIS应用程序">
                                 <el-form :inline="true" :model="formIISDetailQuery" class="demo-form-inline">
                                     <el-form-item label="程序名称">
                                         <el-input v-model="formIISDetailQuery.Content" placeholder="IIS应用程序名称"></el-input>
                                     </el-form-item>
                                     <el-form-item>
-                                        <el-button type="primary" @click="">查询</el-button>
+                                        <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
+                                        <el-button type="primary" @click="" icon="el-icon-plus">创建新应用程序</el-button>
                                         <el-button type="primary" @click="show = !show" icon="el-icon-back">返回</el-button>
                                     </el-form-item>
                                 </el-form>
@@ -121,55 +124,56 @@
 
                                     <el-table-column prop="path" label="程序路径" width="220">
                                         <template slot-scope="scope">
-                                            <el-popover placement="top-start" title="标题" width="200" trigger="hover"
-                                                content="asdfasd">
-                                                <span slot="reference">aaaa</span>
-                                                <!-- <el-table-column prop="path" label="程序路径" width="220" slot="reference"></el-table-column> -->
+                                            <el-popover placement="top-start" width="auto" trigger="hover"
+                                                v-bind:content="scope.row.path">
+                                                <span slot="reference" style="display:block;overflow: hidden;">{{scope.row.path}}</span>
                                             </el-popover>
                                         </template>
                                     </el-table-column>
 
-
-
-                                    <!-- <el-table-column prop="path" label="程序路径" width="220"></el-table-column> -->
                                     <el-table-column prop="status" label="程序状态" width="120"></el-table-column>
                                     <el-table-column prop="io" label="磁盘占用" width="120"></el-table-column>
                                     <el-table-column prop="memory" label="内存占用" width="120"></el-table-column>
                                     <el-table-column label="操作" fixed="right">
                                         <template slot-scope="scope">
                                             <el-button-group>
-                                                <el-button size="mini" icon="el-icon-plus" @click="openAddDialog()">添加</el-button>
-                                                <el-button size="mini" icon="el-icon-edit" @click="updateService(scope.$index)">修改</el-button>
-                                                <el-button size="mini" icon="el-icon-info" @click="show = !show">详情</el-button>
+                                                <el-popover placement="top" width="auto" v-model="changeVersionVisible"
+                                                    trigger="click">
+                                                    <p>可用版本</p>
+                                                    <el-select v-model="value" placeholder="请选择">
+                                                        <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                                            :value="item.value">
+                                                        </el-option>
+                                                    </el-select>
+                                                    <br />
+                                                    <div style="text-align: right;margin-top: 5%">
+                                                        <el-button size="mini" type="text" @click="changeVersionVisible = false">取消</el-button>
+                                                        <el-button type="primary" size="mini" @click="changeVersionVisible = false">确定</el-button>
+                                                    </div>
+                                                    <el-button size="mini" slot="reference" icon="el-icon-sort" @click="changeVersionVisible = true">版本切换</el-button>
+                                                </el-popover>
+                                                <!-- <el-button size="mini" icon="el-icon-plus" @click="openAddDialog()">版本切换</el-button> -->
+                                                <el-button size="mini" icon="el-icon-warning" @click="">重启</el-button>
+                                                <el-button size="mini" icon="el-icon-upload2" @click="">上传并切换版本</el-button>
+                                                <el-button size="mini" icon="el-icon-edit" @click="showConfig = true">更改配置文件</el-button>
                                             </el-button-group>
                                         </template>
                                     </el-table-column>
                                 </el-table>
-                            </div>
-                        </el-collapse-transition>
-                    </el-tab-pane>
-                    <el-tab-pane label="EXE应用程序">
-                        <el-table :data="tableEXEServiceData" height="250" max-height="1000">
-                            <el-table-column lable="服务器IP" width="180">
-                                <template slot-scope="scope">
-                                    <i class="el-icon-time"></i>
-                                    <span style="margin-left:10px">{{scope.$index}}-{{scope.row.ip}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column prop="alias" label="服务器别名" width="120">
-                            </el-table-column>
-                            <el-table-column label="操作" fixed="right">
-                                <template slot-scope="scope">
-                                    <el-button-group>
-                                        <el-button size="mini" icon="el-icon-plus">添加</el-button>
-                                        <el-button size="mini" icon="el-icon-edit">修改</el-button>
-                                        <el-button size="mini" icon="el-icon-info">详情</el-button>
-                                    </el-button-group>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </el-tab-pane>
-                </el-tabs>
+                            </el-tab-pane>
+                            <el-tab-pane label="EXE应用程序">
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+                </el-collapse-transition>
+                <el-collapse-transition>
+                    <div v-show="showConfig">
+                        <h1>111111</h1>
+                        <el-button @click="showConfig = false" icon="el-icon-back">返回</el-button>
+                    </div>
+                </el-collapse-transition>
+
+
 
             </el-main>
         </el-container>
@@ -204,18 +208,43 @@
                 },
                 formLabelWidth: '120px',
                 show: true,
+                showConfig: false,
                 formIISQuery: {
                     Content: ""
                 },
                 formIISDetailQuery: {
                     Content: ""
                 },
-                tableIISDetailData: Array(5).fill(detail),
+                tableIISDetailData: Array(1).fill(detail),
+                changeVersionVisible: false,
+                options: [{
+                    value: '1.0.0.0',
+                    label: '1.0.0.0'
+                }, {
+                    value: '1.0.0.1',
+                    label: '1.0.0.1'
+                }, {
+                    value: '1.0.0.2',
+                    label: '1.0.0.2'
+                }, {
+                    value: '1.0.0.3',
+                    label: '1.0.0.3'
+                }, {
+                    value: '1.0.0.4',
+                    label: '1.0.0.4'
+                }],
+                value: '1.0.0.3',
             }
         },
         computed: {
             notShow: function () {
+                if (this.thirdPanelShow) {
+                    return false;
+                }
                 return !this.show;
+            },
+            thirdPanelShow: function () {
+                return this.showConfig;
             }
         },
         methods: {
