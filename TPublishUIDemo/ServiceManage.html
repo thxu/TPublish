@@ -64,7 +64,12 @@
             <el-main>
                 <el-collapse-transition>
                     <div v-show="showSerListPannel">
-                        <h1>服务器列表</h1>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item>首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器列表</el-breadcrumb-item>
+                        </el-breadcrumb>
+                        <br/>
                         <el-form :inline="true" :model="formIISQuery" class="demo-form-inline">
                             <el-form-item label="IP/别名">
                                 <el-input v-model="formIISQuery.Content" placeholder="服务器IP地址或别名"></el-input>
@@ -98,7 +103,13 @@
                 </el-collapse-transition>
                 <el-collapse-transition>
                     <div v-show="ShowAppList">
-                        <h1>应用程序列表</h1>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item>首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器列表</el-breadcrumb-item>
+                            <el-breadcrumb-item>应用程序列表</el-breadcrumb-item>
+                        </el-breadcrumb>
+                        <br/>
                         <el-tabs>
                             <el-tab-pane label="IIS应用程序">
                                 <div v-show="showIISAppListPannel">
@@ -108,7 +119,7 @@
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
-                                            <el-button type="primary" @click="showAddIISPanel = true;showIISAppListPannel=false"
+                                            <el-button type="primary" @click="showAddIISPanel = true"
                                                 icon="el-icon-plus">创建新应用程序</el-button>
                                             <el-button type="primary" @click="showSerListPannel = true" icon="el-icon-back">返回</el-button>
                                         </el-form-item>
@@ -157,7 +168,7 @@
                                                     </el-popover>
                                                     <el-button size="mini" icon="el-icon-warning" @click="">重启</el-button>
                                                     <el-button size="mini" icon="el-icon-upload2" @click="">上传并切换版本</el-button>
-                                                    <el-button size="mini" icon="el-icon-edit" @click="showIISConfig = true;showIISAppListPannel=false">更改配置文件</el-button>
+                                                    <el-button size="mini" icon="el-icon-edit" @click="showIISConfig = true;">更改配置文件</el-button>
                                                 </el-button-group>
                                             </template>
                                         </el-table-column>
@@ -170,16 +181,16 @@
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
-                                            <el-button type="primary" @click="showAddIISPanel = false;showIISAppListPannel=true"
+                                            <el-button type="primary" @click="showAddIISPanel = false;"
                                                 icon="el-icon-back">返回</el-button>
                                         </el-form-item>
                                     </el-form>
                                 </div>
 
                                 <div v-show="showIISConfig">
-                                        <h1>111111</h1>
-                                        <el-button @click="showIISConfig = false;showIISAppListPannel=true" icon="el-icon-back">返回</el-button>
-                                    </div>
+                                    <h1>111111</h1>
+                                    <el-button @click="showIISConfig = false" icon="el-icon-back">返回</el-button>
+                                </div>
 
                             </el-tab-pane>
                             <el-tab-pane label="EXE应用程序">
@@ -220,7 +231,7 @@
                 },
                 formLabelWidth: '120px',
                 showSerListPannel: true,
-                showIISAppListPannel: true,
+                // showIISAppListPannel: true,
                 showIISConfig: false,
                 showAddIISPanel: false,
                 formIISQuery: {
@@ -256,6 +267,9 @@
             },
             thirdPanelShow: function () {
                 return this.showIISConfig;
+            },
+            showIISAppListPannel:function(){
+                return !(this.showAddIISPanel || this.showIISConfig)
             }
         },
         methods: {
