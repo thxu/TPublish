@@ -60,6 +60,15 @@
             </div>
         </el-dialog>
 
+        <el-dialog title="修改WCF配置文件" :visible.sync="updateWcfSettingDialogFormVisible">
+            <el-input v-model="updateSettingForm.AppConfig" type="textarea" :autosize="{ minRows: 10, maxRows: 20}"
+                autocomplete="off"></el-input>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="updateWcfSettingDialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="">确 定</el-button>
+            </div>
+        </el-dialog>
+
         <el-container>
             <el-main>
                 <el-collapse-transition>
@@ -69,7 +78,7 @@
                             <el-breadcrumb-item>服务器管理</el-breadcrumb-item>
                             <el-breadcrumb-item>服务器列表</el-breadcrumb-item>
                         </el-breadcrumb>
-                        <br/>
+                        <br />
                         <el-form :inline="true" :model="formIISQuery" class="demo-form-inline">
                             <el-form-item label="IP/别名">
                                 <el-input v-model="formIISQuery.Content" placeholder="服务器IP地址或别名"></el-input>
@@ -109,7 +118,7 @@
                             <el-breadcrumb-item>服务器列表</el-breadcrumb-item>
                             <el-breadcrumb-item>应用程序列表</el-breadcrumb-item>
                         </el-breadcrumb>
-                        <br/>
+                        <br />
                         <el-tabs>
                             <el-tab-pane label="IIS应用程序">
                                 <div v-show="showIISAppListPannel">
@@ -119,8 +128,7 @@
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
-                                            <el-button type="primary" @click="showAddIISPanel = true"
-                                                icon="el-icon-plus">创建新应用程序</el-button>
+                                            <el-button type="primary" @click="showAddIISPanel = true" icon="el-icon-plus">创建新应用程序</el-button>
                                             <el-button type="primary" @click="showSerListPannel = true" icon="el-icon-back">返回</el-button>
                                         </el-form-item>
                                     </el-form>
@@ -166,30 +174,67 @@
                                                         <el-button size="mini" slot="reference" icon="el-icon-sort"
                                                             @click="changeVersionVisible = true">版本切换</el-button>
                                                     </el-popover>
-                                                    <el-button size="mini" icon="el-icon-warning" @click="">重启</el-button>
-                                                    <el-button size="mini" icon="el-icon-upload2" @click="">上传并切换版本</el-button>
-                                                    <el-button size="mini" icon="el-icon-edit" @click="showIISConfig = true;">更改配置文件</el-button>
+                                                    <el-button size="mini" icon="el-icon-warning" @click="RestartIISApp()">重启</el-button>
+                                                    <el-button size="mini" icon="el-icon-error" @click="StopIISApp()">停止</el-button>
+                                                    <!-- <el-button size="mini" icon="el-icon-upload2" @click="">上传并切换版本</el-button> -->
+                                                    <el-button size="mini" icon="el-icon-upload2" @click="showIISConfig = true;">新增版本</el-button>
                                                 </el-button-group>
                                             </template>
                                         </el-table-column>
                                     </el-table>
                                 </div>
                                 <div v-show="showAddIISPanel">
-                                    <el-form :inline="true" :model="formIISDetailQuery" class="demo-form-inline">
+                                    <el-form :model="formIISDetailQuery" class="demo-form-inline">
                                         <el-form-item label="程序名称">
                                             <el-input v-model="formIISDetailQuery.Content" placeholder="IIS应用程序名称"></el-input>
                                         </el-form-item>
                                         <el-form-item>
                                             <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
-                                            <el-button type="primary" @click="showAddIISPanel = false;"
-                                                icon="el-icon-back">返回</el-button>
+                                            <el-button type="primary" @click="showAddIISPanel = false;" icon="el-icon-back">返回</el-button>
                                         </el-form-item>
                                     </el-form>
                                 </div>
 
                                 <div v-show="showIISConfig">
-                                    <h1>111111</h1>
-                                    <el-button @click="showIISConfig = false" icon="el-icon-back">返回</el-button>
+                                    <h1>上传、配置</h1>
+                                    <el-form ref="form" :model="updateSettingForm">
+                                        <el-form-item label="程序配置" :label-width="formLabelWidth">
+                                            <el-input v-model="updateSettingForm.AppConfig" type="textarea" :autosize="{ minRows: 2, maxRows: 20}"
+                                                autocomplete="off"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="WcfConfig配置" :label-width="formLabelWidth">
+                                            <el-table :data="updateSettingForm.IISWcfConfigTableData">
+                                                <el-table-column width="80">
+                                                    <template slot-scope="scope">
+                                                        <span style="margin-left:10px">{{scope.$index}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="name" width="160">
+                                                </el-table-column>
+                                                <el-table-column fixed="right">
+                                                    <template slot-scope="scope">
+                                                        <el-button size="mini" icon="el-icon-edit" @click="updateWcfSettingDialogFormVisible = true">编辑</el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                            <br />
+
+                                            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/"
+                                                :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove"
+                                                multiple drag :limit="10" :on-exceed="handleExceed" :file-list="updateSettingForm.fileList"
+                                                :auto-upload="false">
+                                                <i slot="trigger" class="el-icon-upload"></i>
+                                                <div slot="trigger" class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                                                <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+                                                <div slot="tip" class="el-upload__tip">只能上传config文件，且不超过500kb</div>
+                                            </el-upload>
+
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button @click="showIISConfig = false">取 消</el-button>
+                                            <el-button type="primary" @click="">保 存</el-button>
+                                        </el-form-item>
+                                    </el-form>
                                 </div>
 
                             </el-tab-pane>
@@ -229,6 +274,14 @@
                     SerAlias: '',
                     Index: 0,
                 },
+                updateWcfSettingDialogFormVisible: false,
+                updateSettingForm: {
+                    AppConfig: "",
+                    IISWcfConfigTableData: [
+                        { name: "order.config", },
+                        { name: "user.config" }],
+                    fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
+                },
                 formLabelWidth: '120px',
                 showSerListPannel: true,
                 // showIISAppListPannel: true,
@@ -259,6 +312,8 @@
                     label: '1.0.0.4'
                 }],
                 value: '1.0.0.3',
+
+
             }
         },
         computed: {
@@ -268,7 +323,7 @@
             thirdPanelShow: function () {
                 return this.showIISConfig;
             },
-            showIISAppListPannel:function(){
+            showIISAppListPannel: function () {
                 return !(this.showAddIISPanel || this.showIISConfig)
             }
         },
@@ -299,6 +354,42 @@
                 vm.$data.addServiceForm.SerAlias = vm.$data.tableIISServiceData[index].alias;
                 vm.$data.addServiceForm.Index = index;
                 vm.$data.dialogFormVisible = true;
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            },
+            beforeRemove(file, fileList) {
+                return this.$confirm(`确定移除 ${file.name}？`);
+            },
+            StopIISApp: function () {
+                this.$confirm('此操作将停止该应用程序, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '停止成功!'
+                    })
+                });
+            },
+            RestartIISApp: function () {
+                this.$confirm('此操作将重启该应用程序, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '重启成功!'
+                    })
+                });
             }
         }
     });
