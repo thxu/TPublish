@@ -45,51 +45,39 @@
             </el-menu>
         </el-aside>
 
-        <el-dialog title="添加新服务器" :visible.sync="dialogFormVisible">
-            <el-form :model="addServiceForm">
-                <el-form-item label="服务器IP" :label-width="formLabelWidth">
-                    <el-input v-model="addServiceForm.SerIP" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="服务器别名" :label-width="formLabelWidth">
-                    <el-input v-model="addServiceForm.SerAlias" autocomplete="off"></el-input>
+        <el-dialog title="添加新运行环境" :visible.sync="EnvironmentModel.addEnvironmentFormShow">
+            <el-form :model="EnvironmentModel.addEnvironmentForm">
+                <el-form-item label="运行环境名" :label-width="formLabelWidth">
+                    <el-input v-model="EnvironmentModel.addEnvironmentForm.enName" autocomplete="off"></el-input>
+                    <input type="hidden" id="hidEnId" v-model="EnvironmentModel.addEnvironmentForm.enId">
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addNewService()">确 定</el-button>
+                <el-button @click="EnvironmentModel.addEnvironmentFormShow = false">取 消</el-button>
+                <el-button type="primary" @click="addEnvironment()">确 定</el-button>
             </div>
         </el-dialog>
 
         <el-container>
             <el-main>
                 <el-collapse-transition>
-                    <div v-show="show">
-                        <h1>服务器列表</h1>
-                        <el-form :inline="true" :model="formIISQuery" class="demo-form-inline">
-                            <el-form-item label="IP/别名">
-                                <el-input v-model="formIISQuery.Content" placeholder="服务器IP地址或别名"></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
-                                <el-button type="primary" icon="el-icon-plus" @click="openAddDialog()">添加服务器</el-button>
-                            </el-form-item>
-                        </el-form>
+                    <div v-show="EnvironmentModelShow">
+                        <h1>运行环境列表</h1>
+                        <el-button type="primary" icon="el-icon-plus" @click="openAddEnvironmentDialog()">添加环境</el-button>
 
-                        <el-table :data="tableIISServiceData" height="auto" max-height="800">
+                        <el-table :data="EnvironmentModel.environmentListData" height="800" max-height="800">
                             <el-table-column label="序号" width="80">
                                 <template slot-scope="scope">
                                     <span style="margin-left:10px">{{scope.$index}}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="ip" label="服务器IP" width="160">
-                            </el-table-column>
-                            <el-table-column prop="alias" label="服务器别名" width="220">
+                            <el-table-column prop="enName" label="运行环境名" width="160">
                             </el-table-column>
                             <el-table-column label="操作" fixed="right">
                                 <template slot-scope="scope">
                                     <el-button-group>
-                                        <el-button size="mini" icon="el-icon-edit" @click="updateService(scope.$index)">修改</el-button>
-                                        <el-button size="mini" icon="el-icon-info" @click="show = !show">详情</el-button>
+                                        <el-button size="mini" icon="el-icon-delete" @click="delEnvironment(scope.$index)">删除</el-button>
+                                        <el-button size="mini" icon="el-icon-info" @click="EnvironmentModelShow = false">查看所有程序</el-button>
                                     </el-button-group>
                                 </template>
                             </el-table-column>
@@ -97,18 +85,18 @@
                     </div>
                 </el-collapse-transition>
                 <el-collapse-transition>
-                    <div v-show="notShow">
+                    <div v-show="AppListShow">
                         <h1>应用程序列表</h1>
                         <el-tabs>
                             <el-tab-pane label="IIS应用程序">
-                                <el-form :inline="true" :model="formIISDetailQuery" class="demo-form-inline">
+                                <el-form :inline="true" :model="AppModel.iisAppListForm" class="demo-form-inline">
                                     <el-form-item label="程序名称">
-                                        <el-input v-model="formIISDetailQuery.Content" placeholder="IIS应用程序名称"></el-input>
+                                        <el-input v-model="AppModel.iisAppListForm" placeholder="IIS应用程序名称"></el-input>
                                     </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
                                         <el-button type="primary" @click="" icon="el-icon-plus">创建新应用程序</el-button>
-                                        <el-button type="primary" @click="show = !show" icon="el-icon-back">返回</el-button>
+                                        <el-button type="primary" @click="EnvironmentModelShow = true" icon="el-icon-back">返回</el-button>
                                     </el-form-item>
                                 </el-form>
 
@@ -172,9 +160,6 @@
                         <el-button @click="showConfig = false" icon="el-icon-back">返回</el-button>
                     </div>
                 </el-collapse-transition>
-
-
-
             </el-main>
         </el-container>
     </el-container>
@@ -198,6 +183,28 @@
         el: '#app1',
         data: function () {
             return {
+                EnvironmentModelShow:true,
+                EnvironmentModel: {
+                    addEnvironmentFormShow: false,
+                    addEnvironmentForm: {
+                        enName: "",
+                        enId: ""
+                    },
+                    environmentListData: [
+                        {
+                            enName: "内网",
+                            enId: "1",
+                        },
+                        {
+                            enName: "预发布",
+                            enId: "2",
+                        }],
+                },
+                AppModel: {
+                    iisAppListForm:{
+
+                    },
+                },
                 tableIISServiceData: Array(5).fill(item),
                 tableEXEServiceData: Array(5).fill(item),
                 dialogFormVisible: false,
@@ -237,44 +244,33 @@
             }
         },
         computed: {
-            notShow: function () {
-                if (this.thirdPanelShow) {
-                    return false;
-                }
-                return !this.show;
+            AppListShow: function () {
+                return !this.EnvironmentModelShow;
             },
-            thirdPanelShow: function () {
-                return this.showConfig;
-            }
         },
         methods: {
             navjump: function (url) {
                 window.location.href = url;
             },
-            openAddDialog: function () {
-                vm.$data.addServiceForm.SerIP = "";
-                vm.$data.addServiceForm.SerAlias = "";
-                vm.$data.addServiceForm.Index = 0;
-                vm.$data.dialogFormVisible = true;
+            openAddEnvironmentDialog: function () {
+                this.EnvironmentModel.addEnvironmentForm.enName = "",
+                    this.EnvironmentModel.addEnvironmentForm.enId = "",
+                    this.EnvironmentModel.addEnvironmentFormShow = true;
             },
-            addNewService: function () {
-                if (vm.$data.addServiceForm.Index <= 0) {
-                    vm.$data.tableIISServiceData.push({ ip: vm.$data.addServiceForm.SerIP, alias: vm.$data.addServiceForm.SerAlias });
-                    this.$message({ message: '添加成功', type: "success" });
-                } else {
-                    var index = vm.$data.addServiceForm.Index;
-                    vm.$data.tableIISServiceData[index].ip = vm.$data.addServiceForm.SerIP;
-                    vm.$data.tableIISServiceData[index].alias = vm.$data.addServiceForm.SerAlias;
-                    this.$message({ message: '修改成功', type: "success" });
-                }
-                vm.$data.dialogFormVisible = false;
+            addEnvironment: function () {
+                this.EnvironmentModel.environmentListData.push(
+                    {
+                        enName: this.EnvironmentModel.addEnvironmentForm.enName,
+                        enId: this.EnvironmentModel.addEnvironmentForm.enId
+                    });
+                this.$message({ message: '添加成功', type: "success" });
+                this.EnvironmentModel.addEnvironmentFormShow = false;
             },
-            updateService: function (index) {
-                vm.$data.addServiceForm.SerIP = vm.$data.tableIISServiceData[index].ip;
-                vm.$data.addServiceForm.SerAlias = vm.$data.tableIISServiceData[index].alias;
-                vm.$data.addServiceForm.Index = index;
-                vm.$data.dialogFormVisible = true;
-            }
+            delEnvironment: function (index) {
+                this.EnvironmentModel.environmentListData.splice(index, 1);
+                this.EnvironmentModel.addEnvironmentFormShow = false;
+            },
+            
         }
     });
 </script>
