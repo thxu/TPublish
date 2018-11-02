@@ -58,6 +58,25 @@
             </div>
         </el-dialog>
 
+        <el-dialog title="添加程序" :visible.sync="AppModel.AddNewIISAppDlgShow">
+            <el-steps :active="AppModel.AddNewIISAppDlg.active" finish-status="success">
+                <el-step title="选择服务器">
+                    <h1>hello</h1>
+                    <el-table :data="AppModel.AddNewIISAppDlg.SerListData" height="auto" max-height="800">
+                        <el-table-column label="序号" width="80" type="index">
+                        </el-table-column>
+                        <el-table-column prop="ip" label="服务器IP" width="160">
+                        </el-table-column>
+                        <el-table-column prop="alias" label="服务器别名" width="220">
+                        </el-table-column>
+                    </el-table>
+                </el-step>
+                <el-step title="选择应用程序"></el-step>
+                <el-step title="完成"></el-step>
+            </el-steps>
+            <el-button style="margin-top: 12px;" @click="addNewIISAppNextStep">下一步</el-button>
+        </el-dialog>
+
         <el-container>
             <el-main>
                 <el-collapse-transition>
@@ -89,13 +108,12 @@
                         <h1>应用程序列表</h1>
                         <el-tabs>
                             <el-tab-pane label="IIS应用程序">
-                                <el-form :inline="true" :model="AppModel.iisAppListForm" class="demo-form-inline">
+                                <el-form :inline="true" :model="AppModel.IISAppListForm" class="demo-form-inline">
                                     <el-form-item label="程序名称">
-                                        <el-input v-model="AppModel.iisAppListForm" placeholder="IIS应用程序名称"></el-input>
+                                        <el-input v-model="AppModel.IISAppListForm.IISAppName" placeholder="IIS应用程序名称"></el-input>
                                     </el-form-item>
                                     <el-form-item>
-                                        <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
-                                        <el-button type="primary" @click="" icon="el-icon-plus">创建新应用程序</el-button>
+                                        <el-button type="primary" @click="AppModel.AddNewIISAppDlgShow = true;AppModel.AddNewIISAppDlg.active=0" icon="el-icon-plus">创建新应用程序</el-button>
                                         <el-button type="primary" @click="EnvironmentModelShow = true" icon="el-icon-back">返回</el-button>
                                     </el-form-item>
                                 </el-form>
@@ -183,7 +201,7 @@
         el: '#app1',
         data: function () {
             return {
-                EnvironmentModelShow:true,
+                EnvironmentModelShow: true,
                 EnvironmentModel: {
                     addEnvironmentFormShow: false,
                     addEnvironmentForm: {
@@ -201,9 +219,15 @@
                         }],
                 },
                 AppModel: {
-                    iisAppListForm:{
-
+                    IISAppListForm: {
+                        IISAppName: ""
                     },
+                    AddNewIISAppDlgShow:false,
+                    AddNewIISAppDlg: {
+                        show: false,
+                        active: 0,
+                        SerListData:Array(5).fill(item),
+                    }
                 },
                 tableIISServiceData: Array(5).fill(item),
                 tableEXEServiceData: Array(5).fill(item),
@@ -270,7 +294,16 @@
                 this.EnvironmentModel.environmentListData.splice(index, 1);
                 this.EnvironmentModel.addEnvironmentFormShow = false;
             },
-            
+            addNewIISAppNextStep: function () {
+                if (this.AppModel.AddNewIISAppDlg.active++ > 1) {
+                    this.AppModel.AddNewIISAppDlgShow = false;
+                    this.$message({ message: '添加成功', type: "success" });
+                }
+            },
+            openAddNewIISAppDlg:function(){
+                this.AppModel.AddNewIISAppDlgShow = true;
+                this.AppModel.AddNewIISAppDlg.active=0;
+            },
         }
     });
 </script>
