@@ -1,3 +1,97 @@
-<html>
-    <h1>222</h1>
-</html>
+<script src="js/vue.js"></script>
+<link rel="stylesheet" href="css/index.css">
+<script src="js/index.js"></script>
+
+<style>
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        color: #333;
+    }
+
+    .transition-box {
+        margin-bottom: 10px;
+        width: 200px;
+        height: 100px;
+        border-radius: 4px;
+        background-color: #409EFF;
+        text-align: center;
+        color: #fff;
+        padding: 40px 20px;
+        box-sizing: border-box;
+        margin-right: 20px;
+    }
+</style>
+
+<div id="app1">
+    <el-container style="height: auto; border: 1px solid #eee">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['1']">
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message"></i>导航一</template>
+                    <el-menu-item index="1-1" v-on:click="navjump('ServiceManage.html')">服务器管理</el-menu-item>
+                    <el-menu-item index="1-2" v-on:click="navjump('ServiceMapManage.html')">运行环境管理</el-menu-item>
+                    <el-menu-item index="1-3" v-on:click="navjump('LoadBalanceManage.html')">负载管理</el-menu-item>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+        <el-container>
+            <el-main>
+                <el-collapse-transition>
+                    <div v-show="LoadBalanceAppListShow">
+                        <h1>负载实例列表</h1>
+                        <el-button type="primary" icon="el-icon-plus" @click="openAddLoadBalanceDialog()">添加负载实例</el-button>
+
+                        <el-table :data="LoadBalanceAppListModel.loadBalanceListData" height="800" max-height="800">
+                            <el-table-column type="index"></el-table-column>
+                            <el-table-column prop="name" label="负载实例名称" width="160"></el-table-column>
+                        </el-table>
+                    </div>
+                </el-collapse-transition>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script>
+    const detail = {
+        serviceInfo: {
+            ip: "192.168.10.19",
+            alias: "19"
+        },
+        name: "go.hello.exe",
+        desc: "示例程序",
+        version: "1.0.0.0",
+        path: "d://exe/go.hello/1.0.0.0",
+        status: "started",
+        io: "10%",
+        memory: "4.5M",
+    }
+
+    var vm = new Vue({
+        el: "#app1",
+        data: function () {
+            return {
+                LoadBalanceAppListShow: true,
+                LoadBalanceAppListModel: {
+                    addLoadBalanceDlgShow: false,
+                    loadBalanceListData: Array(5).fill(detail),
+                }
+            }
+        },
+        computed: {},
+        methods: {
+            navjump: function (url) {
+                window.location.href = url;
+            },
+            openAddLoadBalanceDialog: function () {
+                this.LoadBalanceAppListModel.addLoadBalanceDlgShow = true;
+            }
+        },
+    });
+</script>
