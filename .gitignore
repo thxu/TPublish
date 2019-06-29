@@ -19,3 +19,6 @@
 /TPublish/TPublish.Web/ZipFiles
 /TPublish/TPublish.Web/Logs/ExceptionLog/20180910
 TPublishUIDemo/.vscode/settings.json
+/TPublishUIDemo/.vs/TPublishUIDemo/v15
+/TPublishUIDemo/.vs/slnx.sqlite
+/TPublishUIDemo/.vs/VSWorkspaceState.json
