@@ -22,3 +22,5 @@ TPublishUIDemo/.vscode/settings.json
 /TPublishUIDemo/.vs/TPublishUIDemo/v15
 /TPublishUIDemo/.vs/slnx.sqlite
 /TPublishUIDemo/.vs/VSWorkspaceState.json
+/TPublish/TPublish.VsixClient2019/obj
+/TPublish/TPublish.VsixClient2019/bin/Debug
