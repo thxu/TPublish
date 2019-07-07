@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Xml.Linq;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using TPublish.Common;
+using Newtonsoft.Json;
 using TPublish.VsixClient2019.Model;
+using TPublish.VsixClient2019.Settings;
 
 namespace TPublish.VsixClient2019.Service
 {
@@ -31,14 +36,47 @@ namespace TPublish.VsixClient2019.Service
                 LibReleasePath = string.Empty,
                 ProjType = project.Properties.Item("OutputType").Value.ToString(),
             };
+            model.ProjType = model.ProjType == "2" ? "Library" : "";
 
-            string lastChooseSetting = Path.Combine(model.LibDebugPath, "TPublish.setting");
+            DirectoryInfo dir = new DirectoryInfo(model.LibDebugPath);
+            dir = dir.Parent;
+            if (dir != null)
+            {
+                if (model.ProjType == "Library")
+                {
+                    model.PublishDir.Add(dir.FullName);
+                }
+                else
+                {
+                    model.PublishDir.Add(model.LibDebugPath);
+                    model.PublishDir.Add(model.LibReleasePath);
+                }
+                var propDir = dir.GetDirectories("Properties");
+                if (propDir.Any())
+                {
+                    propDir = propDir[0].GetDirectories("PublishProfiles");
+                    if (propDir.Any())
+                    {
+                        var files = propDir[0].GetFiles("*.pubxml");
+                        foreach (FileInfo file in files)
+                        {
+                            var str = GetFilePath(file.FullName, dir.FullName);
+                            if (str != null && !model.PublishDir.Contains(str))
+                            {
+                                model.PublishDir.Add(str);
+                            }
+                        }
+                    }
+                }
+            }
+
+            string lastChooseSetting = Path.Combine(model.LibDebugPath, "Publish.setting");
             FileInfo settingFile = new FileInfo(lastChooseSetting);
             if (settingFile.Exists)
             {
                 try
                 {
-                    model.LastChooseInfo = File.ReadAllText(lastChooseSetting).DeserializeObject<LastChooseInfo>();
+                    model.LastChooseInfo = JsonConvert.DeserializeObject<LastChooseInfo>(File.ReadAllText(lastChooseSetting));
                 }
                 catch (Exception e)
                 {
@@ -48,6 +86,30 @@ namespace TPublish.VsixClient2019.Service
 
             return model;
         }
+
+        private static string GetFilePath(string xmlPath, string basePath)
+        {
+            string res = null;
+            XElement root = XElement.Load(xmlPath);
+            var propGroupElement = root.Elements().FirstOrDefault(n => n.Name.LocalName == "PropertyGroup");
+            var providerElement = propGroupElement?.Elements().FirstOrDefault(n => n.Name.LocalName == "PublishProvider");
+            if (providerElement != null && providerElement.Value == "FileSystem")
+            {
+                var pathElement = propGroupElement?.Elements().FirstOrDefault(n => n.Name.LocalName == "publishUrl");
+                if (pathElement != null)
+                {
+                    res = !pathElement.Value.Contains(":") ? Path.Combine(basePath, pathElement.Value) : pathElement.Value;
+                    DirectoryInfo dir = new DirectoryInfo(res);
+                    if (!dir.Exists)
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            return res;
+        }
+
 
         /// <summary>
         /// 获取当前选中项目的输出目录
@@ -96,10 +158,44 @@ namespace TPublish.VsixClient2019.Service
             return null;
         }
 
-        //public static OptionPageGrid GetSettingPage()
-        //{
-        //    PublishPackage package = GetSettingPackage();
-        //    return package?.GetDialogPage(typeof(OptionPageGrid)) as OptionPageGrid;
-        //}
+        public static OptionPageGrid GetSettingPage()
+        {
+            PublishPackage package = GetSettingPackage();
+            return package?.GetDialogPage(typeof(OptionPageGrid)) as OptionPageGrid;
+        }
+
+        public static List<AppView> GetAllIISAppNames()
+        {
+            try
+            {
+                OptionPageGrid setting = GetSettingPage();
+                string url = $"{setting.GetApiUrl()}/GetAllIISAppView";
+                WebClient client = new WebClient();
+                var res = client.DownloadString(url).DeserializeObject<List<AppView>>();
+                return res;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public static List<AppView> GetExeAppView(string appName)
+        {
+            try
+            {
+                OptionPageGrid setting = GetSettingPage();
+                string url = $"{setting.GetApiUrl()}/GetExeAppView?appName={appName}";
+
+                var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
+
+                return res.DeserializeObject<List<AppView>>();
+            }
+            catch (Exception e)
+            {
+                return new List<AppView>();
+            }
+        }
+
     }
 }

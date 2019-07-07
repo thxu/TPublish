@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
+using TPublish.VsixClient2019.Settings;
 using Task = System.Threading.Tasks.Task;
 
 namespace TPublish.VsixClient2019
@@ -37,6 +38,7 @@ namespace TPublish.VsixClient2019
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PublishPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+    [ProvideOptionPage(typeof(OptionPageGrid), "PublishSetting", "PushSetting", 0, 0, true)]
     public sealed class PublishPackage : AsyncPackage
     {
         /// <summary>

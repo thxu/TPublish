@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using TPublish.VsixClient2019.Model;
 using TPublish.VsixClient2019.Service;
+using TPublish.VsixClient2019.Settings;
 using VSLangProj;
 using VSLangProj80;
 using Task = System.Threading.Tasks.Task;
@@ -119,11 +120,22 @@ namespace TPublish.VsixClient2019
                     throw new Exception("项目信息解析失败");
                 }
 
-                //OptionPageGrid settingInfo = PublishService.GetSettingPage();
-                //if (string.IsNullOrWhiteSpace(settingInfo?.IpAdress))
-                //{
-                //    throw new Exception("请先完善设置信息");
-                //}
+                OptionPageGrid settingInfo = PublishService.GetSettingPage();
+                if (string.IsNullOrWhiteSpace(settingInfo?.IpAdress))
+                {
+                    throw new Exception("请先完善设置信息");
+                }
+
+                var form = new DeployForm();
+                var iniRes = form.Ini(projModel);
+                if (iniRes.IsSucceed)
+                {
+                    form.Show();
+                }
+                else
+                {
+                    MessageBox.Show(iniRes.Message);
+                }
             }
             catch (Exception exception)
             {
