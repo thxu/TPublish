@@ -119,11 +119,11 @@ namespace TPublish.VsixClient2019
                     throw new Exception("项目信息解析失败");
                 }
 
-                OptionPageGrid settingInfo = PublishService.GetSettingPage();
-                if (string.IsNullOrWhiteSpace(settingInfo?.IpAdress))
-                {
-                    throw new Exception("请先完善设置信息");
-                }
+                //OptionPageGrid settingInfo = PublishService.GetSettingPage();
+                //if (string.IsNullOrWhiteSpace(settingInfo?.IpAdress))
+                //{
+                //    throw new Exception("请先完善设置信息");
+                //}
             }
             catch (Exception exception)
             {

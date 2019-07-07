@@ -96,10 +96,10 @@ namespace TPublish.VsixClient2019.Service
             return null;
         }
 
-        public static OptionPageGrid GetSettingPage()
-        {
-            PublishPackage package = GetSettingPackage();
-            return package?.GetDialogPage(typeof(OptionPageGrid)) as OptionPageGrid;
-        }
+        //public static OptionPageGrid GetSettingPage()
+        //{
+        //    PublishPackage package = GetSettingPackage();
+        //    return package?.GetDialogPage(typeof(OptionPageGrid)) as OptionPageGrid;
+        //}
     }
 }
