@@ -1,10 +1,21 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
+using TPublish.VsixClient2019.Model;
+using TPublish.VsixClient2019.Service;
+using VSLangProj;
+using VSLangProj80;
 using Task = System.Threading.Tasks.Task;
 
 namespace TPublish.VsixClient2019
@@ -88,18 +99,92 @@ namespace TPublish.VsixClient2019
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "Publish";
+            try
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                var projInfo = ThreadHelper.JoinableTaskFactory.Run(GetSelectedProjInfoAsync);
+                if (projInfo == null)
+                {
+                    throw new Exception("您还未选中项目");
+                }
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                if (projInfo.Kind != PrjKind.prjKindCSharpProject)
+                {
+                    throw new Exception("当前插件仅支持C#程序");
+                }
+
+                var projModel = projInfo.AnalysisProject();
+                if (projModel == null)
+                {
+                    throw new Exception("项目信息解析失败");
+                }
+
+                OptionPageGrid settingInfo = PublishService.GetSettingPage();
+                if (string.IsNullOrWhiteSpace(settingInfo?.IpAdress))
+                {
+                    throw new Exception("请先完善设置信息");
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// 获取当前选中的项目
+        /// </summary>
+        /// <returns>项目信息</returns>
+        private async Task<Project> GetSelectedProjInfoAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            if (ServiceProvider != null)
+            {
+                var dte = await ServiceProvider.GetServiceAsync(typeof(DTE)) as DTE2;
+                if (dte == null)
+                {
+                    return null;
+                }
+                var projInfo = (Array)dte.ToolWindows.SolutionExplorer.SelectedItems;
+                foreach (UIHierarchyItem selItem in projInfo)
+                {
+                    if (selItem.Object is Project item)
+                    {
+                        return item;
+                    }
+                }
+                return null;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取当前选中项目的输出目录
+        /// </summary>
+        /// <param name="project">项目信息</param>
+        /// <returns>输出路径</returns>
+        public static string GetFullOutputPath(Project project)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var outputPath = (string)project.ConfigurationManager.ActiveConfiguration.Properties.Item("OutputPath").Value;
+            var projFullPath = project.Properties.Item("FullPath").Value?.ToString();
+            if (string.IsNullOrWhiteSpace(projFullPath))
+            {
+                return string.Empty;
+            }
+            DirectoryInfo projDirectoryInfo = new DirectoryInfo(projFullPath);
+
+            while (outputPath.StartsWith(@"..\"))
+            {
+                projDirectoryInfo = projDirectoryInfo?.Parent;
+                char[] tmp = { '.', '.', '\\' };
+                outputPath = outputPath.Substring(3);
+            }
+
+            outputPath = outputPath.TrimStart('.', '\\');
+
+            var path = Path.Combine(projDirectoryInfo?.FullName ?? string.Empty, outputPath);
+            return path;
         }
     }
 }
