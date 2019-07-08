@@ -162,6 +162,7 @@ namespace TPublish.VsixClient2019
 
         private void bwUploadZip_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
+            var now = DateTime.Now;
             string pathTmp = _projModel.LibDebugPath;
             if (_projModel.ProjType == "Library")
             {
@@ -175,11 +176,7 @@ namespace TPublish.VsixClient2019
                 return;
             }
             bwUploadZip.ReportProgress(50, "压缩文件中...");
-            var now = DateTime.Now;
             ZipHelper.ZipManyFilesOrDictorys(_projModel.LastChooseInfo.LastChoosePublishFiles, zipFullPath, _projModel.LastChooseInfo.LastChoosePublishDir);
-
-            var timeSpan = (DateTime.Now - now).TotalMilliseconds;
-            bwUploadZip.ReportProgress(65, "压缩文件完成，耗时：" + timeSpan);
 
             NameValueCollection dic = new NameValueCollection();
             dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
@@ -190,13 +187,14 @@ namespace TPublish.VsixClient2019
                 e.Cancel = true;
                 return;
             }
-            bwUploadZip.ReportProgress(90, "文件上传中..." + timeSpan);
+            bwUploadZip.ReportProgress(90, "文件上传中...");
 
             string url = $"{PublishService.GetSettingPage().GetApiUrl()}/UploadZip";
             string uploadResStr = HttpHelper.HttpPostData(url, 30000, _projModel.LibName + ".zip", zipFullPath, dic);
             var uploadRes = uploadResStr.DeserializeObject<Result>();
             string msg = uploadRes.IsSucceed ? "部署成功" : "部署失败：" + uploadRes.Message;
-            bwUploadZip.ReportProgress(100, msg + timeSpan);
+            var timeSpan = (DateTime.Now - now).TotalMilliseconds;
+            bwUploadZip.ReportProgress(100, msg + ",耗时："+timeSpan);
         }
 
         private void bwUploadZip_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)

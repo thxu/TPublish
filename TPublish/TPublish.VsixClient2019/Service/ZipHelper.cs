@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Checksum;
 using ICSharpCode.SharpZipLib.Zip;
+using TPublish.VsixClient2019.Model;
 
 namespace TPublish.VsixClient2019.Service
 {
@@ -304,6 +305,7 @@ namespace TPublish.VsixClient2019.Service
         }
 
         private static ConcurrentBag<string> emptyDir = new ConcurrentBag<string>();
+        private static ConcurrentBag<ZipEntryData> zipEntryDatas = new ConcurrentBag<ZipEntryData>();
 
         /// <summary>
         /// 压缩多个目录或文件
@@ -319,62 +321,76 @@ namespace TPublish.VsixClient2019.Service
                 return false;
             }
             emptyDir = new ConcurrentBag<string>();
+            zipEntryDatas = new ConcurrentBag<ZipEntryData>();
+
             bool res = true;
             using (var s = new ZipOutputStream(File.Create(zipedFile)))
             {
                 s.SetLevel(5);
 
-                //ConcurrentQueue<string> queue = new ConcurrentQueue<string>(folderOrFileList);
+                ConcurrentQueue<string> queue = new ConcurrentQueue<string>(folderOrFileList);
 
-                //List<Task> tasks = new List<Task>();
+                List<Task> tasks = new List<Task>();
 
-                //for (int i = 0; i < 10; i++)
-                //{
-                //    var task = new Task(() =>
-                //    {
-                //        string dir = string.Empty;
-                //        while (queue.TryDequeue(out dir))
-                //        {
-                //            if (!string.IsNullOrWhiteSpace(dir))
-                //            {
-                //                DoZip(dir, baseDir, s);
-                //            }
-                //        }
-                //    });
-                //    tasks.Add(task);
-                //    task.Start();
-                //}
-
-                //Task.WaitAll(tasks.ToArray());
-
-                foreach (string fileOrDir in folderOrFileList)
+                for (int i = 0; i < 10; i++)
                 {
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
-                    string parentPath = "";
-                    if (fileOrDir.StartsWith(baseDir))
+                    var task = new Task(() =>
                     {
-                        var parentPaths = GetParentPaths(fileOrDir, baseDir);
-                        while (parentPaths.Count > 0)
+                        string dir = string.Empty;
+                        while (queue.TryDequeue(out dir))
                         {
-                            string path = parentPaths.Pop();
-                            AddEmptyDir(path, s, parentPath);
-                            parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                            if (!string.IsNullOrWhiteSpace(dir))
+                            {
+                                DoZip(dir, baseDir, s);
+                            }
                         }
-                    }
-                    //是文件夹
-                    if (Directory.Exists(fileOrDir))
+                    });
+                    tasks.Add(task);
+                    task.Start();
+                }
+
+                Task.WaitAll(tasks.ToArray());
+                foreach (ZipEntryData zipEntryData in zipEntryDatas)
+                {
+                    s.PutNextEntry(zipEntryData.ZipEntry);
+                    if (zipEntryData.Data != null)
                     {
-                        res = ZipFileDictory(fileOrDir, s, parentPath);
+                        s.Write(zipEntryData.Data, 0, zipEntryData.Data.Length);
                     }
                     else
                     {
-                        //文件
-                        res = ZipFileWithStream(fileOrDir, s, parentPath);
+                        s.Flush();
                     }
-                    stopwatch.Stop();
-                    TxtLogService.WriteLog($"Zip {fileOrDir} spendtime ={stopwatch.ElapsedMilliseconds}", "D:\\Logs");
                 }
+
+                //foreach (string fileOrDir in folderOrFileList)
+                //{
+                //    Stopwatch stopwatch = new Stopwatch();
+                //    stopwatch.Start();
+                //    string parentPath = "";
+                //    if (fileOrDir.StartsWith(baseDir))
+                //    {
+                //        var parentPaths = GetParentPaths(fileOrDir, baseDir);
+                //        while (parentPaths.Count > 0)
+                //        {
+                //            string path = parentPaths.Pop();
+                //            AddEmptyDir(path, s, parentPath);
+                //            parentPath = Path.Combine(parentPath, Path.GetFileName(path) ?? throw new InvalidOperationException());
+                //        }
+                //    }
+                //    //是文件夹
+                //    if (Directory.Exists(fileOrDir))
+                //    {
+                //        res = ZipFileDictory(fileOrDir, s, parentPath);
+                //    }
+                //    else
+                //    {
+                //        //文件
+                //        res = ZipFileWithStream(fileOrDir, s, parentPath);
+                //    }
+                //    stopwatch.Stop();
+                //    TxtLogService.WriteLog($"Zip {fileOrDir} spendtime ={stopwatch.ElapsedMilliseconds}", "D:\\Logs");
+                //}
                 s.Finish();
                 s.Close();
                 return res;
@@ -434,8 +450,11 @@ namespace TPublish.VsixClient2019.Service
                     return;
                 }
                 ZipEntry entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/"));
-                s.PutNextEntry(entry);
-                s.Flush();
+                //s.PutNextEntry(entry);
+                //s.Flush();
+
+                zipEntryDatas.Add(new ZipEntryData { Data = null, ZipEntry = entry });
+
                 emptyDir.Add(folderToZip);
             }
             catch (Exception)
@@ -471,11 +490,14 @@ namespace TPublish.VsixClient2019.Service
                 zipFile.Read(buffer, 0, buffer.Length);
                 zipFile.Close();
                 zipEntry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(fileToZip)));
+
+                zipEntryDatas.Add(new ZipEntryData { Data = buffer, ZipEntry = zipEntry });
+
                 //lock (_lockObj)
-                {
-                    zipStream.PutNextEntry(zipEntry);
-                    zipStream.Write(buffer, 0, buffer.Length);
-                }
+                //{
+                //zipStream.PutNextEntry(zipEntry);
+                //zipStream.Write(buffer, 0, buffer.Length);
+                //}
             }
             catch
             {
