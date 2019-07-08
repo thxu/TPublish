@@ -61,7 +61,7 @@ namespace TPublish.VsixClient2019.Service
                         foreach (FileInfo file in files)
                         {
                             var str = GetFilePath(file.FullName, dir.FullName);
-                            if (str != null && !model.PublishDir.Contains(str))
+                            if (!string.IsNullOrWhiteSpace(str) && !model.PublishDir.Contains(str))
                             {
                                 model.PublishDir.Add(str);
                             }

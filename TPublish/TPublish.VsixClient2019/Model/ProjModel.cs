@@ -27,6 +27,10 @@ namespace TPublish.VsixClient2019.Model
             {
                 foreach (string path in files)
                 {
+                    if (string.IsNullOrWhiteSpace(path))
+                    {
+                        continue;
+                    }
                     DirectoryInfo dir = new DirectoryInfo(path);
                     res.Add(new DirSimpleName
                     {
