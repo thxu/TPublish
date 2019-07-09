@@ -137,7 +137,7 @@ namespace TPublish.VsixClient2019.Service
             outputPath = outputPath.TrimStart('.', '\\');
 
             var path = Path.Combine(projDirectoryInfo?.FullName ?? string.Empty, outputPath);
-            return path;
+            return path.TrimEnd('\\');
         }
 
         private static PublishPackage GetSettingPackage()

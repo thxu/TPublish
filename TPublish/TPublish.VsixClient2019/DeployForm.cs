@@ -150,7 +150,7 @@ namespace TPublish.VsixClient2019
         private void linklbChooseFiles_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             PushFilesForm form = new PushFilesForm();
-            form.Ini(_projModel.LastChooseInfo.LastChoosePublishDir, _projModel.LastChooseInfo.LastChoosePublishFiles);
+            form.Ini(_projModel.LastChooseInfo.LastChoosePublishDir, _projModel.LastChooseInfo.LastChoosePublishFiles, _projModel.LibName + ".zip");
 
             PushFilesForm.FileSaveEvent = list =>
             {
@@ -194,7 +194,7 @@ namespace TPublish.VsixClient2019
             var uploadRes = uploadResStr.DeserializeObject<Result>();
             string msg = uploadRes.IsSucceed ? "部署成功" : "部署失败：" + uploadRes.Message;
             var timeSpan = (DateTime.Now - now).TotalMilliseconds;
-            bwUploadZip.ReportProgress(100, msg + ",耗时："+timeSpan);
+            bwUploadZip.ReportProgress(100, msg + ",耗时：" + timeSpan);
         }
 
         private void bwUploadZip_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)

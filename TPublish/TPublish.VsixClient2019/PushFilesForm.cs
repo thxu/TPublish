@@ -12,13 +12,15 @@ namespace TPublish.VsixClient2019
     {
         public static Action<List<string>> FileSaveEvent;
         private List<string> SelectedFiels = new List<string>();
+        private string _zipName = string.Empty;
+        private string _basePath = string.Empty;
 
         public PushFilesForm()
         {
             InitializeComponent();
         }
 
-        public void Ini(string basePath, List<string> selectedFiles)
+        public void Ini(string basePath, List<string> selectedFiles,string zipName)
         {
             if (string.IsNullOrWhiteSpace(basePath))
             {
@@ -27,14 +29,11 @@ namespace TPublish.VsixClient2019
             }
 
             SelectedFiels = selectedFiles ?? new List<string>();
-            DirectoryInfo root = new DirectoryInfo(basePath);
+            _zipName = zipName;
+            _basePath = basePath;
+            chk_ShowConfig.Checked = false;
 
-            TreeNode rootNode = new TreeNode { Text = "全选", Tag = null };
-            tvPushFiles.Nodes.Add(rootNode);
-            bool isDirExist = AddAllDirs(root.GetDirectories(), rootNode.Nodes);
-            bool isFileExist = AddAllFiles(root, rootNode.Nodes);
-            rootNode.Checked = isDirExist || isFileExist;
-            rootNode.Expand();
+            RefreshTreeView();
         }
 
         private void GetAllTreeNode(TreeNodeCollection nodes, List<string> paths)
@@ -65,7 +64,13 @@ namespace TPublish.VsixClient2019
         private bool AddAllFiles(DirectoryInfo root, TreeNodeCollection nodes)
         {
             bool res = false;
-            foreach (FileInfo file in root.GetFiles("*.*").Where(n => !n.Name.ToLower().EndsWith("xml") && !n.Name.ToLower().EndsWith("pdb") && !n.Name.Equals("TPublish.setting")))
+            foreach (FileInfo file in root.GetFiles("*.*")
+                .Where(n => !n.Name.ToLower().EndsWith("xml") 
+                            && !n.Name.ToLower().EndsWith("vshost.exe")
+                            && !n.Name.ToLower().EndsWith("pdb") 
+                            && !n.Name.Equals("TPublish.setting") 
+                            && !n.Name.Equals("Publish.setting")
+                            && !n.Name.Equals(_zipName)))
             {
                 TreeNode nodeTmp = new TreeNode
                 {
@@ -80,6 +85,11 @@ namespace TPublish.VsixClient2019
                 if (nodeTmp.Checked)
                 {
                     res = true;
+                }
+                if (!chk_ShowConfig.Checked && nodeTmp.ForeColor == Color.Red)
+                {
+                    // 当前节点是配置文件，但未勾选显示配置文件，不加载当前节点
+                    continue;
                 }
                 nodes.Add(nodeTmp);
             }
@@ -133,5 +143,21 @@ namespace TPublish.VsixClient2019
             TreeViewCheck.CheckControl(e);
         }
 
+        private void Chk_ShowConfig_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshTreeView();
+        }
+
+        private void RefreshTreeView()
+        {
+            tvPushFiles.Nodes.Clear();
+            DirectoryInfo root = new DirectoryInfo(_basePath);
+            TreeNode rootNode = new TreeNode { Text = "全选", Tag = null };
+            tvPushFiles.Nodes.Add(rootNode);
+            bool isDirExist = AddAllDirs(root.GetDirectories(), rootNode.Nodes);
+            bool isFileExist = AddAllFiles(root, rootNode.Nodes);
+            rootNode.Checked = isDirExist || isFileExist;
+            rootNode.Expand();
+        }
     }
 }

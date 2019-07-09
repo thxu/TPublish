@@ -332,7 +332,10 @@ namespace TPublish.VsixClient2019.Service
 
                 List<Task> tasks = new List<Task>();
 
-                for (int i = 0; i < Environment.ProcessorCount * 2 + 2; i++)
+                int threadCnt = Environment.ProcessorCount * 2 + 2;
+                //int threadCnt = 1;
+
+                for (int i = 0; i < threadCnt; i++)
                 {
                     var task = new Task(() =>
                     {
@@ -427,14 +430,18 @@ namespace TPublish.VsixClient2019.Service
             Stack<string> res = new Stack<string>();
             var path = file;
             DirectoryInfo a;
+            DirectoryInfo b = new DirectoryInfo(baseDir);
 
             while (path != baseDir && (a = Directory.GetParent(path)) != null)
             {
                 path = a.FullName;
-                if (path != baseDir)
+                if (path != b.FullName && Path.GetPathRoot(path) != path)
                 {
-
                     res.Push(path);
+                }
+                else
+                {
+                    break;
                 }
             }
 
