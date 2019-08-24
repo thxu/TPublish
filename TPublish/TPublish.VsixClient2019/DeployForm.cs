@@ -162,39 +162,55 @@ namespace TPublish.VsixClient2019
 
         private void bwUploadZip_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            var now = DateTime.Now;
-            string pathTmp = _projModel.LibDebugPath;
-            if (_projModel.ProjType == "Library")
+            try
             {
-                pathTmp = new DirectoryInfo(pathTmp).Parent?.FullName ?? pathTmp;
-            }
-            string zipFullPath = Path.Combine(pathTmp, _projModel.LibName + ".zip");
+                var now = DateTime.Now;
+                string pathTmp = _projModel.LibDebugPath;
+                if (_projModel.ProjType == "Library")
+                {
+                    pathTmp = new DirectoryInfo(pathTmp).Parent?.FullName ?? pathTmp;
+                }
+                string zipFullPath = Path.Combine(pathTmp, _projModel.LibName + ".zip");
 
-            if (bwUploadZip.CancellationPending)
+                if (bwUploadZip.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                bwUploadZip.ReportProgress(50, "压缩文件中...");
+                ZipHelper.BatchZip(_projModel.LastChooseInfo.LastChoosePublishFiles, zipFullPath, _projModel.LastChooseInfo.LastChoosePublishDir, (progressValue) =>
+                {
+                    bwUploadZip.ReportProgress(50 + (int)(progressValue * 0.4), "压缩文件中...");
+                    if (bwUploadZip.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return true;
+                    }
+                    return false;
+                });
+
+                NameValueCollection dic = new NameValueCollection();
+                dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
+                dic.Add("AppId", e.Argument.ToString());
+
+                if (bwUploadZip.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                bwUploadZip.ReportProgress(90, "文件上传中...");
+
+                string url = $"{PublishService.GetSettingPage().GetApiUrl()}/UploadZip";
+                string uploadResStr = HttpHelper.HttpPostData(url, 30000, _projModel.LibName + ".zip", zipFullPath, dic);
+                var uploadRes = uploadResStr.DeserializeObject<Result>();
+                string msg = uploadRes.IsSucceed ? "部署成功" : "部署失败：" + uploadRes.Message;
+                var timeSpan = (DateTime.Now - now).TotalMilliseconds;
+                bwUploadZip.ReportProgress(100, msg + ",耗时：" + timeSpan);
+            }
+            catch (Exception exception)
             {
-                e.Cancel = true;
-                return;
+                bwUploadZip.ReportProgress(0, $"发布失败：{exception.Message }");
             }
-            bwUploadZip.ReportProgress(50, "压缩文件中...");
-            ZipHelper.ZipManyFilesOrDictorys(_projModel.LastChooseInfo.LastChoosePublishFiles, zipFullPath, _projModel.LastChooseInfo.LastChoosePublishDir);
-
-            NameValueCollection dic = new NameValueCollection();
-            dic.Add("Type", _projModel.ProjType == "Library" ? "iis" : "exe");
-            dic.Add("AppId", e.Argument.ToString());
-
-            if (bwUploadZip.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }
-            bwUploadZip.ReportProgress(90, "文件上传中...");
-
-            string url = $"{PublishService.GetSettingPage().GetApiUrl()}/UploadZip";
-            string uploadResStr = HttpHelper.HttpPostData(url, 30000, _projModel.LibName + ".zip", zipFullPath, dic);
-            var uploadRes = uploadResStr.DeserializeObject<Result>();
-            string msg = uploadRes.IsSucceed ? "部署成功" : "部署失败：" + uploadRes.Message;
-            var timeSpan = (DateTime.Now - now).TotalMilliseconds;
-            bwUploadZip.ReportProgress(100, msg + ",耗时：" + timeSpan);
         }
 
         private void bwUploadZip_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
