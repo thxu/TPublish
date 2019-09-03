@@ -133,7 +133,7 @@ namespace TPublish.Web.Controllers
             {
                 Directory.CreateDirectory(zipBackDir);
             }
-            string zipBackPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+            string zipBackPath = Path.Combine(zipBackDir, fileName);
             fileInfo.SaveAs(zipBackPath);
             SettingLogic.SetAppZipFilePath($"IIS-{appId}", zipBackPath);
 

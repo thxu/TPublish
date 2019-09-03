@@ -9,7 +9,7 @@ namespace TPublish.Common
 {
     public class SettingLogic
     {
-        private static SettingView _setting = new SettingView();
+        private static SettingView _setting = new SettingView() { AppZipFileMap = new Dictionary<string, string>(), MgeProcessFullName = string.Empty, RemoteAppList = new List<AppSerListMap>(), ServiceGroups = new List<ServiceGroup>() };
         private static string settingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TPublish.Setting");
         private static object _objLock = new object();
 
@@ -78,9 +78,9 @@ namespace TPublish.Common
             }
             catch (Exception e)
             {
-                TxtLogService.WriteLog(e,"读取进程守护路径异常");
+                TxtLogService.WriteLog(e, "读取进程守护路径异常");
             }
-            
+
             return res;
         }
 
