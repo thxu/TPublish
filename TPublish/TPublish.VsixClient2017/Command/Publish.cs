@@ -1,17 +1,17 @@
-﻿using System;
+﻿using EnvDTE;
+using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
+using System;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using EnvDTE;
-using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
-using TPublish.VsixClient2019.Service;
-using TPublish.VsixClient2019.Settings;
-using VSLangProj;
+using TPublish.VsixClient2017.Service;
+using TPublish.VsixClient2017.Settings;
+using TPublish.VsixClient2017.WinForms;
 using Task = System.Threading.Tasks.Task;
 
-namespace TPublish.VsixClient2019
+namespace TPublish.VsixClient2017.Command
 {
     /// <summary>
     /// Command handler
@@ -26,7 +26,7 @@ namespace TPublish.VsixClient2019
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("461cdd42-36b5-42bc-b300-33050f142163");
+        public static readonly Guid CommandSet = new Guid("425124fe-7fb5-469f-9d86-beee27cdd683");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -79,7 +79,7 @@ namespace TPublish.VsixClient2019
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
-            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService;
             Instance = new Publish(package, commandService);
         }
 
@@ -101,7 +101,7 @@ namespace TPublish.VsixClient2019
                     throw new Exception("您还未选中项目");
                 }
 
-                if (projInfo.Kind != PrjKind.prjKindCSharpProject)
+                if (projInfo.Kind != "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}")
                 {
                     throw new Exception("当前插件仅支持C#程序");
                 }
