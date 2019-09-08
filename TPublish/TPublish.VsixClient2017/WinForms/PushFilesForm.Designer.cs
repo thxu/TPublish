@@ -31,6 +31,7 @@
             this.chk_ShowConfig = new System.Windows.Forms.CheckBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.tvPushFiles = new System.Windows.Forms.TreeView();
+            this.btn_Cancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // chk_ShowConfig
@@ -49,7 +50,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSave.Location = new System.Drawing.Point(138, 468);
+            this.btnSave.Location = new System.Drawing.Point(166, 466);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 13;
@@ -69,11 +70,23 @@
             this.tvPushFiles.TabIndex = 12;
             this.tvPushFiles.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvPushFiles_AfterCheck);
             // 
+            // btn_Cancel
+            // 
+            this.btn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_Cancel.Location = new System.Drawing.Point(262, 466);
+            this.btn_Cancel.Name = "btn_Cancel";
+            this.btn_Cancel.Size = new System.Drawing.Size(75, 23);
+            this.btn_Cancel.TabIndex = 15;
+            this.btn_Cancel.Text = "取消";
+            this.btn_Cancel.UseVisualStyleBackColor = true;
+            this.btn_Cancel.Click += new System.EventHandler(this.btn_Cancel_Click);
+            // 
             // PushFilesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(349, 501);
+            this.Controls.Add(this.btn_Cancel);
             this.Controls.Add(this.chk_ShowConfig);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tvPushFiles);
@@ -89,5 +102,6 @@
         private System.Windows.Forms.CheckBox chk_ShowConfig;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TreeView tvPushFiles;
+        private System.Windows.Forms.Button btn_Cancel;
     }
 }

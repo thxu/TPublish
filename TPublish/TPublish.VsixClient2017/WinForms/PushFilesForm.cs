@@ -159,5 +159,10 @@ namespace TPublish.VsixClient2017.WinForms
             rootNode.Checked = isDirExist || isFileExist;
             rootNode.Expand();
         }
+
+        private void btn_Cancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
