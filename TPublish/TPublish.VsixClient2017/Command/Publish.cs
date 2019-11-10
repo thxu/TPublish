@@ -118,16 +118,27 @@ namespace TPublish.VsixClient2017.Command
                     throw new Exception("请先完善设置信息");
                 }
 
-                var form = new DeployForm();
-                var iniRes = form.Ini(projModel);
-                if (iniRes.IsSucceed)
-                {
-                    form.Show();
-                }
-                else
-                {
-                    MessageBox.Show(iniRes.Message);
-                }
+                // 尝试连接服务器
+                //var isConnected = PublishService.CheckConnection();
+                //if (!isConnected)
+                //{
+                //    throw new Exception("尝试连接服务器失败");
+                //}
+
+                var publishForm = new PublishForm();
+                publishForm.Ini(projModel);
+                publishForm.Show();
+
+                //var form = new DeployForm();
+                //var iniRes = form.Ini(projModel);
+                //if (iniRes.IsSucceed)
+                //{
+                //    form.Show();
+                //}
+                //else
+                //{
+                //    MessageBox.Show(iniRes.Message);
+                //}
             }
             catch (Exception exception)
             {

@@ -10,6 +10,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using Microsoft.Build.Locator;
+using NuGet.Frameworks;
 using TPublish.VsixClient2017.Command;
 using TPublish.VsixClient2017.Model;
 using TPublish.VsixClient2017.Settings;
@@ -36,7 +38,11 @@ namespace TPublish.VsixClient2017.Service
                 LibDebugPath = project.GetFullOutputPath(),
                 LibReleasePath = string.Empty,
                 ProjType = project.Properties.Item("OutputType").Value.ToString(),
+                NetFrameworkVersion = NuGetFramework.Parse(project.GetProjectProperty("TargetFrameworkMoniker")).GetShortFolderName(),
+                MsBuildPath = GetMsBuildPath1(),
+                ProjPath = projName,
             };
+            
             model.ProjType = model.ProjType == "2" ? "Library" : "";
 
             DirectoryInfo dir = new DirectoryInfo(model.LibDebugPath);
@@ -86,6 +92,55 @@ namespace TPublish.VsixClient2017.Service
             }
 
             return model;
+        }
+
+        public static string GetProjectProperty(this Project project, string key)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            try
+            {
+                return (string)project.Properties.Item(key).Value;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        //public static string GetMsBuildPath()
+        //{
+        //    try
+        //    {
+        //        var getmS = Microsoft.Build.Utilities.ToolLocationHelper.GetPathToBuildTools(Microsoft.Build.Utilities.ToolLocationHelper.CurrentToolsVersion);
+        //        return getmS;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return string.Empty;
+        //    }
+        //}
+
+        /// <summary>
+        /// 获取Msbuild的路径
+        /// </summary>
+        /// <returns></returns>
+        public static string GetMsBuildPath1()
+        {
+            try
+            {
+                var instances = MSBuildLocator.QueryVisualStudioInstances().ToList();
+                var instance_laster = instances.OrderByDescending(r => r.Version).FirstOrDefault();
+                if (instance_laster != null && !string.IsNullOrEmpty(instance_laster.MSBuildPath))
+                {
+                    return Path.Combine(instance_laster.MSBuildPath, "MSBuild.exe");
+                }
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+
+            return string.Empty;
         }
 
         private static string GetFilePath(string xmlPath, string basePath)

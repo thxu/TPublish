@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -8,7 +9,11 @@ namespace TPublish.VsixClient2019.Model
     {
         public string Key { get; set; }
 
+        public string ProjPath { get; set; }
+
         public string ProjType { get; set; }
+
+        public string NetFrameworkVersion { get; set; }
 
         public string LibName { get; set; }
 
@@ -19,6 +24,8 @@ namespace TPublish.VsixClient2019.Model
         public List<string> PublishDir { get; set; }
 
         public LastChooseInfo LastChooseInfo { get; set; }
+
+        public string MsBuildPath { get; set; }
 
         public static List<DirSimpleName> ToDirSimpleNames(List<string> files)
         {
@@ -39,8 +46,13 @@ namespace TPublish.VsixClient2019.Model
                     });
                 }
             }
-            
+
             return res;
+        }
+
+        public bool IsNetCore()
+        {
+            return this.NetFrameworkVersion.Contains("netcoreapp");
         }
     }
 
@@ -58,5 +70,92 @@ namespace TPublish.VsixClient2019.Model
         public string Name { get; set; }
 
         public string FullName { get; set; }
+    }
+
+    public class ProjectHelper
+    {
+        public static string GetBuildToPath(string projectName)
+        {
+            try
+            {
+                var projPath = GetProjPath(projectName);
+                if (string.IsNullOrWhiteSpace(projPath))
+                {
+                    return string.Empty;
+                }
+                var projFilePath = Path.Combine(projPath, projectName);
+                return projFilePath;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string GetProjConfigPath(string projectName)
+        {
+            try
+            {
+                var projPath = GetProjPath(projectName);
+                if (string.IsNullOrWhiteSpace(projPath))
+                {
+                    return string.Empty;
+                }
+                var projConfigPath = Path.Combine(projPath, $"{projectName}.json");
+                return projConfigPath;
+            }
+            catch (Exception e)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string GetPluginConfigPath()
+        {
+            try
+            {
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var folderName = Path.Combine(path, "TPublish");
+                if (!string.IsNullOrEmpty(folderName))
+                {
+                    if (!Directory.Exists(folderName))
+                    {
+                        Directory.CreateDirectory(folderName);
+                    }
+                    return folderName;
+                }
+                return string.Empty;
+            }
+            catch (Exception e)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string GetProjPath(string projectName)
+        {
+            try
+            {
+                var pluginConfigPath = GetPluginConfigPath();
+                if (string.IsNullOrWhiteSpace(pluginConfigPath))
+                {
+                    return string.Empty;
+                }
+                var projPath = Path.Combine(pluginConfigPath, projectName);
+                if (!string.IsNullOrEmpty(projPath))
+                {
+                    if (!Directory.Exists(projPath))
+                    {
+                        Directory.CreateDirectory(projPath);
+                    }
+                    return projPath;
+                }
+                return string.Empty;
+            }
+            catch (Exception e)
+            {
+                return string.Empty;
+            }
+        }
     }
 }
