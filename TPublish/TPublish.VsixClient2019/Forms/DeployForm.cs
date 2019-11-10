@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using TPublish.VsixClient2019.Model;
 using TPublish.VsixClient2019.Service;
 
-namespace TPublish.VsixClient2019
+namespace TPublish.VsixClient2019.Forms
 {
     public partial class DeployForm : Form
     {

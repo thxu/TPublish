@@ -18,6 +18,15 @@ namespace TPublish.Web.Controllers
         }
 
         /// <summary>
+        /// 检查连接是否可用
+        /// </summary>
+        /// <returns></returns>
+        public string CheckConnection()
+        {
+            return "OK";
+        }
+
+        /// <summary>
         /// 获取所有iis应用程序名称
         /// </summary>
         /// <returns>应用程序名称集合</returns>

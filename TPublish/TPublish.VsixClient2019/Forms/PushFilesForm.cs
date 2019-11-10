@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using TPublish.VsixClient2019.Service;
 
-namespace TPublish.VsixClient2019
+namespace TPublish.VsixClient2019.Forms
 {
     public partial class PushFilesForm : Form
     {

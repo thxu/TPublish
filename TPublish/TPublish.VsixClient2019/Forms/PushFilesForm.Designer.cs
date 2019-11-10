@@ -1,4 +1,4 @@
-﻿namespace TPublish.VsixClient2019
+﻿namespace TPublish.VsixClient2019.Forms
 {
     partial class PushFilesForm
     {

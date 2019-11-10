@@ -197,5 +197,20 @@ namespace TPublish.VsixClient2019.Service
             }
         }
 
+        public static bool CheckConnection()
+        {
+            try
+            {
+                OptionPageGrid setting = GetSettingPage();
+                string url = $"{setting.GetApiUrl()}/CheckConnection";
+                WebClient client = new WebClient();
+                var res = client.DownloadString(url);
+                return res == "OK";
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
     }
 }
