@@ -126,8 +126,8 @@ namespace TPublish.VsixClient2017.Command
                 //}
 
                 var publishForm = new PublishForm();
-                publishForm.Ini(projModel);
                 publishForm.Show();
+                publishForm.Ini(projModel);
 
                 //var form = new DeployForm();
                 //var iniRes = form.Ini(projModel);

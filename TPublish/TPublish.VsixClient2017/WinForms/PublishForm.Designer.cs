@@ -107,6 +107,7 @@
             this.Controls.Add(this.step_Pubsh);
             this.Name = "PublishForm";
             this.Text = "PublishForm";
+            this.Shown += new System.EventHandler(this.PublishForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

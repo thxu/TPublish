@@ -15,9 +15,9 @@ namespace TPublish.VsixClient2017.WinForms
         private SynchronizationContext _syncContext = null;
         protected ProjModel _projModel;
 
-        private void LogAppend(object obj)
+        private void LogAppend1(object obj)
         {
-            txtLog.AppendText((string)obj);
+            txtLog.AppendText((string)obj + Environment.NewLine);
         }
         private void SetProcessVal(object val)
         {
@@ -31,6 +31,77 @@ namespace TPublish.VsixClient2017.WinForms
                 return;
             }
             this.ucProcessLine1.Value += 1;
+        }
+
+        delegate void SetProcessCallback(int val);
+        private void SetProcess(int val)
+        {
+            if (this.ucProcessLine1.InvokeRequired)
+            {
+                while (!this.ucProcessLine1.IsHandleCreated)
+                {
+                    if (this.ucProcessLine1.Disposing || this.ucProcessLine1.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+                SetProcessCallback callback = new SetProcessCallback(SetProcess);
+                this.ucProcessLine1.Invoke(callback, new object[] { val });
+            }
+            else
+            {
+                this.ucProcessLine1.Value = val;
+            }
+        }
+
+        delegate void ProcessAutoIncrementCallback(int maxLimit);
+        private void ProcessAutoIncrement(int maxLimit)
+        {
+            if (this.ucProcessLine1.InvokeRequired)
+            {
+                while (!this.ucProcessLine1.IsHandleCreated)
+                {
+                    if (this.ucProcessLine1.Disposing || this.ucProcessLine1.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+                ProcessAutoIncrementCallback callback = new ProcessAutoIncrementCallback(SetProcess);
+                this.ucProcessLine1.Invoke(callback, new object[] { maxLimit });
+            }
+            else
+            {
+                if (this.ucProcessLine1.Value >= (int)maxLimit)
+                {
+                    return;
+                }
+                this.ucProcessLine1.Value += 1;
+            }
+        }
+
+        delegate void LogAppendCallback(string txt);
+        private void LogAppend(string txt)
+        {
+            if (this.txtLog.InvokeRequired)
+            {
+                while (!this.txtLog.IsHandleCreated)
+                {
+                    if (this.txtLog.Disposing || this.txtLog.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+
+                Action<string> actionDelegate = (x) => { this.txtLog.AppendText($"{txt}{Environment.NewLine}"); };
+                this.txtLog.Invoke(actionDelegate, txt);
+
+                //LogAppendCallback callback = new LogAppendCallback(LogAppend);
+                //this.txtLog.Invoke(callback, new object[] { txt });
+            }
+            else
+            {
+                this.txtLog.AppendText($"{txt}{Environment.NewLine}");
+            }
         }
 
 
@@ -94,7 +165,7 @@ namespace TPublish.VsixClient2017.WinForms
 
         private void Msbuild()
         {
-            _syncContext.Post(SetProcessVal, 1);
+            SetProcess(1);
             if (string.IsNullOrWhiteSpace(_projModel.MsBuildPath))
             {
                 txtLog.AppendText($"编译项目失败：未获取到MsBuild路径 {Environment.NewLine}");
@@ -113,22 +184,22 @@ namespace TPublish.VsixClient2017.WinForms
             }
             ClearPublishFolder(toPath);
             var buildArg = "\"" + _projModel.ProjPath.Replace("\\\\", "\\") + "\"";
-            buildArg += " /verbosity:minimal /p:Configuration=Release /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + toPath + "\"";
-            _syncContext.Post(SetProcessVal, 2);
+            buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + toPath + "\"";
+            SetProcess(2);
 
             var isSuccess = RunCmd(_projModel.MsBuildPath, buildArg);
             if (!isSuccess)
             {
-                _syncContext.Post(SetProcessVal, 0);
+                SetProcess(0);
                 txtLog.AppendText($"编译项目失败 {Environment.NewLine}");
                 return;
             }
-            _syncContext.Post(SetProcessVal, 100);
+            SetProcess(100);
         }
 
         private void DotNetBuild()
         {
-            _syncContext.Post(SetProcessVal, 1);
+            SetProcess(1);
             string filePath = ProjectHelper.GetBuildToPath(_projModel.LibName);
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -142,18 +213,18 @@ namespace TPublish.VsixClient2017.WinForms
             }
             ClearPublishFolder(toPath);
 
-            var buildArg = $"publish \"{_projModel.ProjPath}\" -c Release ";
+            var buildArg = $"publish \"{_projModel.ProjPath}\" -c Debug ";
             buildArg += " -o \"" + toPath + "\"";
-            _syncContext.Post(SetProcessVal, 2);
+            SetProcess(2);
 
             var isSuccess = RunCmd("dotnet", buildArg);
             if (!isSuccess)
             {
-                _syncContext.Post(SetProcessVal, 0);
+                SetProcess(0);
                 txtLog.AppendText($"编译项目失败 {Environment.NewLine}");
                 return;
             }
-            _syncContext.Post(SetProcessVal, 100);
+            SetProcess(100);
         }
 
         /// <summary>
@@ -231,21 +302,21 @@ namespace TPublish.VsixClient2017.WinForms
                     {
                         if (args.Data.StartsWith(" "))//有这个代表肯定build有出问题
                         {
-                            _syncContext.Post(LogAppend, args.Data);
+                            LogAppend(args.Data);
                         }
-                        if (args.Data.Contains(": warning"))
+                        else if (args.Data.Contains(": warning"))
                         {
-                            _syncContext.Post(LogAppend, $"[warning]:{args.Data}");
+                            LogAppend($"[warning]:{args.Data}");
                         }
                         else if (args.Data.Contains(": error"))
                         {
-                            _syncContext.Post(LogAppend, $"[error]:{args.Data}");
+                            LogAppend($"[error]:{args.Data}");
                         }
                         else
                         {
-                            _syncContext.Post(LogAppend, $"{args.Data}");
-                            _syncContext.Post(ProcessUp, 98);
+                            LogAppend($"{args.Data}");
                         }
+                        ProcessAutoIncrement(98);
                     }
                 };
                 process.BeginOutputReadLine();
@@ -254,13 +325,13 @@ namespace TPublish.VsixClient2017.WinForms
                 {
                     if (!string.IsNullOrWhiteSpace(data.Data))
                     {
-                        _syncContext.Post(LogAppend, $"[error]:{data.Data}");
+                            LogAppend($"[error]:{data.Data}");
                     }
                 };
                 process.BeginErrorReadLine();
 
                 process.WaitForExit();
-                _syncContext.Post(SetProcessVal, 99);
+                SetProcess(99);
                 try
                 {
                     process.Kill();
@@ -311,6 +382,16 @@ namespace TPublish.VsixClient2017.WinForms
                 case 3:
                     break;
             }
+        }
+
+        private void PublishForm_Shown(object sender, EventArgs e)
+        {
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    Thread.Sleep(100);
+            //    //_syncContext.Post(SetProcessVal, i);
+            //    this.ucProcessLine1.Value = i;
+            //}
         }
     }
 }
