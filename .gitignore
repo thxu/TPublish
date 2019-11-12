@@ -27,3 +27,5 @@ TPublishUIDemo/.vscode/settings.json
 /TPublish/TPublish.VsixClient2019/bin
 /TPublish/TPublish.VsixClient2017/obj/Debug
 /TPublish/TPublish.VsixClient2017/bin/Debug
+/TPublish/TPublish.WinFormClient/obj/Debug
+/TPublish/TPublish.WinFormClient/bin/Debug

@@ -79,6 +79,7 @@
     <Compile Include="Model\AppServiceGroupView.cs" />
     <Compile Include="Model\AppView.cs" />
     <Compile Include="Model\MyJsonResult.cs" />
+    <Compile Include="Model\ProjectModel.cs" />
     <Compile Include="Model\ServiceGroup.cs" />
     <Compile Include="Model\SettingView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
