@@ -3,12 +3,14 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TPublish.VsixClient2017.Service;
 using TPublish.VsixClient2017.Settings;
 using TPublish.VsixClient2017.WinForms;
+using Process = System.Diagnostics.Process;
 using Task = System.Threading.Tasks.Task;
 
 namespace TPublish.VsixClient2017.Command

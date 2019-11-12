@@ -14,7 +14,7 @@ namespace TPublish.WinFormClient.Utils
                 {
                     return string.Empty;
                 }
-                var projFilePath = Path.Combine(projPath, projectName);
+                var projFilePath = Path.Combine(projPath, $"{projectName}_Files");
                 return projFilePath;
             }
             catch (Exception)

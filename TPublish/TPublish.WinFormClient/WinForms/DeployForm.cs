@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
+using HZH_Controls;
+using HZH_Controls.Forms;
 using TPublish.Common.Model;
 using TPublish.WinFormClient.Utils;
 
@@ -11,6 +12,7 @@ namespace TPublish.WinFormClient.WinForms
     public partial class DeployForm : Form
     {
         private ProjectModel _projectModel = null;
+        private string _publishFilesDir = null;
 
         public DeployForm(ProjectModel projectModel = null)
         {
@@ -25,82 +27,126 @@ namespace TPublish.WinFormClient.WinForms
                 case 1:
                     {
                         SetProcessVal(0);
-                        for (int i = 1; i <= 100; i++)
+
+                        ControlHelper.ThreadRunExt(this, () =>
                         {
-                            SetProcessVal(i);
-                            LogAppend("hello" + i);
-                            Thread.Sleep(100);
-                        }
+                            BuildProj();
+                            ControlHelper.ThreadInvokerControl(this, () =>
+                            {
+                                SetProcessVal(100);
+                                SetStep(2);
+                            });
+                        }, null, this, false);
                     }
                     break;
                 case 2:
+                    {
+                        // 弹出选择文件窗口
+                        var fileForm = new SelectFilesForm();
+                        fileForm.Ini(_publishFilesDir, null, null);
+                        fileForm.ShowDialog();
+                    }
                     break;
                 case 3:
                     break;
             }
         }
 
+        /// <summary>
+        /// 编译项目
+        /// </summary>
+        /// <returns></returns>
+        public bool BuildProj()
+        {
+            try
+            {
+                // 判断项目类型
+                if (_projectModel.IsNetCore())
+                {
+                    LogAppend($"开始编译DotNet项目");
+                    DotNetBuild();
+                }
+                else
+                {
+                    LogAppend($"开始编译NetFramework项目");
+                    Msbuild();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                LogAppend($"编译项目失败：{e.Message}");
+                return false;
+            }
+        }
+
         #region Build
 
+        /// <summary>
+        /// NetFramework编译
+        /// </summary>
         private void Msbuild()
         {
             SetProcessVal(1);
             if (string.IsNullOrWhiteSpace(_projectModel.MsBuildPath))
             {
-                textLog.AppendText($"编译项目失败：未获取到MsBuild路径 {Environment.NewLine}");
+                LogAppend($"编译项目失败：未获取到MsBuild路径");
                 return;
             }
             string filePath = ProjectHelper.GetBuildToPath(_projectModel.ProjName);
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                textLog.AppendText($"编译项目失败：未获取到文件生成路径 {Environment.NewLine}");
+                LogAppend($"编译项目失败：未获取到文件生成路径");
                 return;
             }
-            var toPath = filePath.Replace("\\\\", "\\");
-            if (toPath.EndsWith("\\"))
+            _publishFilesDir = filePath.Replace("\\\\", "\\");
+            if (_publishFilesDir.EndsWith("\\"))
             {
-                toPath = toPath.Substring(0, toPath.Length - 1);
+                _publishFilesDir = _publishFilesDir.Substring(0, _publishFilesDir.Length - 1);
             }
-            ClearPublishFolder(toPath);
+            ClearPublishFolder(_publishFilesDir);
             var buildArg = "\"" + _projectModel.ProjPath.Replace("\\\\", "\\") + "\"";
-            buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + toPath + "\"";
+            buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + _publishFilesDir + "\"";
             SetProcessVal(2);
 
             var isSuccess = RunCmd(_projectModel.MsBuildPath, buildArg);
             if (!isSuccess)
             {
                 SetProcessVal(0);
-                textLog.AppendText($"编译项目失败 {Environment.NewLine}");
+                LogAppend($"编译项目失败");
                 return;
             }
             SetProcessVal(100);
         }
 
+        /// <summary>
+        /// NetCore编译
+        /// </summary>
         private void DotNetBuild()
         {
             SetProcessVal(1);
             string filePath = ProjectHelper.GetBuildToPath(_projectModel.ProjName);
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                textLog.AppendText($"编译项目失败：未获取到文件生成路径 {Environment.NewLine}");
+                LogAppend($"编译项目失败：未获取到文件生成路径");
                 return;
             }
-            var toPath = filePath.Replace("\\\\", "\\");
-            if (toPath.EndsWith("\\"))
+            var _publishFilesDir = filePath.Replace("\\\\", "\\");
+            if (_publishFilesDir.EndsWith("\\"))
             {
-                toPath = toPath.Substring(0, toPath.Length - 1);
+                _publishFilesDir = _publishFilesDir.Substring(0, _publishFilesDir.Length - 1);
             }
-            ClearPublishFolder(toPath);
+            ClearPublishFolder(_publishFilesDir);
 
             var buildArg = $"publish \"{_projectModel.ProjPath}\" -c Debug ";
-            buildArg += " -o \"" + toPath + "\"";
+            buildArg += " -o \"" + _publishFilesDir + "\"";
             SetProcessVal(2);
 
             var isSuccess = RunCmd("dotnet", buildArg);
             if (!isSuccess)
             {
                 SetProcessVal(0);
-                textLog.AppendText($"编译项目失败 {Environment.NewLine}");
+                LogAppend($"编译项目失败");
                 return;
             }
             SetProcessVal(100);
@@ -110,10 +156,11 @@ namespace TPublish.WinFormClient.WinForms
         /// 发布前清空
         /// </summary>
         /// <param name="srcDir">需要清空的目录</param>
-        private static void ClearPublishFolder(string srcDir)
+        private void ClearPublishFolder(string srcDir)
         {
             try
             {
+                LogAppend($"开始清空发布目录...");
                 DirectoryInfo dir = new DirectoryInfo(srcDir);
 
                 if (!dir.Exists) return;
@@ -146,6 +193,7 @@ namespace TPublish.WinFormClient.WinForms
 
                     }
                 }
+                LogAppend($"清空发布目录完成");
             }
             catch (Exception)
             {
@@ -213,6 +261,7 @@ namespace TPublish.WinFormClient.WinForms
                 process.BeginErrorReadLine();
 
                 process.WaitForExit();
+                LogAppend("编译完成");
                 SetProcessVal(99);
                 try
                 {
@@ -322,6 +371,30 @@ namespace TPublish.WinFormClient.WinForms
             else
             {
                 this.textLog.AppendText($"{txt}{Environment.NewLine}");
+            }
+        }
+
+        private void SetStep(int stepIndex)
+        {
+            if (this.ucStep.InvokeRequired)
+            {
+                while (!this.ucStep.IsHandleCreated)
+                {
+                    if (this.ucStep.Disposing || this.ucStep.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+
+                Action<string> actionDelegate = (x) => { this.ucStep.StepIndex = stepIndex; };
+                this.ucStep.Invoke(actionDelegate, stepIndex);
+
+                //LogAppendCallback callback = new LogAppendCallback(LogAppend);
+                //this.textLog.Invoke(callback, new object[] { txt });
+            }
+            else
+            {
+                this.ucStep.StepIndex = stepIndex;
             }
         }
 
