@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.779
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.Web", "TPublish.Web\TPublish.Web.csproj", "{6D101593-556B-4DFF-987B-BFA39FAD0A81}"
 EndProject
@@ -9,11 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.Common", "TPublish
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.TestExe", "TPublish.TestExe\TPublish.TestExe.csproj", "{7A52D203-C24B-4770-8038-075FE6113A6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.ClientVsix", "TPublish.ClientVsix\TPublish.ClientVsix.csproj", "{60008894-F764-49A4-84D9-D159F16A89DC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.CommonTests", "TPublish.CommonTests\TPublish.CommonTests.csproj", "{03D5379F-9426-4163-A3DA-DF99F7B47741}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.VsixClient2019", "TPublish.VsixClient2019\TPublish.VsixClient2019.csproj", "{14945828-614A-4E56-BE64-0A36D6D77F1C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.VsixClient2017", "TPublish.VsixClient2017\TPublish.VsixClient2017.csproj", "{2DEEEFEB-1CC4-469F-BF5B-18535A2FF30B}"
 EndProject
@@ -35,18 +31,10 @@ Global
 		{7A52D203-C24B-4770-8038-075FE6113A6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A52D203-C24B-4770-8038-075FE6113A6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A52D203-C24B-4770-8038-075FE6113A6D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60008894-F764-49A4-84D9-D159F16A89DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60008894-F764-49A4-84D9-D159F16A89DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60008894-F764-49A4-84D9-D159F16A89DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60008894-F764-49A4-84D9-D159F16A89DC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03D5379F-9426-4163-A3DA-DF99F7B47741}.Release|Any CPU.Build.0 = Release|Any CPU
-		{14945828-614A-4E56-BE64-0A36D6D77F1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{14945828-614A-4E56-BE64-0A36D6D77F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{14945828-614A-4E56-BE64-0A36D6D77F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{14945828-614A-4E56-BE64-0A36D6D77F1C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DEEEFEB-1CC4-469F-BF5B-18535A2FF30B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DEEEFEB-1CC4-469F-BF5B-18535A2FF30B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DEEEFEB-1CC4-469F-BF5B-18535A2FF30B}.Release|Any CPU.ActiveCfg = Release|Any CPU
