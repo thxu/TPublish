@@ -35,6 +35,8 @@
             // 
             // ucStep
             // 
+            this.ucStep.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ucStep.BackColor = System.Drawing.Color.Transparent;
             this.ucStep.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ucStep.ImgCompleted = null;
@@ -72,6 +74,9 @@
             // 
             // textLog
             // 
+            this.textLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textLog.BackColor = System.Drawing.SystemColors.Control;
             this.textLog.DecLength = 2;
             this.textLog.InputType = HZH_Controls.TextInputType.NotControl;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HZH_Controls.Controls;
 using TPublish.WinFormClient.Utils;
 
 namespace TPublish.WinFormClient.WinForms
@@ -15,8 +16,12 @@ namespace TPublish.WinFormClient.WinForms
     public partial class SelectFilesForm : HZH_Controls.Forms.FrmWithOKCancel2
     {
         private List<string> _selectedFiels = new List<string>();
+        private Dictionary<string, bool> extList = new Dictionary<string, bool>();
+
         private string _zipName = string.Empty;
         private string _basePath = string.Empty;
+        private bool _isChkAllChanging = false;
+        private bool _isChildChkChanging = false;
 
         public SelectFilesForm()
         {
@@ -25,7 +30,9 @@ namespace TPublish.WinFormClient.WinForms
 
         public void Ini(string basePath, List<string> selectedFiles, string zipName)
         {
-            if (string.IsNullOrWhiteSpace(basePath))
+            _basePath = basePath;
+            _basePath = @"E:\Git-10.9\Go.WeiXinShop.UserService\Go.WeiXinShop.UserService\Go.WeiXinShop.UserService.Host.Exe\bin\Debug";
+            if (string.IsNullOrWhiteSpace(_basePath))
             {
                 MessageBox.Show("请选择文件所在目录");
                 return;
@@ -33,9 +40,29 @@ namespace TPublish.WinFormClient.WinForms
 
             _selectedFiels = selectedFiles ?? new List<string>();
             _zipName = zipName;
-            _basePath = basePath;
 
             RefreshTreeView();
+
+            foreach (var extension in extList)
+            {
+                var chk = new UCCheckBox() { TextValue = extension.Key, Width = 100 };
+                chk.Checked = extension.Value;
+                chk.CheckedChangeEvent += (sender, args) =>
+                {
+                    if (_isChkAllChanging)
+                    {
+                        return;
+                    }
+                    var control = (UCCheckBox) sender;
+                    extList[control.TextValue] = control.Checked;
+                    _isChildChkChanging = true;
+                    this.ucCheckBox_ChkAll.Checked = extList.ContainsValue(true);
+                    _isChildChkChanging = false;
+
+                    RefreshTreeView();
+                };
+                this.pannel_ChkList.Controls.Add(chk);
+            }
         }
 
         private void RefreshTreeView()
@@ -72,6 +99,11 @@ namespace TPublish.WinFormClient.WinForms
                     Tag = file.FullName,
                     Checked = _selectedFiels.Exists(n => n == file.FullName)
                 };
+                var extName = file.Extension.ToLower();
+                if (!extList.ContainsKey(extName))
+                {
+                    extList.Add(extName, false);
+                }
                 if (file.Extension.ToLower() == ".config" || file.Extension.ToLower() == ".manifest" || file.Extension.ToLower() == ".asax")
                 {
                     nodeTmp.ForeColor = Color.Red;
@@ -119,5 +151,20 @@ namespace TPublish.WinFormClient.WinForms
             return res;
         }
 
+        private void ucCheckBox_ChkAll_CheckedChangeEvent(object sender, EventArgs e)
+        {
+            if (_isChildChkChanging)
+            {
+                return;
+            }
+            var chkAll = (UCCheckBox)sender;
+            _isChkAllChanging = true;
+            foreach (UCCheckBox chk in this.pannel_ChkList.Controls)
+            {
+                extList[chk.TextValue] = chkAll.Checked;
+                chk.Checked = chkAll.Checked;
+            }
+            _isChkAllChanging = false;
+        }
     }
 }

@@ -29,13 +29,16 @@
         private void InitializeComponent()
         {
             this.tvFiles = new System.Windows.Forms.TreeView();
-            this.ucCheckBox1 = new HZH_Controls.Controls.UCCheckBox();
+            this.ucCheckBox_ChkAll = new HZH_Controls.Controls.UCCheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.pannel_ChkList = new System.Windows.Forms.FlowLayoutPanel();
             this.panel3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.ucCheckBox1);
+            this.panel3.Controls.Add(this.groupBox1);
             this.panel3.Controls.Add(this.tvFiles);
             this.panel3.Size = new System.Drawing.Size(537, 563);
             // 
@@ -53,20 +56,40 @@
             this.tvFiles.ItemHeight = 25;
             this.tvFiles.Location = new System.Drawing.Point(12, 6);
             this.tvFiles.Name = "tvFiles";
-            this.tvFiles.Size = new System.Drawing.Size(513, 438);
+            this.tvFiles.Size = new System.Drawing.Size(513, 299);
             this.tvFiles.TabIndex = 0;
             this.tvFiles.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterCheck);
             // 
-            // ucCheckBox1
+            // ucCheckBox_ChkAll
             // 
-            this.ucCheckBox1.BackColor = System.Drawing.Color.Transparent;
-            this.ucCheckBox1.Checked = false;
-            this.ucCheckBox1.Location = new System.Drawing.Point(12, 450);
-            this.ucCheckBox1.Name = "ucCheckBox1";
-            this.ucCheckBox1.Padding = new System.Windows.Forms.Padding(1);
-            this.ucCheckBox1.Size = new System.Drawing.Size(102, 30);
-            this.ucCheckBox1.TabIndex = 1;
-            this.ucCheckBox1.TextValue = "排除文件";
+            this.ucCheckBox_ChkAll.BackColor = System.Drawing.Color.Transparent;
+            this.ucCheckBox_ChkAll.Checked = false;
+            this.ucCheckBox_ChkAll.Location = new System.Drawing.Point(6, 22);
+            this.ucCheckBox_ChkAll.Name = "ucCheckBox_ChkAll";
+            this.ucCheckBox_ChkAll.Padding = new System.Windows.Forms.Padding(1);
+            this.ucCheckBox_ChkAll.Size = new System.Drawing.Size(102, 30);
+            this.ucCheckBox_ChkAll.TabIndex = 1;
+            this.ucCheckBox_ChkAll.TextValue = "全选";
+            this.ucCheckBox_ChkAll.CheckedChangeEvent += new System.EventHandler(this.ucCheckBox_ChkAll_CheckedChangeEvent);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.pannel_ChkList);
+            this.groupBox1.Controls.Add(this.ucCheckBox_ChkAll);
+            this.groupBox1.Location = new System.Drawing.Point(12, 311);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(513, 147);
+            this.groupBox1.TabIndex = 1;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "快速勾选";
+            // 
+            // pannel_ChkList
+            // 
+            this.pannel_ChkList.AutoScroll = true;
+            this.pannel_ChkList.Location = new System.Drawing.Point(6, 58);
+            this.pannel_ChkList.Name = "pannel_ChkList";
+            this.pannel_ChkList.Size = new System.Drawing.Size(501, 83);
+            this.pannel_ChkList.TabIndex = 2;
             // 
             // SelectFilesForm
             // 
@@ -80,6 +103,7 @@
             this.Text = "SelectFilesForm";
             this.Title = "选择要发布的文件";
             this.panel3.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -87,6 +111,8 @@
         #endregion
 
         private System.Windows.Forms.TreeView tvFiles;
-        private HZH_Controls.Controls.UCCheckBox ucCheckBox1;
+        private HZH_Controls.Controls.UCCheckBox ucCheckBox_ChkAll;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.FlowLayoutPanel pannel_ChkList;
     }
 }
