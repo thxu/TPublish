@@ -40,11 +40,11 @@
             // 
             this.panel3.Controls.Add(this.groupBox1);
             this.panel3.Controls.Add(this.tvFiles);
-            this.panel3.Size = new System.Drawing.Size(537, 563);
+            this.panel3.Size = new System.Drawing.Size(537, 463);
             // 
             // panel2
             // 
-            this.panel2.Location = new System.Drawing.Point(0, 624);
+            this.panel2.Location = new System.Drawing.Point(0, 524);
             this.panel2.Size = new System.Drawing.Size(537, 64);
             // 
             // tvFiles
@@ -97,11 +97,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BorderStyleColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(537, 688);
+            this.ClientSize = new System.Drawing.Size(537, 588);
             this.DoubleBuffered = true;
             this.Name = "SelectFilesForm";
             this.Text = "SelectFilesForm";
             this.Title = "选择要发布的文件";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectFilesForm_FormClosing);
             this.panel3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);

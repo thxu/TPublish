@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using HZH_Controls;
 using HZH_Controls.Forms;
+using TPublish.Common;
 using TPublish.Common.Model;
 using TPublish.WinFormClient.Utils;
 
@@ -13,6 +16,7 @@ namespace TPublish.WinFormClient.WinForms
     {
         private ProjectModel _projectModel = null;
         private string _publishFilesDir = null;
+        private List<string> _selectedFileList = new List<string>();
 
         public DeployForm(ProjectModel projectModel = null)
         {
@@ -43,11 +47,37 @@ namespace TPublish.WinFormClient.WinForms
                     {
                         // 弹出选择文件窗口
                         var fileForm = new SelectFilesForm();
-                        fileForm.Ini(_publishFilesDir, null, null);
-                        fileForm.ShowDialog();
+                        fileForm.Ini(_publishFilesDir, _selectedFileList, null);
+                        SelectFilesForm.FileSaveEvent = list =>
+                        {
+                            _selectedFileList = list;
+                            this.ucStep.Steps[1] = $"(已选择{list?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)";
+                            this.ucStep.Refresh();
+
+                            // 打包文件
+                            ControlHelper.ThreadRunExt(this, () =>
+                            {
+                                //ZipHelper.BatchZip(_projModel.LastChooseInfo.LastChoosePublishFiles, zipFullPath, _projModel.LastChooseInfo.LastChoosePublishDir, (progressValue) =>
+                                //{
+                                //    SetProcessVal(progressValue);
+                                //    return false;
+                                //});
+
+                                ControlHelper.ThreadInvokerControl(this, () =>
+                                {
+                                    SetProcessVal(100);
+                                    SetStep(3);
+                                });
+                            }, null, this, false);
+                        };
+
+                        var res = fileForm.ShowDialog();
                     }
                     break;
                 case 3:
+                    {
+                        // 弹出选择服务器窗口
+                    }
                     break;
             }
         }

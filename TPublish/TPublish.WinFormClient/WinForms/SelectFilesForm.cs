@@ -23,6 +23,10 @@ namespace TPublish.WinFormClient.WinForms
         private bool _isChkAllChanging = false;
         private bool _isChildChkChanging = false;
 
+        private int _selectType = 1;
+
+        public static Action<List<string>> FileSaveEvent;
+
         public SelectFilesForm()
         {
             InitializeComponent();
@@ -31,7 +35,7 @@ namespace TPublish.WinFormClient.WinForms
         public void Ini(string basePath, List<string> selectedFiles, string zipName)
         {
             _basePath = basePath;
-            _basePath = @"E:\Git-10.9\Go.WeiXinShop.UserService\Go.WeiXinShop.UserService\Go.WeiXinShop.UserService.Host.Exe\bin\Debug";
+            //_basePath = @"E:\Code\C#\Test\Test\ConsoleApp1Tests\bin\Debug";
             if (string.IsNullOrWhiteSpace(_basePath))
             {
                 MessageBox.Show("请选择文件所在目录");
@@ -59,6 +63,7 @@ namespace TPublish.WinFormClient.WinForms
                     this.ucCheckBox_ChkAll.Checked = extList.ContainsValue(true);
                     _isChildChkChanging = false;
 
+                    _selectType = 2;
                     RefreshTreeView();
                 };
                 this.pannel_ChkList.Controls.Add(chk);
@@ -99,10 +104,15 @@ namespace TPublish.WinFormClient.WinForms
                     Tag = file.FullName,
                     Checked = _selectedFiels.Exists(n => n == file.FullName)
                 };
+                
                 var extName = file.Extension.ToLower();
                 if (!extList.ContainsKey(extName))
                 {
                     extList.Add(extName, false);
+                }
+                if (_selectType == 2)
+                {
+                    nodeTmp.Checked = extList[extName];
                 }
                 if (file.Extension.ToLower() == ".config" || file.Extension.ToLower() == ".manifest" || file.Extension.ToLower() == ".asax")
                 {
@@ -165,6 +175,53 @@ namespace TPublish.WinFormClient.WinForms
                 chk.Checked = chkAll.Checked;
             }
             _isChkAllChanging = false;
+
+            _selectType = 2;
+            RefreshTreeView();
+        }
+
+        private void SelectFilesForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                
+            }
+            else
+            {
+                List<string> selectedFiles = new List<string>();
+                GetAllTreeNode(tvFiles.Nodes, selectedFiles);
+                if (!selectedFiles.Any())
+                {
+                    MessageBox.Show("请选择要发布的文件");
+                    return;
+                }
+                FileSaveEvent?.Invoke(selectedFiles);
+            }
+        }
+
+        private void GetAllTreeNode(TreeNodeCollection nodes, List<string> paths)
+        {
+            foreach (TreeNode treeNode in nodes)
+            {
+                if (treeNode.Checked)
+                {
+                    if (treeNode.Tag != null)
+                    {
+                        paths.Add(treeNode.Tag.ToString());
+                        if (treeNode.Tag.ToString().EndsWith("dll"))
+                        {
+                            string tmp = treeNode.Tag.ToString().Replace(".dll", ".pdb");
+                            FileInfo file = new FileInfo(tmp);
+                            if (file.Exists)
+                            {
+                                paths.Add(tmp);
+                            }
+                        }
+                    }
+
+                    GetAllTreeNode(treeNode.Nodes, paths);
+                }
+            }
         }
     }
 }
