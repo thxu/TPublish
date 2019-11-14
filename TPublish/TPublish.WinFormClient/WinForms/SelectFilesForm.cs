@@ -35,7 +35,7 @@ namespace TPublish.WinFormClient.WinForms
         public void Ini(string basePath, List<string> selectedFiles, string zipName)
         {
             _basePath = basePath;
-            //_basePath = @"E:\Code\C#\Test\Test\ConsoleApp1Tests\bin\Debug";
+            //_basePath = @"E:\Git-10.9\Go.WeiXinShop.Api\Go.WeiXinShop.Api\Go.WeiXinShop.Api\bin\Release\Publish";
             if (string.IsNullOrWhiteSpace(_basePath))
             {
                 MessageBox.Show("请选择文件所在目录");

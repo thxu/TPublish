@@ -53,19 +53,23 @@ namespace TPublish.WinFormClient.WinForms
                             _selectedFileList = list;
                             this.ucStep.Steps[1] = $"(已选择{list?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)";
                             this.ucStep.Refresh();
+                            SetProcessVal(0);
 
                             // 打包文件
                             ControlHelper.ThreadRunExt(this, () =>
                             {
-                                //ZipHelper.BatchZip(_projModel.LastChooseInfo.LastChoosePublishFiles, zipFullPath, _projModel.LastChooseInfo.LastChoosePublishDir, (progressValue) =>
-                                //{
-                                //    SetProcessVal(progressValue);
-                                //    return false;
-                                //});
+                                LogAppend("开始压缩选中的文件");
+                                var zipPath = ProjectHelper.GetZipPath(_projectModel.ProjName);
+                                ZipHelper.BatchZip(list, zipPath, _publishFilesDir, (progressValue) =>
+                                {
+                                    SetProcessVal(progressValue);
+                                    return false;
+                                });
 
                                 ControlHelper.ThreadInvokerControl(this, () =>
                                 {
                                     SetProcessVal(100);
+                                    LogAppend("文件压缩完成");
                                     SetStep(3);
                                 });
                             }, null, this, false);
@@ -77,6 +81,8 @@ namespace TPublish.WinFormClient.WinForms
                 case 3:
                     {
                         // 弹出选择服务器窗口
+                        var serviceForm = new ServiceForm();
+                        serviceForm.ShowDialog();
                     }
                     break;
             }

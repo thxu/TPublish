@@ -64,6 +64,12 @@
     <Compile Include="WinForms\SelectFilesForm.Designer.cs">
       <DependentUpon>SelectFilesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WinForms\ServiceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\ServiceForm.Designer.cs">
+      <DependentUpon>ServiceForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="WinForms\DeployForm.resx">
       <DependentUpon>DeployForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -78,6 +84,9 @@
     </Compile>
     <EmbeddedResource Include="WinForms\SelectFilesForm.resx">
       <DependentUpon>SelectFilesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\ServiceForm.resx">
+      <DependentUpon>ServiceForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

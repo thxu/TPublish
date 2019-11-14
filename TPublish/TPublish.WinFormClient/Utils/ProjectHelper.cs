@@ -15,6 +15,28 @@ namespace TPublish.WinFormClient.Utils
                     return string.Empty;
                 }
                 var projFilePath = Path.Combine(projPath, $"{projectName}_Files");
+                if (!Directory.Exists(projFilePath))
+                {
+                    Directory.CreateDirectory(projFilePath);
+                }
+                return projFilePath;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string GetZipPath(string projectName)
+        {
+            try
+            {
+                var projPath = GetProjPath(projectName);
+                if (string.IsNullOrWhiteSpace(projPath))
+                {
+                    return string.Empty;
+                }
+                var projFilePath = Path.Combine(projPath, $"{projectName}.zip");
                 return projFilePath;
             }
             catch (Exception)
