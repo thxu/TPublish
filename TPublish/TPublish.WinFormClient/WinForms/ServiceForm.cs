@@ -15,6 +15,15 @@ namespace TPublish.WinFormClient.WinForms
         public ServiceForm()
         {
             InitializeComponent();
+
+            List<KeyValuePair<string, string>> lstCom = new List<KeyValuePair<string, string>>();
+            for (int i = 0; i < 5; i++)
+            {
+                lstCom.Add(new KeyValuePair<string, string>(i.ToString(), "IIS" + i));
+            }
+
+            ucCombox1.Source = lstCom;
+            ucCombox2.Source = lstCom;
         }
     }
 }
