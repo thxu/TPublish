@@ -8,9 +8,10 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>TPublish.WinFormClientApp</RootNamespace>
     <AssemblyName>TPublish.WinFormClientApp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,6 +42,9 @@
     <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
       <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Locator">
+      <HintPath>..\DLL\Microsoft.Build.Locator.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,10 +58,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeployForm.cs">
+    <Compile Include="Controls\StepControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\StepControl.Designer.cs">
+      <DependentUpon>StepControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\MProjectSettingInfo.cs" />
+    <Compile Include="Model\MSettingInfo.cs" />
+    <Compile Include="Utils\ApiHelper.cs" />
+    <Compile Include="Utils\SettingHelper.cs" />
+    <Compile Include="WinForms\DeployForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DeployForm.Designer.cs">
+    <Compile Include="WinForms\DeployForm.Designer.cs">
       <DependentUpon>DeployForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -65,7 +79,31 @@
     <Compile Include="Utils\ControlHelper.cs" />
     <Compile Include="Utils\ProjectHelper.cs" />
     <Compile Include="Utils\TreeViewCheck.cs" />
-    <EmbeddedResource Include="DeployForm.resx">
+    <Compile Include="WinForms\SelectFilesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\SelectFilesForm.Designer.cs">
+      <DependentUpon>SelectFilesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinForms\SelectProjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\SelectProjectForm.Designer.cs">
+      <DependentUpon>SelectProjectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinForms\ServiceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\ServiceForm.Designer.cs">
+      <DependentUpon>ServiceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinForms\SettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\SettingForm.Designer.cs">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="WinForms\DeployForm.resx">
       <DependentUpon>DeployForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -76,7 +114,20 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="WinForms\SelectFilesForm.resx">
+      <DependentUpon>SelectFilesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\SelectProjectForm.resx">
+      <DependentUpon>SelectProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\ServiceForm.resx">
+      <DependentUpon>ServiceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\SettingForm.resx">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

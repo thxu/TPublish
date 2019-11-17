@@ -22,12 +22,12 @@ namespace TPublish.Web
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            _timer.Interval = 10000;
-            _timer.Elapsed += (sender, args) => { TxtLogService.WriteLog("111"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "E:\\PublishTest"); };
+            //_timer.Interval = 10000;
+            //_timer.Elapsed += (sender, args) => { TxtLogService.WriteLog("111"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "E:\\PublishTest"); };
 
-            _timer.Start();
+            //_timer.Start();
 
-            this.waitOne.WaitOne(10000);
+            //this.waitOne.WaitOne(10000);
         }
     }
 }

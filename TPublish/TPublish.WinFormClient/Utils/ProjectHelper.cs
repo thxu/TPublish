@@ -79,7 +79,7 @@ namespace TPublish.WinFormClient.Utils
                 }
                 return string.Empty;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return string.Empty;
             }

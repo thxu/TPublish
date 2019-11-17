@@ -127,20 +127,20 @@ namespace TPublish.VsixClient2017.Command
                 //    throw new Exception("尝试连接服务器失败");
                 //}
 
-                var publishForm = new PublishForm();
-                publishForm.Show();
-                publishForm.Ini(projModel);
+                //var publishForm = new PublishForm();
+                //publishForm.Show();
+                //publishForm.Ini(projModel);
 
-                //var form = new DeployForm();
-                //var iniRes = form.Ini(projModel);
-                //if (iniRes.IsSucceed)
-                //{
-                //    form.Show();
-                //}
-                //else
-                //{
-                //    MessageBox.Show(iniRes.Message);
-                //}
+                var form = new DeployForm();
+                var iniRes = form.Ini(projModel);
+                if (iniRes.IsSucceed)
+                {
+                    form.Show();
+                }
+                else
+                {
+                    MessageBox.Show(iniRes.Message);
+                }
             }
             catch (Exception exception)
             {

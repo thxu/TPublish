@@ -124,11 +124,11 @@ namespace TPublish.WinFormClient.WinForms
         private void Msbuild()
         {
             SetProcessVal(1);
-            if (string.IsNullOrWhiteSpace(_projectModel.MsBuildPath))
-            {
-                LogAppend($"编译项目失败：未获取到MsBuild路径");
-                return;
-            }
+            //if (string.IsNullOrWhiteSpace(_projectModel.MsBuildPath))
+            //{
+            //    LogAppend($"编译项目失败：未获取到MsBuild路径");
+            //    return;
+            //}
             string filePath = ProjectHelper.GetBuildToPath(_projectModel.ProjName);
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -145,13 +145,13 @@ namespace TPublish.WinFormClient.WinForms
             buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + _publishFilesDir + "\"";
             SetProcessVal(2);
 
-            var isSuccess = RunCmd(_projectModel.MsBuildPath, buildArg);
-            if (!isSuccess)
-            {
-                SetProcessVal(0);
-                LogAppend($"编译项目失败");
-                return;
-            }
+            //var isSuccess = RunCmd(_projectModel.MsBuildPath, buildArg);
+            //if (!isSuccess)
+            //{
+            //    SetProcessVal(0);
+            //    LogAppend($"编译项目失败");
+            //    return;
+            //}
             SetProcessVal(100);
         }
 

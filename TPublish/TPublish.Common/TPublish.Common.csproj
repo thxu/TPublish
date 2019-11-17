@@ -87,6 +87,7 @@
     <Compile Include="Result.cs" />
     <Compile Include="SerializerExtension.cs" />
     <Compile Include="SettingLogic.cs" />
+    <Compile Include="StringExtension.cs" />
     <Compile Include="TextWriter.cs" />
     <Compile Include="TxtLogService.cs" />
     <Compile Include="ZipHelper.cs" />

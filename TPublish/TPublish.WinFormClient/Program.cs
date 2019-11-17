@@ -24,14 +24,10 @@ namespace TPublish.WinFormClient
                 ProjectModel model = new ProjectModel()
                 {
                     Key = "abed0270-e96c-45b5-b513-785ba08fc0c8",
-                    MsBuildPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
                     NetFrameworkVersion = "net45",
                     ProjName = "Go.WeiXinShop.Api",
                     ProjPath = @"E:\Git-10.9\Go.WeiXinShop.Api\Go.WeiXinShop.Api\Go.WeiXinShop.Api\Go.WeiXinShop.Api.csproj",
-                    ProjType = "Library",
-                    PublisherName = "",
-                    PublishKey = "",
-                    PublishUrl = "",
+                    OutPutType = "Library",
                 };
                 Application.Run(new DeployForm(model));
             }
