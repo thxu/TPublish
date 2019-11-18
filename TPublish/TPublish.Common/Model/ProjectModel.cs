@@ -22,12 +22,7 @@
         /// </summary>
         public string OutPutType { get; set; }
 
-        public string NetFrameworkVersion { get; set; }
-
-        public bool IsNetCore()
-        {
-            return this.NetFrameworkVersion.Contains("netcoreapp");
-        }
+        public bool IsNetCore { get; set; }
 
         public bool IsExe()
         {

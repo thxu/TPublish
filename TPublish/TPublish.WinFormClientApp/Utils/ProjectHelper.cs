@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
+using NuGet.Frameworks;
 using TPublish.Common;
+using TPublish.Common.Model;
 using TPublish.WinFormClientApp.Model;
 
 namespace TPublish.WinFormClientApp.Utils
@@ -123,12 +128,12 @@ namespace TPublish.WinFormClientApp.Utils
             var settingFile = GetProjConfigPath(projectName);
             if (!File.Exists(settingFile))
             {
-                res = new MProjectSettingInfo();
+                res = new MProjectSettingInfo() { ProjectName = projectName };
             }
             else
             {
                 var str = File.ReadAllText(settingFile);
-                res = str.DeserializeObject<MProjectSettingInfo>() ?? new MProjectSettingInfo();
+                res = str.DeserializeObject<MProjectSettingInfo>() ?? new MProjectSettingInfo() { ProjectName = projectName };
             }
 
             if (res.SelectedFiles == null)
@@ -160,6 +165,71 @@ namespace TPublish.WinFormClientApp.Utils
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 解析项目信息
+        /// </summary>
+        /// <param name="projPath"></param>
+        /// <returns></returns>
+        public static ProjectModel ParseProject(string projPath)
+        {
+            ProjectModel res = new ProjectModel()
+            {
+                Key = Guid.NewGuid().ToString(),
+                ProjName = Path.GetFileNameWithoutExtension(projPath),
+                ProjPath = projPath,
+                ProjType = 2,
+                OutPutType = string.Empty,
+                IsNetCore = false,
+            };
+
+            XDocument doc = XDocument.Load(projPath);
+            var rootElement = doc.Root;
+            if (rootElement == null)
+            {
+                throw new Exception("无法解析此项目文件");
+            }
+
+            var sdkInfo = rootElement.Attribute("Sdk");
+            res.IsNetCore = sdkInfo?.Value != null;
+
+            if (!res.IsNetCore)
+            {
+                var allPropGroups = rootElement.Elements().Where(n => n.Name.LocalName == "PropertyGroup").ToList();
+                if (allPropGroups != null && allPropGroups.Any())
+                {
+                    foreach (XElement propGroup in allPropGroups)
+                    {
+                        var outputTypeElement = propGroup.Elements().FirstOrDefault(n => n.Name.LocalName == "OutputType");
+                        if (outputTypeElement != null)
+                        {
+                            res.OutPutType = outputTypeElement.Value;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                switch (sdkInfo.Value)
+                {
+                    case "Microsoft.NET.Sdk":
+                    case "Microsoft.NET.Sdk.WindowsDesktop":
+                        res.OutPutType = "Exe";
+                        break;
+                    case "Microsoft.NET.Sdk.Web":
+                        res.OutPutType = "Library";
+                        break;
+                    case "Microsoft.NET.Sdk.Razor":
+                    case "Microsoft.NET.Sdk.Worker":
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return res;
         }
     }
 }

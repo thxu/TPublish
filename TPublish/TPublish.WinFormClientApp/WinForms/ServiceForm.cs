@@ -16,6 +16,7 @@ namespace TPublish.WinFormClientApp.WinForms
         private MProjectSettingInfo _projectSetting;
         private MSettingInfo _settingInfo = new MSettingInfo();
         private List<AppView> _appViews = new List<AppView>();
+        private bool _isInit = false;
 
         public static Action<string, string> ServiceSelectedEvent;
 
@@ -62,6 +63,7 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void ServiceForm_Shown(object sender, EventArgs e)
         {
+            _isInit = true;
             if (_projectModel.OutPutType == "Library")
             {
                 this.cbProjType.SelectedIndex = 0;
@@ -81,10 +83,16 @@ namespace TPublish.WinFormClientApp.WinForms
                     this.cbProjType.SelectedIndex = 1;
                 }
             }
+
+            _isInit = false;
         }
 
         private void cbServiceName_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_isInit)
+            {
+                return;
+            }
             showLbText(this.lbSerPath, (this.cbServiceName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
             _projectSetting.LastChooseAppName = (this.cbServiceName.SelectedItem as AppView)?.Id;
 

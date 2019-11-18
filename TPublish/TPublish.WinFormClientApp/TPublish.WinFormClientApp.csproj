@@ -45,6 +45,9 @@
     <Reference Include="Microsoft.Build.Locator">
       <HintPath>..\DLL\Microsoft.Build.Locator.dll</HintPath>
     </Reference>
+    <Reference Include="NuGet.Frameworks, Version=5.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\NuGet.Frameworks.5.3.1\lib\net40\NuGet.Frameworks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -64,6 +67,7 @@
     <Compile Include="Controls\StepControl.Designer.cs">
       <DependentUpon>StepControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\FolderSelectDialog.cs" />
     <Compile Include="Model\MProjectSettingInfo.cs" />
     <Compile Include="Model\MSettingInfo.cs" />
     <Compile Include="Utils\ApiHelper.cs" />

@@ -29,7 +29,7 @@ namespace TPublish.WinFormClientApp
                     //NetFrameworkVersion = "net45",
                     //ProjName = "ConsoleApp1",
                     //ProjPath = @"E:\Code\C#\Test\Test\ConsoleApp1\ConsoleApp1.csproj",
-                    NetFrameworkVersion = "netcoreapp2.2",
+                    //NetFrameworkVersion = "netcoreapp2.2",
                     ProjName = "ConsoleApp3.0_NetCore",
                     ProjPath = @"E:\Code\C#\Test\Test\ConsoleApp3.0_NetCore\ConsoleApp3.0_NetCore.csproj",
                     OutPutType = "Library",

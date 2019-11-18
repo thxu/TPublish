@@ -90,20 +90,45 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void btnSelectFolder_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog dlg = new FolderBrowserDialog();
-            if (dlg.ShowDialog() == DialogResult.OK)
+            using (var fsd = new FolderSelectDialog())
             {
-                DirectoryInfo dir = new DirectoryInfo(dlg.SelectedPath);
-                MSelectedItem item = _settingInfo.SelectedItems.FirstOrDefault(n => n.Path == dir.FullName);
-                if (item == null)
+                fsd.Title = "选择文件夹";
+                if (fsd.ShowDialog(this.Handle))
                 {
-                    item = new MSelectedItem() { Type = 3, Name = dir.Name, Path = dir.FullName, Guid = Guid.NewGuid().ToString(), CreateTime = DateTime.Now };
-                    _settingInfo.SelectedItems.Add(item);
-                    SettingHelper.SaveSettingInfo(_settingInfo);
+                    var folder = fsd.FileName;
+                    if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
+                    {
+                        this.DialogResult = DialogResult.OK;
+
+                        DirectoryInfo dir = new DirectoryInfo(folder);
+                        MSelectedItem item = _settingInfo.SelectedItems.FirstOrDefault(n => n.Path == dir.FullName);
+                        if (item == null)
+                        {
+                            item = new MSelectedItem() { Type = 3, Name = dir.Name, Path = dir.FullName, Guid = Guid.NewGuid().ToString(), CreateTime = DateTime.Now };
+                            _settingInfo.SelectedItems.Add(item);
+                            SettingHelper.SaveSettingInfo(_settingInfo);
+                        }
+                        ProjSelectedEvent?.Invoke(item);
+                        this.Close();
+                    }
                 }
-                ProjSelectedEvent?.Invoke(item);
-                this.Close();
             }
+
+
+            //FolderBrowserDialog dlg = new FolderBrowserDialog();
+            //if (dlg.ShowDialog() == DialogResult.OK)
+            //{
+            //    DirectoryInfo dir = new DirectoryInfo(dlg.SelectedPath);
+            //    MSelectedItem item = _settingInfo.SelectedItems.FirstOrDefault(n => n.Path == dir.FullName);
+            //    if (item == null)
+            //    {
+            //        item = new MSelectedItem() { Type = 3, Name = dir.Name, Path = dir.FullName, Guid = Guid.NewGuid().ToString(), CreateTime = DateTime.Now };
+            //        _settingInfo.SelectedItems.Add(item);
+            //        SettingHelper.SaveSettingInfo(_settingInfo);
+            //    }
+            //    ProjSelectedEvent?.Invoke(item);
+            //    this.Close();
+            //}
         }
 
         private void ListSelectedRecords_DoubleClick(object sender, EventArgs e)

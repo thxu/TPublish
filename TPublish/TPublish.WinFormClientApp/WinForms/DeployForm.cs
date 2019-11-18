@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MetroFramework;
 using MetroFramework.Forms;
 using TPublish.Common;
 using TPublish.Common.Model;
@@ -232,9 +233,9 @@ namespace TPublish.WinFormClientApp.WinForms
                 }
                 LogAppend($"清空发布目录完成");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                MetroMessageBox.Show(this, ex.Message, "清空发布目录异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -311,6 +312,7 @@ namespace TPublish.WinFormClientApp.WinForms
             }
             catch (Exception ex)
             {
+                MetroMessageBox.Show(this, ex.Message, "编译项目异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             finally
@@ -374,31 +376,41 @@ namespace TPublish.WinFormClientApp.WinForms
                                 //this._publishProjPath = item.Path;
                                 if (item.Type == 2)
                                 {
-                                    //this._publishProjName = item.Name;
                                     // c# 项目
-                                    _projectModel = new ProjectModel()
+                                    _projectModel = ProjectHelper.ParseProject(item.Path);
+                                    ControlHelper.ThreadRunExt(this, () =>
                                     {
-                                    };
+                                        bool isBuildSuccess = BuildProj();
+                                        ControlHelper.ThreadInvokerControl(this, () =>
+                                        {
+                                            SetProcessVal(100);
+                                            if (!isBuildSuccess)
+                                            {
+                                                return;
+                                            }
+                                            //_publishProjPath = _projectModel.ProjPath;
+                                            SetStep(2);
+                                        });
+                                    }, null, this);
                                 }
                                 else
                                 {
-                                    //this._publishProjName = $"{item.Name}{item.Guid}";
                                     _projectModel = new ProjectModel()
                                     {
                                         Key = Guid.NewGuid().ToString(),
-                                        NetFrameworkVersion = string.Empty,
                                         OutPutType = string.Empty,
                                         ProjName = $"{item.Name}{item.Guid}",
                                         ProjPath = item.Path,
                                         ProjType = item.Type,
                                     };
                                     _publishFilesDir = item.Path;
+                                    SetStep(2);
                                 }
 
-                                Task.Run((() =>
-                                {
-                                    SetStep(2);
-                                }));
+                                //Task.Run((() =>
+                                //{
+                                //    SetStep(2);
+                                //}));
                             };
                             form.ShowDialog();
                         }
@@ -407,7 +419,7 @@ namespace TPublish.WinFormClientApp.WinForms
                     case 2:
                         {
                             _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
-                            SelectFilesForm filesForm = new SelectFilesForm(_projectSetting, _projectModel.ProjPath);
+                            SelectFilesForm filesForm = new SelectFilesForm(_projectSetting, _publishFilesDir);
                             filesForm.Activate();
                             SelectFilesForm.FileSaveEvent = list =>
                             {
@@ -467,6 +479,7 @@ namespace TPublish.WinFormClientApp.WinForms
             {
                 //TxtLogService.WriteLog(exception, SettingHelper.GetLogDirPath(), "步骤执行失败");
                 LogAppend($"步骤执行失败：{exception.Message}", Color.Red);
+                MetroMessageBox.Show(this, exception.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -482,7 +495,7 @@ namespace TPublish.WinFormClientApp.WinForms
                 var isSuccess = false;
                 SetProcessVal(1);
                 // 判断项目类型
-                if (_projectModel.IsNetCore())
+                if (_projectModel.IsNetCore)
                 {
                     LogAppend($"开始编译DotNet项目:{this._projectModel.ProjName}", Color.FromArgb(0, 174, 219));
                     isSuccess = DotNetBuild();
@@ -506,6 +519,7 @@ namespace TPublish.WinFormClientApp.WinForms
             catch (Exception e)
             {
                 LogAppend($"编译项目失败：{e.Message}", Color.Red);
+                MetroMessageBox.Show(this, e.Message, "编译项目失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
