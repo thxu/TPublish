@@ -83,7 +83,8 @@ namespace TPublish.WinFormClientApp.WinForms
                     _settingInfo.SelectedItems.Add(item);
                     SettingHelper.SaveSettingInfo(_settingInfo);
                 }
-                ProjSelectedEvent?.Invoke(item);
+                //ProjSelectedEvent?.Invoke(item);
+                ProjSelectedEvent?.BeginInvoke(item, null, null);
                 this.Close();
             }
         }
@@ -108,7 +109,7 @@ namespace TPublish.WinFormClientApp.WinForms
                             _settingInfo.SelectedItems.Add(item);
                             SettingHelper.SaveSettingInfo(_settingInfo);
                         }
-                        ProjSelectedEvent?.Invoke(item);
+                        ProjSelectedEvent?.BeginInvoke(item, null, null);
                         this.Close();
                     }
                 }
@@ -138,7 +139,7 @@ namespace TPublish.WinFormClientApp.WinForms
             var item = _settingInfo.SelectedItems.First(n => n.Guid == guid);
             item.CreateTime = DateTime.Now;
             SettingHelper.SaveSettingInfo(_settingInfo);
-            ProjSelectedEvent?.Invoke(item);
+            ProjSelectedEvent?.BeginInvoke(item, null, null);
             this.Close();
         }
     }

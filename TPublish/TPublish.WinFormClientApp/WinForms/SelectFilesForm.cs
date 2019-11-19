@@ -195,7 +195,7 @@ namespace TPublish.WinFormClientApp.WinForms
                 MessageBox.Show("请选择要发布的文件");
                 return;
             }
-            FileSaveEvent?.Invoke(selectedFiles);
+            FileSaveEvent?.BeginInvoke(selectedFiles, null, null);
             this.Close();
         }
     }

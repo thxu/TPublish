@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MetroFramework;
@@ -108,8 +103,8 @@ namespace TPublish.WinFormClientApp.WinForms
             }
         }
 
-        delegate void SetStepCallback(int stepIndex);
-        private void SetStep(int stepIndex)
+        delegate void SetStepIndexCallback(int stepIndex);
+        private void SetStepIndex(int stepIndex)
         {
             if (this.deployStep.InvokeRequired)
             {
@@ -121,12 +116,43 @@ namespace TPublish.WinFormClientApp.WinForms
                     }
                 }
 
-                SetStepCallback callback = SetStep;
+                SetStepIndexCallback callback = SetStepIndex;
                 this.deployStep.Invoke(callback, stepIndex);
             }
             else
             {
                 this.deployStep.StepIndex = stepIndex;
+            }
+        }
+
+        private void SetStepAsync(int stepIndex)
+        {
+            Task.Run((() =>
+            {
+                SetStepIndex(stepIndex);
+            }));
+        }
+
+        delegate void SetStepsCallback(int stepIndex, string val);
+        private void SetSteps(int index, string val)
+        {
+            if (this.deployStep.InvokeRequired)
+            {
+                while (!this.deployStep.IsHandleCreated)
+                {
+                    if (this.deployStep.Disposing || this.deployStep.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+
+                SetStepsCallback callback = SetSteps;
+                this.deployStep.Invoke(callback, index, val);
+            }
+            else
+            {
+                this.deployStep.Steps[index] = val;
+                this.deployStep.Refresh();
             }
         }
 
@@ -353,16 +379,13 @@ namespace TPublish.WinFormClientApp.WinForms
                             ControlHelper.ThreadRunExt(this, () =>
                             {
                                 bool isBuildSuccess = BuildProj();
-                                ControlHelper.ThreadInvokerControl(this, () =>
+                                if (!isBuildSuccess)
                                 {
-                                    SetProcessVal(100);
-                                    if (!isBuildSuccess)
-                                    {
-                                        return;
-                                    }
-                                    //_publishProjPath = _projectModel.ProjPath;
-                                    SetStep(2);
-                                });
+                                    return;
+                                }
+                                SetProcessVal(100);
+                                SetStepIndex(2);
+
                             }, null, this);
                         }
                         else
@@ -372,26 +395,17 @@ namespace TPublish.WinFormClientApp.WinForms
                             form.Activate();
                             SelectProjectForm.ProjSelectedEvent = (item) =>
                             {
-                                //this._type = item.Type;
-                                //this._publishProjPath = item.Path;
                                 if (item.Type == 2)
                                 {
                                     // c# 项目
                                     _projectModel = ProjectHelper.ParseProject(item.Path);
-                                    ControlHelper.ThreadRunExt(this, () =>
+                                    bool isBuildSuccess = BuildProj();
+                                    SetProcessVal(100);
+                                    if (!isBuildSuccess)
                                     {
-                                        bool isBuildSuccess = BuildProj();
-                                        ControlHelper.ThreadInvokerControl(this, () =>
-                                        {
-                                            SetProcessVal(100);
-                                            if (!isBuildSuccess)
-                                            {
-                                                return;
-                                            }
-                                            //_publishProjPath = _projectModel.ProjPath;
-                                            SetStep(2);
-                                        });
-                                    }, null, this);
+                                        return;
+                                    }
+                                    SetStepIndex(2);
                                 }
                                 else
                                 {
@@ -404,13 +418,8 @@ namespace TPublish.WinFormClientApp.WinForms
                                         ProjType = item.Type,
                                     };
                                     _publishFilesDir = item.Path;
-                                    SetStep(2);
+                                    SetStepIndex(2);
                                 }
-
-                                //Task.Run((() =>
-                                //{
-                                //    SetStep(2);
-                                //}));
                             };
                             form.ShowDialog();
                         }
@@ -426,28 +435,19 @@ namespace TPublish.WinFormClientApp.WinForms
                                 // 打开发布服务器窗口
                                 _projectSetting.SelectedFiles = list;
                                 ProjectHelper.SaveProjectSettingInfo(_projectSetting);
-                                this.deployStep.Steps[1] = $"(已选择{list?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)";
-                                this.deployStep.Refresh();
+                                SetSteps(1, $"(已选择{list?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)");
                                 SetProcessVal(0);
                                 // 打包文件
-                                ControlHelper.ThreadRunExt(this, () =>
+                                LogAppend("开始压缩选中的文件");
+                                _zipFilePath = ProjectHelper.GetZipPath(_projectModel.ProjName);
+                                ZipHelper.BatchZip(list, _zipFilePath, _publishFilesDir, (progressValue) =>
                                 {
-                                    LogAppend("开始压缩选中的文件");
-                                    _zipFilePath = ProjectHelper.GetZipPath(_projectModel.ProjName);
-                                    ZipHelper.BatchZip(list, _zipFilePath, _publishFilesDir, (progressValue) =>
-                                    {
-                                        SetProcessVal(progressValue);
-                                        return false;
-                                    });
-
-                                    ControlHelper.ThreadInvokerControl(this, () =>
-                                    {
-                                        SetProcessVal(100);
-                                        LogAppend("文件压缩完成");
-                                        SetStep(3);
-                                    });
-                                }, null, this);
-
+                                    SetProcessVal(progressValue);
+                                    return false;
+                                });
+                                SetProcessVal(100);
+                                LogAppend("文件压缩完成");
+                                SetStepIndex(3);
                             };
                             filesForm.ShowDialog();
                         }
@@ -554,7 +554,7 @@ namespace TPublish.WinFormClientApp.WinForms
                 return;
             }
 
-            SetStep(1);
+            SetStepIndex(1);
         }
     }
 }

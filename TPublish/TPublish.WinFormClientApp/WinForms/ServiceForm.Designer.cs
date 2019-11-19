@@ -194,7 +194,6 @@
             this.Controls.Add(this.metroLabel1);
             this.Name = "ServiceForm";
             this.Text = "发布到服务器";
-            this.TopMost = true;
             this.Shown += new System.EventHandler(this.ServiceForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
