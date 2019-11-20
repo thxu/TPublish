@@ -39,6 +39,7 @@
             // btnSelectProj
             // 
             this.btnSelectProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSelectProj.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnSelectProj.Location = new System.Drawing.Point(23, 343);
             this.btnSelectProj.Name = "btnSelectProj";
             this.btnSelectProj.Size = new System.Drawing.Size(159, 51);
@@ -50,6 +51,7 @@
             // btnSelectFolder
             // 
             this.btnSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSelectFolder.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnSelectFolder.Location = new System.Drawing.Point(188, 343);
             this.btnSelectFolder.Name = "btnSelectFolder";
             this.btnSelectFolder.Size = new System.Drawing.Size(159, 51);

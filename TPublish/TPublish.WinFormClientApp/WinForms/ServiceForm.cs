@@ -54,7 +54,7 @@ namespace TPublish.WinFormClientApp.WinForms
             MetroComboBox comboBox = (MetroComboBox)sender;
             _appViews = comboBox.SelectedIndex == 0
                 ? ApiHelper.GetAllIISAppNames(_settingInfo)
-                : ApiHelper.GetExeAppView(_settingInfo, _projectModel.ProjName);
+                : ApiHelper.GetExeAppView(_settingInfo, _projectModel.ProjType == 3 ? "" : _projectModel.ProjName);
             this.cbServiceName.DataSource = _appViews;
             this.cbServiceName.DisplayMember = "AppAlias";
             this.cbServiceName.ValueMember = "AppPhysicalPath";

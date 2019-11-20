@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace TPublish.Web.Controllers
 {
     public class ClientApiController : BaseController
     {
+        private static string _apiKey = ConfigurationManager.AppSettings["ApiKey"] ?? string.Empty;
+
         public string Index()
         {
             return "hello";
@@ -22,9 +25,13 @@ namespace TPublish.Web.Controllers
         /// 检查连接是否可用
         /// </summary>
         /// <returns></returns>
-        public string CheckConnection()
+        public string CheckConnection(string apiKey)
         {
-            return "OK";
+            if (apiKey.Trim() == _apiKey.Trim())
+            {
+                return "OK";
+            }
+            return "Fail";
         }
 
         /// <summary>
@@ -143,7 +150,7 @@ namespace TPublish.Web.Controllers
             {
                 Directory.CreateDirectory(zipBackDir);
             }
-            string zipBackPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+            string zipBackPath = Path.Combine(zipBackDir, fileName);
             fileInfo.SaveAs(zipBackPath);
             SettingLogic.SetAppZipFilePath($"IIS-{appId}", zipBackPath);
 

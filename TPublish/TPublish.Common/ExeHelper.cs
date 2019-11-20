@@ -74,7 +74,12 @@ namespace TPublish.Common
                 string mgeProcessFileName = SettingLogic.GetMgeProcessFullName();
                 string processMgeXmlFullName = Path.Combine(Directory.GetParent(mgeProcessFileName).FullName, "ProcessInfo.xml");
                 XElement element = XElement.Load(processMgeXmlFullName);
-                foreach (XElement processElement in element.Elements().Where(n => n.Attribute("Name").Value.ToLower().StartsWith(appName.ToLower())))
+                var subElements = element.Elements();
+                if (!appName.IsNullOrEmpty())
+                {
+                    subElements = subElements.Where(n => n.Attribute("Name").Value.ToLower().StartsWith(appName.ToLower()));
+                }
+                foreach (XElement processElement in subElements)
                 {
                     AppView view = new AppView
                     {

@@ -206,6 +206,7 @@
             // 
             // btnSelectMsBuild
             // 
+            this.btnSelectMsBuild.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnSelectMsBuild.Location = new System.Drawing.Point(403, 203);
             this.btnSelectMsBuild.Name = "btnSelectMsBuild";
             this.btnSelectMsBuild.Size = new System.Drawing.Size(64, 23);
@@ -216,6 +217,7 @@
             // 
             // btnSaveSetting
             // 
+            this.btnSaveSetting.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnSaveSetting.Location = new System.Drawing.Point(146, 264);
             this.btnSaveSetting.Name = "btnSaveSetting";
             this.btnSaveSetting.Size = new System.Drawing.Size(98, 36);
@@ -226,6 +228,7 @@
             // 
             // btnReset
             // 
+            this.btnReset.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnReset.Location = new System.Drawing.Point(403, 232);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(64, 23);
@@ -236,6 +239,7 @@
             // 
             // btnTestConnect
             // 
+            this.btnTestConnect.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnTestConnect.Location = new System.Drawing.Point(403, 110);
             this.btnTestConnect.Name = "btnTestConnect";
             this.btnTestConnect.Size = new System.Drawing.Size(64, 23);

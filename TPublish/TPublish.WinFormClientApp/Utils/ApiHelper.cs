@@ -47,7 +47,7 @@ namespace TPublish.WinFormClientApp.Utils
         {
             try
             {
-                string url = $"{setting.GetApiUrl()}/CheckConnection";
+                string url = $"{setting.GetApiUrl()}/CheckConnection?apiKey=" + setting.ApiKey;
                 WebClient client = new WebClient();
                 var res = client.DownloadString(url) == "OK";
                 return res;

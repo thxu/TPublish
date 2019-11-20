@@ -76,6 +76,7 @@
             this.metroLabel4.Size = new System.Drawing.Size(107, 19);
             this.metroLabel4.TabIndex = 3;
             this.metroLabel4.Text = "本次发布内容：";
+            this.metroLabel4.Visible = false;
             // 
             // lbSerPath
             // 
@@ -117,8 +118,7 @@
             // 
             // txtDeployRemark
             // 
-            this.txtDeployRemark.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtDeployRemark.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -146,13 +146,15 @@
             this.txtDeployRemark.Size = new System.Drawing.Size(236, 83);
             this.txtDeployRemark.TabIndex = 7;
             this.txtDeployRemark.UseSelectable = true;
+            this.txtDeployRemark.Visible = false;
             this.txtDeployRemark.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.txtDeployRemark.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
             // btnDeploy
             // 
             this.btnDeploy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDeploy.Location = new System.Drawing.Point(150, 307);
+            this.btnDeploy.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            this.btnDeploy.Location = new System.Drawing.Point(150, 204);
             this.btnDeploy.Name = "btnDeploy";
             this.btnDeploy.Size = new System.Drawing.Size(75, 46);
             this.btnDeploy.TabIndex = 8;
@@ -163,7 +165,8 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnCancel.Location = new System.Drawing.Point(242, 307);
+            this.btnCancel.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            this.btnCancel.Location = new System.Drawing.Point(242, 204);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 46);
             this.btnCancel.TabIndex = 9;
@@ -181,7 +184,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(416, 372);
+            this.ClientSize = new System.Drawing.Size(416, 269);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnDeploy);
             this.Controls.Add(this.txtDeployRemark);

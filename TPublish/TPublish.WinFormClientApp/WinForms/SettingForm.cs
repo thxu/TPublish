@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using MetroFramework;
 using MetroFramework.Forms;
+using TPublish.Common;
 using TPublish.WinFormClientApp.Model;
 using TPublish.WinFormClientApp.Utils;
 
@@ -74,13 +75,17 @@ namespace TPublish.WinFormClientApp.WinForms
         {
             try
             {
-                var isConnect = ApiHelper.Connect(_settingInfo);
+                var settingTmp = _settingInfo.DeepCopy();
+                settingTmp.Authour = this.txtAuthor.Text;
+                settingTmp.ApiIpAdress = this.txtApiAdress.Text;
+                settingTmp.ApiKey = this.txtApiKey.Text;
+                var isConnect = ApiHelper.Connect(settingTmp);
                 if (!isConnect)
                 {
                     MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                MetroMessageBox.Show(this, "连接成功", "连接成功", MessageBoxButtons.OK, MessageBoxIcon.None);
+                MetroMessageBox.Show(this, "连接成功", "连接成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (System.Exception ex)
             {

@@ -86,6 +86,7 @@
             // 
             // btnSelect
             // 
+            this.btnSelect.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnSelect.Location = new System.Drawing.Point(326, 536);
             this.btnSelect.Name = "btnSelect";
             this.btnSelect.Size = new System.Drawing.Size(75, 45);
@@ -96,6 +97,7 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.btnCancel.Location = new System.Drawing.Point(422, 536);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 45);
