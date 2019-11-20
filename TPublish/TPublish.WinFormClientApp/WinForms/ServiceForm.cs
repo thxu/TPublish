@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using MetroFramework;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
 using TPublish.Common.Model;
@@ -23,9 +24,9 @@ namespace TPublish.WinFormClientApp.WinForms
         public ServiceForm(ProjectModel projectModel, MProjectSettingInfo projectSetting, MSettingInfo settingInfo)
         {
             InitializeComponent();
-            _projectModel = projectModel;
-            _projectSetting = projectSetting;
-            _settingInfo = settingInfo;
+            _projectModel = projectModel ?? new ProjectModel();
+            _projectSetting = projectSetting ?? new MProjectSettingInfo();
+            _settingInfo = settingInfo ?? new MSettingInfo();
         }
 
         private void showLbText(MetroLabel lb, string text)
@@ -63,28 +64,35 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void ServiceForm_Shown(object sender, EventArgs e)
         {
-            _isInit = true;
-            if (_projectModel.OutPutType == "Library")
+            try
             {
-                this.cbProjType.SelectedIndex = 0;
-            }
-            else if (_projectModel.OutPutType == "Exe")
-            {
-                this.cbProjType.SelectedIndex = 1;
-            }
-            else
-            {
-                if (_projectSetting.Type == "Library")
+                _isInit = true;
+                if (_projectModel.OutPutType == "Library")
                 {
                     this.cbProjType.SelectedIndex = 0;
                 }
-                else if (_projectSetting.Type == "Exe")
+                else if (_projectModel.OutPutType == "Exe")
                 {
                     this.cbProjType.SelectedIndex = 1;
                 }
-            }
+                else
+                {
+                    if (_projectSetting.Type == "Library")
+                    {
+                        this.cbProjType.SelectedIndex = 0;
+                    }
+                    else if (_projectSetting.Type == "Exe")
+                    {
+                        this.cbProjType.SelectedIndex = 1;
+                    }
+                }
 
-            _isInit = false;
+                _isInit = false;
+            }
+            catch (Exception ex)
+            {
+                MetroMessageBox.Show(this, ex.Message, "部署服务器窗体初始化错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void cbServiceName_SelectedIndexChanged(object sender, EventArgs e)
@@ -100,18 +108,25 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void btnDeploy_Click(object sender, EventArgs e)
         {
-            _projectSetting.Type = this.cbProjType.SelectedIndex == 0 ? "Library" : "Exe";
-            ProjectHelper.SaveProjectSettingInfo(_projectSetting);
-
-            var view = this.cbServiceName.SelectedItem as AppView;
-            if (string.IsNullOrWhiteSpace(view?.AppAlias))
+            try
             {
-                MessageBox.Show("请选择要发布的项目");
-                return;
-            }
+                _projectSetting.Type = this.cbProjType.SelectedIndex == 0 ? "Library" : "Exe";
+                ProjectHelper.SaveProjectSettingInfo(_projectSetting);
 
-            ServiceSelectedEvent?.Invoke(_projectSetting.Type, view.Id);
-            this.Close();
+                var view = this.cbServiceName.SelectedItem as AppView;
+                if (string.IsNullOrWhiteSpace(view?.AppAlias))
+                {
+                    MetroMessageBox.Show(this, "请选择要发布的项目", "未选择项目", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                ServiceSelectedEvent?.BeginInvoke(_projectSetting.Type, view.Id, null, null);
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MetroMessageBox.Show(this, ex.Message, "部署处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

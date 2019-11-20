@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using MetroFramework;
 using MetroFramework.Forms;
 using TPublish.WinFormClientApp.Model;
 using TPublish.WinFormClientApp.Utils;
@@ -12,7 +13,7 @@ namespace TPublish.WinFormClientApp.WinForms
         public SettingForm(MSettingInfo settingInfo)
         {
             InitializeComponent();
-            _settingInfo = settingInfo;
+            _settingInfo = settingInfo ?? new MSettingInfo();
 
             this.txtAuthor.Text = _settingInfo.Authour;
             this.txtApiAdress.Text = _settingInfo.ApiIpAdress;
@@ -35,26 +36,33 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void btnSaveSetting_Click(object sender, System.EventArgs e)
         {
-            _settingInfo.Authour = this.txtAuthor.Text;
-            _settingInfo.ApiIpAdress = this.txtApiAdress.Text;
-            _settingInfo.ApiKey = this.txtApiKey.Text;
-            _settingInfo.MsBuildExePath = this.txtMsBuildPath.Text;
-
-            var isConnect = ApiHelper.Connect(_settingInfo);
-            if (!isConnect)
+            try
             {
-                MessageBox.Show("服务器连接失败，请检查服务器地址");
-                return;
+                _settingInfo.Authour = this.txtAuthor.Text;
+                _settingInfo.ApiIpAdress = this.txtApiAdress.Text;
+                _settingInfo.ApiKey = this.txtApiKey.Text;
+                _settingInfo.MsBuildExePath = this.txtMsBuildPath.Text;
+
+                var isConnect = ApiHelper.Connect(_settingInfo);
+                if (!isConnect)
+                {
+                    MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+
+                var isSuccess = SettingHelper.SaveSettingInfo(_settingInfo);
+                if (!isSuccess)
+                {
+                    MetroMessageBox.Show(this, "保存失败，请稍后再试", "保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                this.Close();
             }
-
-
-            var isSuccess = SettingHelper.SaveSettingInfo(_settingInfo);
-            if (!isSuccess)
+            catch (System.Exception ex)
             {
-                MessageBox.Show("保存失败，请稍后再试");
-                return;
+                MetroMessageBox.Show(this, ex.Message, "保存设置出错", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            this.Close();
         }
 
         private void btnReset_Click(object sender, System.EventArgs e)
@@ -64,13 +72,20 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void btnTestConnect_Click(object sender, System.EventArgs e)
         {
-            var isConnect = ApiHelper.Connect(_settingInfo);
-            if (!isConnect)
+            try
             {
-                MessageBox.Show("服务器连接失败，请检查服务器地址");
-                return;
+                var isConnect = ApiHelper.Connect(_settingInfo);
+                if (!isConnect)
+                {
+                    MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                MetroMessageBox.Show(this, "连接成功", "连接成功", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
-            MessageBox.Show("连接成功");
+            catch (System.Exception ex)
+            {
+                MetroMessageBox.Show(this, ex.Message, "连接到服务器出错", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

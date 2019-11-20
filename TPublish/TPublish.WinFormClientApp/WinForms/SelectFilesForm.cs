@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using MetroFramework;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
 using TPublish.WinFormClientApp.Model;
@@ -113,27 +114,34 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void SelectFilesForm_Shown(object sender, EventArgs e)
         {
-            RefreshTreeView();
-            foreach (var extension in extList)
+            try
             {
-                var chk = new MetroCheckBox() { Text = extension.Key };
-                chk.Checked = extension.Value;
-                chk.CheckedChanged += (controlObj, args) =>
+                RefreshTreeView();
+                foreach (var extension in extList)
                 {
-                    if (_isChkAllChanging)
+                    var chk = new MetroCheckBox() { Text = extension.Key };
+                    chk.Checked = extension.Value;
+                    chk.CheckedChanged += (controlObj, args) =>
                     {
-                        return;
-                    }
-                    var control = (MetroCheckBox)controlObj;
-                    extList[control.Text] = control.Checked;
-                    _isChildChkChanging = true;
-                    this.ChkAll.Checked = extList.ContainsValue(true);
-                    _isChildChkChanging = false;
+                        if (_isChkAllChanging)
+                        {
+                            return;
+                        }
+                        var control = (MetroCheckBox)controlObj;
+                        extList[control.Text] = control.Checked;
+                        _isChildChkChanging = true;
+                        this.ChkAll.Checked = extList.ContainsValue(true);
+                        _isChildChkChanging = false;
 
-                    _selectType = 2;
-                    RefreshTreeView();
-                };
-                this.pannel_ChkList.Controls.Add(chk);
+                        _selectType = 2;
+                        RefreshTreeView();
+                    };
+                    this.pannel_ChkList.Controls.Add(chk);
+                }
+            }
+            catch (Exception ex)
+            {
+                MetroMessageBox.Show(this, ex.Message, "文件选择窗体初始化错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -188,15 +196,22 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            List<string> selectedFiles = new List<string>();
-            GetAllTreeNode(tvFiles.Nodes, selectedFiles);
-            if (!selectedFiles.Any())
+            try
             {
-                MessageBox.Show("请选择要发布的文件");
-                return;
+                List<string> selectedFiles = new List<string>();
+                GetAllTreeNode(tvFiles.Nodes, selectedFiles);
+                if (!selectedFiles.Any())
+                {
+                    MessageBox.Show("请选择要发布的文件");
+                    return;
+                }
+                FileSaveEvent?.BeginInvoke(selectedFiles, null, null);
+                this.Close();
             }
-            FileSaveEvent?.BeginInvoke(selectedFiles, null, null);
-            this.Close();
+            catch (Exception ex)
+            {
+                MetroMessageBox.Show(this, ex.Message, "文件选择处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -183,7 +183,15 @@ namespace TPublish.WinFormClientApp.WinForms
             }
             ClearPublishFolder(_publishFilesDir);
             var buildArg = "\"" + _projectModel.ProjPath.Replace("\\\\", "\\") + "\"";
-            buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + _publishFilesDir + "\"";
+            if (_projectModel.IsExe())
+            {
+                buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:OutputPath=\"" + _publishFilesDir + "\"";
+            }
+            else
+            {
+                buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + _publishFilesDir + "\"";
+            }
+            
             SetProcessVal(2);
 
             var isSuccess = RunCmd(_settingInfo.MsBuildExePath, buildArg);
@@ -300,7 +308,7 @@ namespace TPublish.WinFormClientApp.WinForms
                         }
                         else if (args.Data.Contains(": warning"))
                         {
-                            LogAppend($"!!!【warning】:{args.Data}", Color.BurlyWood);
+                            LogAppend($"【warning】:{args.Data}", Color.BurlyWood);
                         }
                         else if (args.Data.Contains(": error"))
                         {
@@ -328,11 +336,14 @@ namespace TPublish.WinFormClientApp.WinForms
                 SetProcessVal(99);
                 try
                 {
-                    process.Kill();
+                    if (!process.HasExited)
+                    {
+                        process.Kill();
+                    }
                 }
                 catch (Exception)
                 {
-                    //ignore
+                    
                 }
                 return process.ExitCode == 0;
             }
@@ -395,31 +406,39 @@ namespace TPublish.WinFormClientApp.WinForms
                             form.Activate();
                             SelectProjectForm.ProjSelectedEvent = (item) =>
                             {
-                                if (item.Type == 2)
+                                try
                                 {
-                                    // c# 项目
-                                    _projectModel = ProjectHelper.ParseProject(item.Path);
-                                    bool isBuildSuccess = BuildProj();
-                                    SetProcessVal(100);
-                                    if (!isBuildSuccess)
+                                    if (item.Type == 2)
                                     {
-                                        return;
+                                        // c# 项目
+                                        _projectModel = ProjectHelper.ParseProject(item.Path);
+                                        bool isBuildSuccess = BuildProj();
+                                        SetProcessVal(100);
+                                        if (!isBuildSuccess)
+                                        {
+                                            return;
+                                        }
+                                        SetStepIndex(2);
                                     }
-                                    SetStepIndex(2);
-                                }
-                                else
-                                {
-                                    _projectModel = new ProjectModel()
+                                    else
                                     {
-                                        Key = Guid.NewGuid().ToString(),
-                                        OutPutType = string.Empty,
-                                        ProjName = $"{item.Name}{item.Guid}",
-                                        ProjPath = item.Path,
-                                        ProjType = item.Type,
-                                    };
-                                    _publishFilesDir = item.Path;
-                                    SetStepIndex(2);
+                                        _projectModel = new ProjectModel()
+                                        {
+                                            Key = Guid.NewGuid().ToString(),
+                                            OutPutType = string.Empty,
+                                            ProjName = $"{item.Name}{item.Guid}",
+                                            ProjPath = item.Path,
+                                            ProjType = item.Type,
+                                        };
+                                        _publishFilesDir = item.Path;
+                                        SetStepIndex(2);
+                                    }
                                 }
+                                catch (Exception ex)
+                                {
+                                    MetroMessageBox.Show(this, ex.Message, "项目选择处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                
                             };
                             form.ShowDialog();
                         }
@@ -432,22 +451,29 @@ namespace TPublish.WinFormClientApp.WinForms
                             filesForm.Activate();
                             SelectFilesForm.FileSaveEvent = list =>
                             {
-                                // 打开发布服务器窗口
-                                _projectSetting.SelectedFiles = list;
-                                ProjectHelper.SaveProjectSettingInfo(_projectSetting);
-                                SetSteps(1, $"(已选择{list?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)");
-                                SetProcessVal(0);
-                                // 打包文件
-                                LogAppend("开始压缩选中的文件");
-                                _zipFilePath = ProjectHelper.GetZipPath(_projectModel.ProjName);
-                                ZipHelper.BatchZip(list, _zipFilePath, _publishFilesDir, (progressValue) =>
+                                try
                                 {
-                                    SetProcessVal(progressValue);
-                                    return false;
-                                });
-                                SetProcessVal(100);
-                                LogAppend("文件压缩完成");
-                                SetStepIndex(3);
+                                    // 打开发布服务器窗口
+                                    _projectSetting.SelectedFiles = list;
+                                    ProjectHelper.SaveProjectSettingInfo(_projectSetting);
+                                    SetSteps(1, $"(已选择{list?.Where(n => !n.EndsWith("pdb"))?.Count() ?? 0}个文件)");
+                                    SetProcessVal(0);
+                                    // 打包文件
+                                    LogAppend("开始压缩选中的文件");
+                                    _zipFilePath = ProjectHelper.GetZipPath(_projectModel.ProjName);
+                                    ZipHelper.BatchZip(list, _zipFilePath, _publishFilesDir, (progressValue) =>
+                                    {
+                                        SetProcessVal(progressValue);
+                                        return false;
+                                    });
+                                    SetProcessVal(100);
+                                    LogAppend("文件压缩完成");
+                                    SetStepIndex(3);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MetroMessageBox.Show(this, ex.Message, "文件处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             };
                             filesForm.ShowDialog();
                         }
@@ -458,17 +484,17 @@ namespace TPublish.WinFormClientApp.WinForms
                             form.Activate();
                             ServiceForm.ServiceSelectedEvent = (type, appId) =>
                             {
-                                ControlHelper.ThreadRunExt(this, () =>
+                                try
                                 {
                                     LogAppend("开始上传文件");
                                     ApiHelper.UploadZipFile(_settingInfo, type, appId, _zipFilePath);
-
-                                    ControlHelper.ThreadInvokerControl(this, () =>
-                                    {
-                                        SetProcessVal(100);
-                                        LogAppend("文件部署完成");
-                                    });
-                                }, null, this);
+                                    SetProcessVal(100);
+                                    LogAppend("文件部署完成");
+                                }
+                                catch (Exception ex)
+                                {
+                                    MetroMessageBox.Show(this, ex.Message, "发布到服务器错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             };
                             form.ShowDialog();
                         }
@@ -550,7 +576,7 @@ namespace TPublish.WinFormClientApp.WinForms
             var isConnect = ApiHelper.Connect(_settingInfo);
             if (!isConnect)
             {
-                MessageBox.Show("服务器连接失败，请检查服务器地址");
+                MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
