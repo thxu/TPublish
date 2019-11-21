@@ -92,5 +92,38 @@ namespace TPublish.WinFormClientApp.WinForms
                 MetroMessageBox.Show(this, ex.Message, "连接到服务器出错", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void metroTile1_Click(object sender, System.EventArgs e)
+        {
+            _settingInfo.MetroThemeStyle = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Dark.GetHashCode() : MetroThemeStyle.Light.GetHashCode();
+            this.metroStyleManager1.Theme = (MetroThemeStyle)_settingInfo.MetroThemeStyle;
+            //this.Theme = (MetroThemeStyle)_settingInfo.MetroThemeStyle;
+
+            //this.Refresh();
+        }
+
+        private void metroTile2_Click(object sender, System.EventArgs e)
+        {
+            _settingInfo.MetroColorStyle = (_settingInfo.MetroColorStyle + 1) % 15;
+            this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            //this.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            //this.Refresh();
+        }
+
+        private void SettingForm_Shown(object sender, System.EventArgs e)
+        {
+            this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            //this.Theme = _settingInfo.MetroThemeStyle == 0 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+
+            if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+            {
+                _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+            }
+            this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            //this.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+
+            this.StyleManager = this.metroStyleManager1;
+            this.Refresh();
+        }
     }
 }

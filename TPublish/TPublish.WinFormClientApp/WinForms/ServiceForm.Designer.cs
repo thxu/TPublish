@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
@@ -39,6 +40,8 @@
             this.btnDeploy = new MetroFramework.Controls.MetroButton();
             this.btnCancel = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // metroLabel1
@@ -180,6 +183,10 @@
             this.toolTip1.StyleManager = null;
             this.toolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
+            // metroStyleManager1
+            // 
+            this.metroStyleManager1.Owner = this;
+            // 
             // ServiceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -196,8 +203,10 @@
             this.Controls.Add(this.metroLabel2);
             this.Controls.Add(this.metroLabel1);
             this.Name = "ServiceForm";
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "发布到服务器";
             this.Shown += new System.EventHandler(this.ServiceForm_Shown);
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -216,5 +225,6 @@
         private MetroFramework.Controls.MetroButton btnDeploy;
         private MetroFramework.Controls.MetroButton btnCancel;
         private MetroFramework.Components.MetroToolTip toolTip1;
+        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
     }
 }

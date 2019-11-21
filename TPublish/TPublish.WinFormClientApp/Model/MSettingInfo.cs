@@ -41,6 +41,16 @@ namespace TPublish.WinFormClientApp.Model
         {
             return $"{ApiIpAdress}/ClientApi";
         }
+
+        /// <summary>
+        /// 主题
+        /// </summary>
+        public int MetroThemeStyle { get; set; }
+
+        /// <summary>
+        /// 风格
+        /// </summary>
+        public int MetroColorStyle { get; set; }
     }
 
     public class MSelectedItem

@@ -63,6 +63,15 @@ namespace TPublish.WinFormClientApp.WinForms
                 ListSelectedRecords.Columns[1].Width = -2;
                 ListSelectedRecords.Columns[0].TextAlign = HorizontalAlignment.Left;
                 ListSelectedRecords.Columns[1].TextAlign = HorizontalAlignment.Left;
+
+                this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+                if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+                {
+                    _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+                }
+                this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+                this.StyleManager = this.metroStyleManager1;
+                this.Refresh();
             }
             catch (Exception ex)
             {

@@ -192,7 +192,7 @@ namespace TPublish.WinFormClientApp.WinForms
             {
                 buildArg += " /verbosity:minimal /p:Configuration=Debug /p:DeployOnBuild=true /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=False /p:publishUrl=\"" + _publishFilesDir + "\"";
             }
-            
+
             SetProcessVal(2);
 
             var isSuccess = RunCmd(_settingInfo.MsBuildExePath, buildArg);
@@ -344,7 +344,7 @@ namespace TPublish.WinFormClientApp.WinForms
                 }
                 catch (Exception)
                 {
-                    
+
                 }
                 return process.ExitCode == 0;
             }
@@ -439,7 +439,7 @@ namespace TPublish.WinFormClientApp.WinForms
                                 {
                                     MetroMessageBox.Show(this, ex.Message, "项目选择处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 }
-                                
+
                             };
                             form.ShowDialog();
                         }
@@ -448,7 +448,7 @@ namespace TPublish.WinFormClientApp.WinForms
                     case 2:
                         {
                             _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
-                            SelectFilesForm filesForm = new SelectFilesForm(_projectSetting, _publishFilesDir);
+                            SelectFilesForm filesForm = new SelectFilesForm(_projectSetting, _publishFilesDir, _settingInfo);
                             filesForm.Activate();
                             SelectFilesForm.FileSaveEvent = list =>
                             {
@@ -562,6 +562,19 @@ namespace TPublish.WinFormClientApp.WinForms
             SettingForm settingForm = new SettingForm(_settingInfo);
             settingForm.Activate();
             settingForm.ShowDialog();
+
+            if (_settingInfo == null)
+            {
+                _settingInfo = new MSettingInfo();
+            }
+            this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+            {
+                _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+            }
+            this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            //this.StyleManager = this.metroStyleManager1;
+            this.Refresh();
         }
 
         private void DeployForm_Shown(object sender, EventArgs e)
@@ -573,6 +586,19 @@ namespace TPublish.WinFormClientApp.WinForms
                 settingForm.Activate();
                 settingForm.ShowDialog();
             }
+
+            if (_settingInfo == null)
+            {
+                _settingInfo = new MSettingInfo();
+            }
+            this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+            {
+                _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+            }
+            this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.StyleManager = this.metroStyleManager1;
+            this.Refresh();
 
             // 尝试连接服务器
             var isConnect = ApiHelper.Connect(_settingInfo);

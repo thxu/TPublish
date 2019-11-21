@@ -14,6 +14,7 @@ namespace TPublish.WinFormClientApp.WinForms
 {
     public partial class SelectFilesForm : MetroForm
     {
+        private MSettingInfo _settingInfo = new MSettingInfo();
         private MProjectSettingInfo _projectSetting;
         private string _basePath = string.Empty;
         private bool _isChkAllChanging = false;
@@ -23,11 +24,12 @@ namespace TPublish.WinFormClientApp.WinForms
 
         public static Action<List<string>> FileSaveEvent;
 
-        public SelectFilesForm(MProjectSettingInfo projectSetting, string basePath)
+        public SelectFilesForm(MProjectSettingInfo projectSetting, string basePath, MSettingInfo settingInfo)
         {
             InitializeComponent();
             _projectSetting = projectSetting;
             _basePath = basePath;
+            _settingInfo = settingInfo ?? new MSettingInfo();
         }
 
         private void tvFiles_AfterCheck(object sender, TreeViewEventArgs e)
@@ -138,6 +140,15 @@ namespace TPublish.WinFormClientApp.WinForms
                     };
                     this.pannel_ChkList.Controls.Add(chk);
                 }
+
+                this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+                if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+                {
+                    _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+                }
+                this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+                this.StyleManager = this.metroStyleManager1;
+                this.Refresh();
             }
             catch (Exception ex)
             {

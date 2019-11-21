@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
@@ -40,6 +41,12 @@
             this.btnSaveSetting = new MetroFramework.Controls.MetroButton();
             this.btnReset = new MetroFramework.Controls.MetroButton();
             this.btnTestConnect = new MetroFramework.Controls.MetroButton();
+            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
+            this.metroTile1 = new MetroFramework.Controls.MetroTile();
+            this.metroTile2 = new MetroFramework.Controls.MetroTile();
+            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.metroToolTip2 = new MetroFramework.Components.MetroToolTip();
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // metroLabel1
@@ -218,7 +225,7 @@
             // btnSaveSetting
             // 
             this.btnSaveSetting.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            this.btnSaveSetting.Location = new System.Drawing.Point(146, 264);
+            this.btnSaveSetting.Location = new System.Drawing.Point(302, 261);
             this.btnSaveSetting.Name = "btnSaveSetting";
             this.btnSaveSetting.Size = new System.Drawing.Size(98, 36);
             this.btnSaveSetting.TabIndex = 14;
@@ -248,11 +255,49 @@
             this.btnTestConnect.UseSelectable = true;
             this.btnTestConnect.Click += new System.EventHandler(this.btnTestConnect_Click);
             // 
+            // metroStyleManager1
+            // 
+            this.metroStyleManager1.Owner = this;
+            // 
+            // metroTile1
+            // 
+            this.metroTile1.ActiveControl = null;
+            this.metroTile1.Location = new System.Drawing.Point(146, 261);
+            this.metroTile1.Name = "metroTile1";
+            this.metroTile1.Size = new System.Drawing.Size(36, 36);
+            this.metroTile1.TabIndex = 17;
+            this.metroTile1.UseSelectable = true;
+            this.metroTile1.Click += new System.EventHandler(this.metroTile1_Click);
+            // 
+            // metroTile2
+            // 
+            this.metroTile2.ActiveControl = null;
+            this.metroTile2.Location = new System.Drawing.Point(224, 261);
+            this.metroTile2.Name = "metroTile2";
+            this.metroTile2.Size = new System.Drawing.Size(36, 36);
+            this.metroTile2.TabIndex = 18;
+            this.metroTile2.UseSelectable = true;
+            this.metroTile2.Click += new System.EventHandler(this.metroTile2_Click);
+            // 
+            // metroToolTip1
+            // 
+            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip1.StyleManager = null;
+            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // metroToolTip2
+            // 
+            this.metroToolTip2.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip2.StyleManager = null;
+            this.metroToolTip2.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 310);
+            this.Controls.Add(this.metroTile2);
+            this.Controls.Add(this.metroTile1);
             this.Controls.Add(this.btnTestConnect);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnSaveSetting);
@@ -266,7 +311,10 @@
             this.Controls.Add(this.metroLabel2);
             this.Controls.Add(this.metroLabel1);
             this.Name = "SettingForm";
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "设置页面";
+            this.Shown += new System.EventHandler(this.SettingForm_Shown);
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -285,5 +333,10 @@
         private MetroFramework.Controls.MetroButton btnSaveSetting;
         private MetroFramework.Controls.MetroButton btnReset;
         private MetroFramework.Controls.MetroButton btnTestConnect;
+        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
+        private MetroFramework.Controls.MetroTile metroTile2;
+        private MetroFramework.Controls.MetroTile metroTile1;
+        private MetroFramework.Components.MetroToolTip metroToolTip1;
+        private MetroFramework.Components.MetroToolTip metroToolTip2;
     }
 }

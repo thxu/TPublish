@@ -28,13 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pannel_ChkList = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ChkAll = new MetroFramework.Controls.MetroCheckBox();
             this.tvFiles = new System.Windows.Forms.TreeView();
             this.btnSelect = new MetroFramework.Controls.MetroButton();
             this.btnCancel = new MetroFramework.Controls.MetroButton();
+            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // pannel_ChkList
@@ -106,6 +109,10 @@
             this.btnCancel.UseSelectable = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // metroStyleManager1
+            // 
+            this.metroStyleManager1.Owner = this;
+            // 
             // SelectFilesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -116,10 +123,12 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tvFiles);
             this.Name = "SelectFilesForm";
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "选择要发布的文件";
             this.Shown += new System.EventHandler(this.SelectFilesForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -132,5 +141,6 @@
         private MetroFramework.Controls.MetroCheckBox ChkAll;
         private MetroFramework.Controls.MetroButton btnSelect;
         private MetroFramework.Controls.MetroButton btnCancel;
+        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
     }
 }

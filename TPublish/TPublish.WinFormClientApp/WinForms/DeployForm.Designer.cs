@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.buildProgressBar = new MetroFramework.Controls.MetroProgressBar();
             this.richTxtLog = new System.Windows.Forms.RichTextBox();
             this.linkSetting = new MetroFramework.Controls.MetroLink();
+            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
             this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // buildProgressBar
@@ -43,6 +46,7 @@
             this.buildProgressBar.Name = "buildProgressBar";
             this.buildProgressBar.Size = new System.Drawing.Size(505, 23);
             this.buildProgressBar.TabIndex = 1;
+            this.buildProgressBar.UseCustomBackColor = true;
             // 
             // richTxtLog
             // 
@@ -61,13 +65,20 @@
             // linkSetting
             // 
             this.linkSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkSetting.BackColor = System.Drawing.SystemColors.Control;
+            this.linkSetting.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.linkSetting.Location = new System.Drawing.Point(453, 34);
             this.linkSetting.Name = "linkSetting";
             this.linkSetting.Size = new System.Drawing.Size(75, 23);
             this.linkSetting.TabIndex = 6;
             this.linkSetting.Text = "设置";
             this.linkSetting.UseSelectable = true;
+            this.linkSetting.UseStyleColors = true;
             this.linkSetting.Click += new System.EventHandler(this.linkSetting_Click);
+            // 
+            // metroStyleManager1
+            // 
+            this.metroStyleManager1.Owner = null;
             // 
             // deployStep
             // 
@@ -102,8 +113,10 @@
             this.Controls.Add(this.deployStep);
             this.Controls.Add(this.buildProgressBar);
             this.Name = "DeployForm";
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "文件部署";
             this.Shown += new System.EventHandler(this.DeployForm_Shown);
+            ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -113,6 +126,7 @@
         private Controls.StepControl deployStep;
         private System.Windows.Forms.RichTextBox richTxtLog;
         private MetroFramework.Controls.MetroLink linkSetting;
+        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
     }
 }
 
