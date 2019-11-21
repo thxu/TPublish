@@ -6,7 +6,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>E:\Code\C#\Git\TPublish\TPublish\TPublish.Web\bin\Release\Publish</_PublishTargetUrl>
+    <_PublishTargetUrl>D:\Git\TPublish\TPublish\TPublish.Web\bin\Release\Publish</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/ICSharpCode.SharpZipLib.dll">
@@ -187,16 +187,16 @@
       <publishTime>05/10/2018 22:42:40</publishTime>
     </File>
     <File Include="bin/TPublish.Common.dll">
-      <publishTime>11/20/2019 22:33:58</publishTime>
+      <publishTime>11/21/2019 09:19:57</publishTime>
     </File>
     <File Include="bin/TPublish.Common.pdb">
-      <publishTime>11/20/2019 22:33:58</publishTime>
+      <publishTime>11/21/2019 09:19:57</publishTime>
     </File>
     <File Include="bin/TPublish.Web.dll">
-      <publishTime>11/20/2019 22:36:43</publishTime>
+      <publishTime>11/21/2019 09:20:07</publishTime>
     </File>
     <File Include="bin/TPublish.Web.pdb">
-      <publishTime>11/20/2019 22:36:43</publishTime>
+      <publishTime>11/21/2019 09:20:07</publishTime>
     </File>
     <File Include="bin/zh-Hans/System.Web.Helpers.resources.dll">
       <publishTime>05/10/2018 22:42:44</publishTime>
@@ -217,205 +217,205 @@
       <publishTime>05/10/2018 22:42:44</publishTime>
     </File>
     <File Include="Content/bootstrap/bootstrap.css">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/bootstrap/bootstrap.min.css">
-      <publishTime>09/04/2018 00:12:12</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/css/font-awesome.css">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/css/font-awesome.min.css">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/fonts/fontawesome-webfont.eot">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/fonts/fontawesome-webfont.svg">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/fonts/fontawesome-webfont.ttf">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/fonts/fontawesome-webfont.woff">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/fonts/fontawesome-webfont.woff2">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/font-awesome/fonts/FontAwesome.otf">
-      <publishTime>07/07/2018 19:28:06</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/css/jquery.gritter.css">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/css/jquery.gritter0.css">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/images/gritter-light.png">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/images/gritter-long.png">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/images/gritter.png">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/images/ie-spacer.gif">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/gritter/js/jquery.gritter.js">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/img/ui-sam.jpg">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>09/02/2018 18:21:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/style-responsive.css">
-      <publishTime>08/14/2018 23:55:02</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/style.css">
-      <publishTime>09/10/2018 22:05:30</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/table-responsive.css">
-      <publishTime>08/14/2018 23:55:02</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Content/zabuto_calendar.css">
-      <publishTime>08/14/2018 23:55:02</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="fonts/glyphicons-halflings-regular.eot">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="fonts/glyphicons-halflings-regular.svg">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="fonts/glyphicons-halflings-regular.ttf">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="fonts/glyphicons-halflings-regular.woff">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Global.asax">
-      <publishTime>06/28/2018 12:46:53</publishTime>
+      <publishTime>06/25/2018 09:08:21</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/bootstrap.min.js">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/common-scripts.js">
-      <publishTime>07/08/2018 00:11:16</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/customer.js">
-      <publishTime>09/04/2018 00:41:51</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery-1.10.2.js">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery-1.10.2.min.js">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery-1.10.2.min.map">
-      <publishTime>09/02/2018 18:21:45</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery.nicescroll.js">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery.scrollTo.min.js">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery.sparkline.js">
-      <publishTime>07/03/2018 14:18:44</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/jquery.treetable.js">
-      <publishTime>09/04/2018 00:44:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/modernizr-2.6.2.js">
-      <publishTime>09/02/2018 18:21:48</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/Home/LocalAppListView.js">
-      <publishTime>09/10/2018 23:13:23</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/common.js">
-      <publishTime>01/31/2018 10:48:49</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/commonExtend.js">
-      <publishTime>01/31/2018 23:35:56</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/jquery.tmpl.min.js">
-      <publishTime>09/10/2018 23:15:17</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/demo.html">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/doc/jquery下载.url">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/doc/layer交流.url">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/doc/layer官网.url">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/extend/layer.ext.js">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/layer.js">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/default/icon-ext.png">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/default/icon.png">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/default/loading-0.gif">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/default/loading-1.gif">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/default/loading-2.gif">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/layer.css">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/layer.ext.css">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/layer/skin/moon/style.css">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Scripts/Views/widget/layer-v2.1/更新日志.txt">
-      <publishTime>09/10/2018 23:14:22</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Views/Home/Default.cshtml">
-      <publishTime>09/02/2018 22:00:21</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>09/02/2018 22:20:59</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Views/Home/LocalAppListView.cshtml">
-      <publishTime>09/10/2018 23:13:18</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Views/Shared/_ContentLayout.cshtml">
-      <publishTime>09/10/2018 23:14:58</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>09/04/2018 00:31:48</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Views/web.config">
-      <publishTime>06/28/2018 12:46:53</publishTime>
+      <publishTime>06/25/2018 09:08:21</publishTime>
     </File>
     <File Include="Views/_ViewStart.cshtml">
-      <publishTime>09/02/2018 22:14:18</publishTime>
+      <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>11/20/2019 22:36:58</publishTime>
+      <publishTime>11/21/2019 09:22:28</publishTime>
     </File>
   </ItemGroup>
 </Project>

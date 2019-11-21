@@ -100,6 +100,7 @@ namespace TPublish.WinFormClientApp.WinForms
             {
                 richTxtLog.SelectionColor = color ?? Color.Black;
                 this.richTxtLog.AppendText($"{txt}{Environment.NewLine}");
+                this.richTxtLog.ScrollToCaret();
             }
         }
 
@@ -209,14 +210,14 @@ namespace TPublish.WinFormClientApp.WinForms
                 LogAppend($"编译项目失败：未获取到文件生成路径");
                 return false;
             }
-            var _publishFilesDir = filePath.Replace("\\\\", "\\");
+            _publishFilesDir = filePath.Replace("\\\\", "\\");
             if (_publishFilesDir.EndsWith("\\"))
             {
                 _publishFilesDir = _publishFilesDir.Substring(0, _publishFilesDir.Length - 1);
             }
             ClearPublishFolder(_publishFilesDir);
 
-            var buildArg = $"publish \"{_projectModel.ProjPath}\" -c Debug ";
+            var buildArg = $"publish \"{_projectModel.ProjPath}\" -c Debug --no-build ";
             buildArg += " -o \"" + _publishFilesDir + "\"";
             SetProcessVal(2);
 
@@ -486,6 +487,7 @@ namespace TPublish.WinFormClientApp.WinForms
                             {
                                 try
                                 {
+                                    SetProcessVal(20);
                                     LogAppend("开始上传文件");
                                     ApiHelper.UploadZipFile(_settingInfo, type, appId, _zipFilePath);
                                     SetProcessVal(100);
@@ -565,7 +567,7 @@ namespace TPublish.WinFormClientApp.WinForms
         private void DeployForm_Shown(object sender, EventArgs e)
         {
             _settingInfo = SettingHelper.LoadSettingInfo();
-            if (_settingInfo == null || _settingInfo.ApiIpAdress.IsNullOrEmpty() || _settingInfo.ApiKey.IsNullOrEmpty())
+            if (_settingInfo == null || _settingInfo.ApiIpAdress.IsNullOrEmpty())
             {
                 SettingForm settingForm = new SettingForm(_settingInfo);
                 settingForm.Activate();

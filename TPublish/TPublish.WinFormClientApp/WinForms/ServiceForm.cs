@@ -86,6 +86,10 @@ namespace TPublish.WinFormClientApp.WinForms
                         this.cbProjType.SelectedIndex = 1;
                     }
                 }
+                if (_projectModel.ProjType != 3)
+                {
+                    this.cbProjType.Enabled = false;
+                }
 
                 _isInit = false;
             }
