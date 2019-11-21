@@ -26,7 +26,7 @@
 
         public bool IsExe()
         {
-            return this.OutPutType == "Exe";
+            return this.OutPutType.Contains("Exe");
         }
     }
 }

@@ -71,7 +71,7 @@ namespace TPublish.WinFormClientApp.WinForms
                 {
                     this.cbProjType.SelectedIndex = 0;
                 }
-                else if (_projectModel.OutPutType == "Exe")
+                else if (_projectModel.OutPutType.Contains("Exe"))
                 {
                     this.cbProjType.SelectedIndex = 1;
                 }
