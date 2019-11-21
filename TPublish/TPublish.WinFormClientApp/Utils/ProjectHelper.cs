@@ -1,10 +1,11 @@
-﻿using System;
+﻿using NuGet.Frameworks;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
-using NuGet.Frameworks;
 using TPublish.Common;
 using TPublish.Common.Model;
 using TPublish.WinFormClientApp.Model;
@@ -174,62 +175,70 @@ namespace TPublish.WinFormClientApp.Utils
         /// <returns></returns>
         public static ProjectModel ParseProject(string projPath)
         {
-            ProjectModel res = new ProjectModel()
+            try
             {
-                Key = Guid.NewGuid().ToString(),
-                ProjName = Path.GetFileNameWithoutExtension(projPath),
-                ProjPath = projPath,
-                ProjType = 2,
-                OutPutType = string.Empty,
-                IsNetCore = false,
-            };
-
-            XDocument doc = XDocument.Load(projPath);
-            var rootElement = doc.Root;
-            if (rootElement == null)
-            {
-                throw new Exception("无法解析此项目文件");
-            }
-
-            var sdkInfo = rootElement.Attribute("Sdk");
-            res.IsNetCore = sdkInfo?.Value != null;
-
-            if (!res.IsNetCore)
-            {
-                var allPropGroups = rootElement.Elements().Where(n => n.Name.LocalName == "PropertyGroup").ToList();
-                if (allPropGroups != null && allPropGroups.Any())
+                ProjectModel res = new ProjectModel()
                 {
-                    foreach (XElement propGroup in allPropGroups)
+                    Key = Guid.NewGuid().ToString(),
+                    ProjName = Path.GetFileNameWithoutExtension(projPath),
+                    ProjPath = projPath,
+                    ProjType = 2,
+                    OutPutType = string.Empty,
+                    IsNetCore = false,
+                };
+
+                XDocument doc = XDocument.Load(projPath);
+                var rootElement = doc.Root;
+                if (rootElement == null)
+                {
+                    throw new Exception("无法解析此项目文件");
+                }
+
+                var sdkInfo = rootElement.Attribute("Sdk");
+                res.IsNetCore = sdkInfo?.Value != null;
+
+                if (!res.IsNetCore)
+                {
+                    var allPropGroups = rootElement.Elements().Where(n => n.Name.LocalName == "PropertyGroup").ToList();
+                    if (allPropGroups != null && allPropGroups.Any())
                     {
-                        var outputTypeElement = propGroup.Elements().FirstOrDefault(n => n.Name.LocalName == "OutputType");
-                        if (outputTypeElement != null)
+                        foreach (XElement propGroup in allPropGroups)
                         {
-                            res.OutPutType = outputTypeElement.Value;
-                            break;
+                            var outputTypeElement = propGroup.Elements().FirstOrDefault(n => n.Name.LocalName == "OutputType");
+                            if (outputTypeElement != null)
+                            {
+                                res.OutPutType = outputTypeElement.Value;
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                switch (sdkInfo.Value)
+                else
                 {
-                    case "Microsoft.NET.Sdk":
-                    case "Microsoft.NET.Sdk.WindowsDesktop":
-                        res.OutPutType = "Exe";
-                        break;
-                    case "Microsoft.NET.Sdk.Web":
-                        res.OutPutType = "Library";
-                        break;
-                    case "Microsoft.NET.Sdk.Razor":
-                    case "Microsoft.NET.Sdk.Worker":
-                        break;
-                    default:
-                        break;
+                    switch (sdkInfo.Value)
+                    {
+                        case "Microsoft.NET.Sdk":
+                        case "Microsoft.NET.Sdk.WindowsDesktop":
+                            res.OutPutType = "Exe";
+                            break;
+                        case "Microsoft.NET.Sdk.Web":
+                            res.OutPutType = "Library";
+                            break;
+                        case "Microsoft.NET.Sdk.Razor":
+                        case "Microsoft.NET.Sdk.Worker":
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
 
-            return res;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("项目解析失败，" + ex.Message);
+                return new ProjectModel();
+            }
         }
     }
 }
