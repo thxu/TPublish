@@ -18,13 +18,19 @@ namespace TPublish.WinFormClientApp
         static void Main()
         {
             string[] args = Environment.GetCommandLineArgs();
-            MessageBox.Show($"{args.Length}");
+            //MessageBox.Show($"{args.Length},{args[0]},{args[1]}");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             if (args.Length == 2)
             {
                 ProjectModel model = ProjectHelper.ParseProject(args[1]);
+                if (model == null)
+                {
+                    MessageBox.Show("项目解析失败");
+                    return;
+                }
+                model.ProjType = 1;
                 //ProjectModel model = new ProjectModel()
                 //{
                 //    Key = "abed0270-e96c-45b5-b513-785ba08fc0c8",
@@ -43,7 +49,7 @@ namespace TPublish.WinFormClientApp
             }
             else
             {
-                Application.Run(new DeployForm(new ProjectModel() { Key = Guid.NewGuid().ToString()}));
+                Application.Run(new DeployForm(new ProjectModel() { Key = Guid.NewGuid().ToString() }));
             }
         }
     }
