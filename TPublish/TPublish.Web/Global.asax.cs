@@ -13,9 +13,9 @@ namespace TPublish.Web
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        private Timer _timer = new Timer();
+        //private Timer _timer = new Timer();
 
-        private ManualResetEvent waitOne;
+        //private ManualResetEvent waitOne;
 
         protected void Application_Start()
         {

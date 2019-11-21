@@ -53,7 +53,7 @@ namespace TPublish.WinFormClientApp.Utils
                 }
                 return path;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

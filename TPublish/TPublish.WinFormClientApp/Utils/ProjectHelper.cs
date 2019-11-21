@@ -1,5 +1,4 @@
-﻿using NuGet.Frameworks;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -125,7 +124,7 @@ namespace TPublish.WinFormClientApp.Utils
         /// <returns></returns>
         public static MProjectSettingInfo LoadProjectSettingInfo(string projectName)
         {
-            MProjectSettingInfo res = new MProjectSettingInfo();
+            MProjectSettingInfo res;
             var settingFile = GetProjConfigPath(projectName);
             if (!File.Exists(settingFile))
             {

@@ -59,9 +59,7 @@ namespace TPublish.Web.Controllers
                 {
                     string url = $"{serAdress}/UploadZip";
                     FileInfo zipFile = new FileInfo(zipFileFullName);
-                    NameValueCollection dic = new NameValueCollection();
-                    dic.Add("Type", type);
-                    dic.Add("AppId", appid);
+                    NameValueCollection dic = new NameValueCollection {{"Type", type}, {"AppId", appid}};
                     string uploadResStr = HttpHelper.HttpPostData(url, 30000, zipFile.Name, zipFileFullName, dic);
                     var executeRes = uploadResStr.DeserializeObject<Result>();
                     res.IsSucceed = executeRes.IsSucceed;

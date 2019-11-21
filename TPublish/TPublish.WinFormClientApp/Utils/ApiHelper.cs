@@ -21,7 +21,7 @@ namespace TPublish.WinFormClientApp.Utils
                 var res = client.DownloadString(url).DeserializeObject<List<AppView>>();
                 return res;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -37,7 +37,7 @@ namespace TPublish.WinFormClientApp.Utils
 
                 return res.DeserializeObject<List<AppView>>();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<AppView>();
             }
@@ -52,7 +52,7 @@ namespace TPublish.WinFormClientApp.Utils
                 var res = client.DownloadString(url) == "OK";
                 return res;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

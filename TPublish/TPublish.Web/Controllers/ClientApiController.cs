@@ -14,7 +14,7 @@ namespace TPublish.Web.Controllers
 {
     public class ClientApiController : BaseController
     {
-        private static string _apiKey = ConfigurationManager.AppSettings["ApiKey"] ?? string.Empty;
+        private static readonly string _apiKey = ConfigurationManager.AppSettings["ApiKey"] ?? string.Empty;
 
         public string Index()
         {
