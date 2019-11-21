@@ -574,6 +574,10 @@ namespace TPublish.WinFormClientApp.WinForms
             }
             this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             //this.StyleManager = this.metroStyleManager1;
+            this.linkSetting.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.linkSetting.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            this.buildProgressBar.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.buildProgressBar.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.Refresh();
         }
 
@@ -598,6 +602,10 @@ namespace TPublish.WinFormClientApp.WinForms
             }
             this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             this.StyleManager = this.metroStyleManager1;
+            this.linkSetting.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.linkSetting.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            this.buildProgressBar.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.buildProgressBar.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.Refresh();
 
             // 尝试连接服务器
