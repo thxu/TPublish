@@ -32,3 +32,4 @@ TPublishUIDemo/.vscode/settings.json
 /TPublish/TPublish.WinFormClientApp/obj/Debug
 /TPublish/TPublish.WinFormClientApp/bin/Debug
 /TPublish/TPublish.WinFormClientApp/TPublish.WinFormClientApp.csproj.user
+/TPublish/TPublish.VsixClient/obj/Debug

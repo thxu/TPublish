@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29503.13
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.Web", "TPublish.Web\TPublish.Web.csproj", "{6D101593-556B-4DFF-987B-BFA39FAD0A81}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.WinFormClient", "TPublish.WinFormClient\TPublish.WinFormClient.csproj", "{C620D12A-F38E-49AB-AC05-2EE222C9702C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.WinFormClientApp", "TPublish.WinFormClientApp\TPublish.WinFormClientApp.csproj", "{9058F85D-0485-4FF7-8388-146FC1FCA042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPublish.VsixClient", "TPublish.VsixClient\TPublish.VsixClient.csproj", "{3070E065-E256-4D3C-88A2-72CD985438B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{9058F85D-0485-4FF7-8388-146FC1FCA042}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9058F85D-0485-4FF7-8388-146FC1FCA042}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9058F85D-0485-4FF7-8388-146FC1FCA042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3070E065-E256-4D3C-88A2-72CD985438B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3070E065-E256-4D3C-88A2-72CD985438B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3070E065-E256-4D3C-88A2-72CD985438B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3070E065-E256-4D3C-88A2-72CD985438B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
