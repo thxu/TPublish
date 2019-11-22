@@ -34,6 +34,7 @@
             this.linkSetting = new MetroFramework.Controls.MetroLink();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
             this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
+            this.metroStyleExtender1 = new MetroFramework.Components.MetroStyleExtender(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,6 +54,8 @@
             this.richTxtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.metroStyleExtender1.SetApplyMetroTheme(this.richTxtLog, true);
+            this.richTxtLog.BackColor = System.Drawing.SystemColors.Window;
             this.richTxtLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTxtLog.CausesValidation = false;
             this.richTxtLog.Location = new System.Drawing.Point(23, 244);
@@ -84,6 +87,7 @@
             // 
             this.deployStep.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.metroStyleExtender1.SetApplyMetroTheme(this.deployStep, true);
             this.deployStep.BackColor = System.Drawing.Color.Transparent;
             this.deployStep.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.deployStep.ImgCompleted = null;
@@ -127,6 +131,7 @@
         private System.Windows.Forms.RichTextBox richTxtLog;
         private MetroFramework.Controls.MetroLink linkSetting;
         private MetroFramework.Components.MetroStyleManager metroStyleManager1;
+        private MetroFramework.Components.MetroStyleExtender metroStyleExtender1;
     }
 }
 

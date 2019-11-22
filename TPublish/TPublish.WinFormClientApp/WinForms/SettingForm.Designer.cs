@@ -225,7 +225,7 @@
             // btnSaveSetting
             // 
             this.btnSaveSetting.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            this.btnSaveSetting.Location = new System.Drawing.Point(302, 261);
+            this.btnSaveSetting.Location = new System.Drawing.Point(146, 261);
             this.btnSaveSetting.Name = "btnSaveSetting";
             this.btnSaveSetting.Size = new System.Drawing.Size(98, 36);
             this.btnSaveSetting.TabIndex = 14;
@@ -262,9 +262,9 @@
             // metroTile1
             // 
             this.metroTile1.ActiveControl = null;
-            this.metroTile1.Location = new System.Drawing.Point(146, 261);
+            this.metroTile1.Location = new System.Drawing.Point(130, 38);
             this.metroTile1.Name = "metroTile1";
-            this.metroTile1.Size = new System.Drawing.Size(36, 36);
+            this.metroTile1.Size = new System.Drawing.Size(10, 10);
             this.metroTile1.TabIndex = 17;
             this.metroTile1.UseSelectable = true;
             this.metroTile1.Click += new System.EventHandler(this.metroTile1_Click);
@@ -272,9 +272,9 @@
             // metroTile2
             // 
             this.metroTile2.ActiveControl = null;
-            this.metroTile2.Location = new System.Drawing.Point(224, 261);
+            this.metroTile2.Location = new System.Drawing.Point(146, 38);
             this.metroTile2.Name = "metroTile2";
-            this.metroTile2.Size = new System.Drawing.Size(36, 36);
+            this.metroTile2.Size = new System.Drawing.Size(10, 10);
             this.metroTile2.TabIndex = 18;
             this.metroTile2.UseSelectable = true;
             this.metroTile2.Click += new System.EventHandler(this.metroTile2_Click);

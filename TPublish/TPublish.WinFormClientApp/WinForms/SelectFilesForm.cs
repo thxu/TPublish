@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using MetroFramework;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
+using TPublish.Common;
 using TPublish.WinFormClientApp.Model;
 using TPublish.WinFormClientApp.Utils;
 
@@ -118,6 +119,7 @@ namespace TPublish.WinFormClientApp.WinForms
         {
             try
             {
+                
                 RefreshTreeView();
                 foreach (var extension in extList)
                 {

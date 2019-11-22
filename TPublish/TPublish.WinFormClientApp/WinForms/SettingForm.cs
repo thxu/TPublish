@@ -123,6 +123,13 @@ namespace TPublish.WinFormClientApp.WinForms
             //this.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
 
             this.StyleManager = this.metroStyleManager1;
+
+            metroToolTip1.InitialDelay = 300;
+            metroToolTip1.SetToolTip(metroTile1, "点我有惊喜");
+
+            metroToolTip2.InitialDelay = 300;
+            metroToolTip2.SetToolTip(metroTile2, "点我有惊喜");
+
             this.Refresh();
         }
     }

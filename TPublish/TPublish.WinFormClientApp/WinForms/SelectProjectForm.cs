@@ -42,6 +42,7 @@ namespace TPublish.WinFormClientApp.WinForms
                     this.ListSelectedRecords.Groups.Add(folderGroup);
                     this.ListSelectedRecords.Groups.Add(projGroup);
 
+
                     foreach (MSelectedItem selectedItem in _settingInfo.SelectedItems)
                     {
                         ListViewItem item = new ListViewItem() { Text = selectedItem.Name, SubItems = { selectedItem.Path }, Tag = selectedItem.Guid };
@@ -145,7 +146,7 @@ namespace TPublish.WinFormClientApp.WinForms
             {
                 MetroMessageBox.Show(this, ex.Message, "文件选择处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
 
 
             //FolderBrowserDialog dlg = new FolderBrowserDialog();

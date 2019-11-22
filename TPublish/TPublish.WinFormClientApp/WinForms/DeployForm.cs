@@ -447,6 +447,12 @@ namespace TPublish.WinFormClientApp.WinForms
                         break;
                     case 2:
                         {
+                            if (_publishFilesDir.IsNullOrEmpty())
+                            {
+                                MetroMessageBox.Show(this, "请选择文件目录或者项目文件", "未找到要部署的文件", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                SetStepAsync(1);
+                                return;
+                            }
                             _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
                             SelectFilesForm filesForm = new SelectFilesForm(_projectSetting, _publishFilesDir, _settingInfo);
                             filesForm.Activate();
@@ -573,7 +579,8 @@ namespace TPublish.WinFormClientApp.WinForms
                 _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
             }
             this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
-            //this.StyleManager = this.metroStyleManager1;
+            this.StyleManager = this.metroStyleManager1;
+            this.deployStep.StyleManager = this.metroStyleManager1;
             this.linkSetting.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             this.linkSetting.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.buildProgressBar.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
@@ -602,6 +609,7 @@ namespace TPublish.WinFormClientApp.WinForms
             }
             this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             this.StyleManager = this.metroStyleManager1;
+            this.deployStep.StyleManager = this.metroStyleManager1;
             this.linkSetting.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             this.linkSetting.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.buildProgressBar.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using MetroFramework;
+using MetroFramework.Components;
+using MetroFramework.Drawing;
 using TPublish.WinFormClientApp.Utils;
 
 namespace TPublish.WinFormClientApp.Controls
@@ -24,6 +27,51 @@ namespace TPublish.WinFormClientApp.Controls
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.MouseDown += Step_MouseDown;
+        }
+
+        /// <summary>
+        /// The m step style
+        /// </summary>
+        private MetroColorStyle _mStepStyle = MetroColorStyle.Default;
+
+        /// <summary>
+        /// 步骤背景色
+        /// </summary>
+        /// <value>The color of the step back.</value>
+        [Description("步骤Style"), Category("自定义")]
+        public MetroColorStyle StepStyle
+        {
+            get
+            {
+                if (DesignMode || _mStepStyle != MetroColorStyle.Default)
+                {
+                    return _mStepStyle;
+                }
+
+                if (StyleManager != null && _mStepStyle == MetroColorStyle.Default)
+                {
+                    return StyleManager.Style;
+                }
+                if (StyleManager == null && _mStepStyle == MetroColorStyle.Default)
+                {
+                    return MetroColorStyle.Default;
+                }
+                return _mStepStyle;
+            }
+            set
+            {
+                _mStepStyle = value;
+                Refresh();
+            }
+        }
+
+        private MetroStyleManager metroStyleManager = null;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MetroStyleManager StyleManager
+        {
+            get { return metroStyleManager; }
+            set { metroStyleManager = value; }
         }
 
         /// <summary>
@@ -264,7 +312,7 @@ namespace TPublish.WinFormClientApp.Controls
 
                     if (_mStepIndex > i)
                     {
-                        g.FillEllipse(new SolidBrush(_mStepForeColor), new Rectangle(new Point(intLeft + i * (_mStepWidth + intSplitWidth) + 2, y + 2), new Size(_mStepWidth - 4, _mStepWidth - 4)));
+                        g.FillEllipse(new SolidBrush(MetroPaint.GetStyleColor(StepStyle) ), new Rectangle(new Point(intLeft + i * (_mStepWidth + intSplitWidth) + 2, y + 2), new Size(_mStepWidth - 4, _mStepWidth - 4)));
 
                     }
                     if (_mStepIndex > i && _mImgCompleted != null)
@@ -279,7 +327,7 @@ namespace TPublish.WinFormClientApp.Controls
                     #endregion
 
                     var sizeTxt = g.MeasureString(_mSteps[i], this.Font);
-                    g.DrawString(_mSteps[i], Font, new SolidBrush(_mStepIndex > i ? _mStepForeColor : _mStepBackColor), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + (_mStepWidth - (int)sizeTxt.Width) / 2 + 1, intTxtY));
+                    g.DrawString(_mSteps[i], Font, new SolidBrush(_mStepIndex > i ? MetroPaint.GetStyleColor(StepStyle) : _mStepBackColor), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + (_mStepWidth - (int)sizeTxt.Width) / 2 + 1, intTxtY));
                 }
 
                 for (var i = 0; i < _mSteps.Length; i++)
@@ -290,12 +338,12 @@ namespace TPublish.WinFormClientApp.Controls
                         {
                             if (_mStepIndex == i + 1)
                             {
-                                g.DrawLine(new Pen(_mStepForeColor, _mLineWidth), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth - 3, y + ((_mStepWidth) / 2)), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth + intSplitWidth / 2, y + ((_mStepWidth) / 2)));
+                                g.DrawLine(new Pen(MetroPaint.GetStyleColor(StepStyle), _mLineWidth), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth - 3, y + ((_mStepWidth) / 2)), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth + intSplitWidth / 2, y + ((_mStepWidth) / 2)));
                                 g.DrawLine(new Pen(_mStepBackColor, _mLineWidth), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth + intSplitWidth / 2, y + ((_mStepWidth) / 2)), new Point(intLeft + (i + 1) * (_mStepWidth + intSplitWidth) + 10, y + ((_mStepWidth) / 2)));
                             }
                             else
                             {
-                                g.DrawLine(new Pen(_mStepForeColor, _mLineWidth), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth - 3, y + ((_mStepWidth) / 2)), new Point(intLeft + (i + 1) * (_mStepWidth + intSplitWidth) + 10, y + ((_mStepWidth) / 2)));
+                                g.DrawLine(new Pen(MetroPaint.GetStyleColor(StepStyle), _mLineWidth), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + _mStepWidth - 3, y + ((_mStepWidth) / 2)), new Point(intLeft + (i + 1) * (_mStepWidth + intSplitWidth) + 10, y + ((_mStepWidth) / 2)));
                             }
                         }
                     }
