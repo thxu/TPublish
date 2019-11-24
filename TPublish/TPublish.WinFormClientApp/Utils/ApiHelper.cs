@@ -12,26 +12,26 @@ namespace TPublish.WinFormClientApp.Utils
 {
     public class ApiHelper
     {
-        public static List<AppView> GetAllIISAppNames(MSettingInfo setting)
+        public static List<AppView> GetAllIISAppNames(ServiceInfo currService)
         {
             try
             {
-                string url = $"{setting.GetApiUrl()}/GetAllIISAppView";
+                string url = $"{currService.GetApiUrl()}/GetAllIISAppView";
                 WebClient client = new WebClient();
                 var res = client.DownloadString(url).DeserializeObject<List<AppView>>();
                 return res;
             }
             catch (Exception)
             {
-                return null;
+                return new List<AppView>();
             }
         }
 
-        public static List<AppView> GetExeAppView(MSettingInfo setting, string appName)
+        public static List<AppView> GetExeAppView(ServiceInfo currService, string appName)
         {
             try
             {
-                string url = $"{setting.GetApiUrl()}/GetExeAppView?appName={appName}";
+                string url = $"{currService.GetApiUrl()}/GetExeAppView?appName={appName}";
 
                 var res = new HttpHelper().HttpGet(url, null, Encoding.UTF8, false, false, 10000);
 
@@ -47,7 +47,23 @@ namespace TPublish.WinFormClientApp.Utils
         {
             try
             {
-                string url = $"{setting.GetApiUrl()}/CheckConnection?apiKey=" + setting.ApiKey;
+                var currService = setting.GetCurrServiceInfo();
+                string url = $"{currService.GetApiUrl()}/CheckConnection?apiKey=" + currService.ApiKey;
+                WebClient client = new WebClient();
+                var res = client.DownloadString(url) == "OK";
+                return res;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool Connect(ServiceInfo currService)
+        {
+            try
+            {
+                string url = $"{currService.GetApiUrl()}/CheckConnection?apiKey=" + currService.ApiKey;
                 WebClient client = new WebClient();
                 var res = client.DownloadString(url) == "OK";
                 return res;
@@ -67,7 +83,7 @@ namespace TPublish.WinFormClientApp.Utils
                 dic.Add("Type", projType == "Library" ? "iis" : "exe");
                 dic.Add("AppId", appId);
 
-                string url = $"{setting.GetApiUrl()}/UploadZip";
+                string url = $"{setting.GetCurrServiceInfo()?.GetApiUrl()}/UploadZip";
                 string uploadResStr = HttpHelper.HttpPostData(url, 30000, Path.GetFileName(fullZipPath), fullZipPath, dic);
                 var uploadRes = uploadResStr.DeserializeObject<Result>();
                 return uploadRes;

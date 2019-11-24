@@ -52,9 +52,12 @@ namespace TPublish.WinFormClientApp.WinForms
         private void cbProjType_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             MetroComboBox comboBox = (MetroComboBox)sender;
+
+            var currService = this.cbServiceList.SelectedItem as ServiceInfo;
+
             _appViews = comboBox.SelectedIndex == 0
-                ? ApiHelper.GetAllIISAppNames(_settingInfo)
-                : ApiHelper.GetExeAppView(_settingInfo, _projectModel.ProjType == 3 ? "" : _projectModel.ProjName);
+                ? ApiHelper.GetAllIISAppNames(currService)
+                : ApiHelper.GetExeAppView(currService, _projectModel.ProjType == 3 ? "" : _projectModel.ProjName);
             this.cbServiceName.DataSource = _appViews;
             this.cbServiceName.DisplayMember = "AppAlias";
             this.cbServiceName.ValueMember = "AppPhysicalPath";
@@ -67,6 +70,26 @@ namespace TPublish.WinFormClientApp.WinForms
             try
             {
                 _isInit = true;
+                if (_settingInfo.ServiceInfos != null && _settingInfo.ServiceInfos.Any())
+                {
+                    this.cbServiceList.DataSource = _settingInfo.ServiceInfos;
+                    this.cbServiceList.DisplayMember = "Alias";
+                    this.cbServiceList.ValueMember = "ApiIpAdress";
+                    this.cbServiceList.SelectedIndex = _settingInfo.ServiceInfos.FindIndex(n => n.IsDefault);
+
+                    //int defaultIndex = 0;
+                    //for (int i = 0; i < _settingInfo.ServiceInfos.Count; i++)
+                    //{
+                    //    if (_settingInfo.ServiceInfos[i].IsDefault)
+                    //    {
+                    //        defaultIndex = i;
+                    //    }
+                    //    this.cbServiceList.Items.Add(_settingInfo.ServiceInfos[i].ApiIpAdress);
+                    //}
+
+                    //this.cbServiceList.SelectedIndex = defaultIndex;
+                }
+
                 if (_projectModel.OutPutType == "Library")
                 {
                     this.cbProjType.SelectedIndex = 0;
@@ -140,6 +163,19 @@ namespace TPublish.WinFormClientApp.WinForms
             {
                 MetroMessageBox.Show(this, ex.Message, "部署处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void cbServiceList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var currService = this.cbServiceList.SelectedItem as ServiceInfo;
+            _appViews = this.cbProjType.SelectedIndex == 0
+                ? ApiHelper.GetAllIISAppNames(currService)
+                : ApiHelper.GetExeAppView(currService, _projectModel.ProjType == 3 ? "" : _projectModel.ProjName);
+            this.cbServiceName.DataSource = _appViews;
+            this.cbServiceName.DisplayMember = "AppAlias";
+            this.cbServiceName.ValueMember = "AppPhysicalPath";
+            this.cbServiceName.SelectedIndex = _appViews.FindIndex(n => n.Id == _projectSetting.LastChooseAppName);
+            showLbText(this.lbSerPath, (this.cbServiceName.SelectedItem as AppView)?.AppPhysicalPath ?? string.Empty);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -449,7 +450,7 @@ namespace TPublish.WinFormClientApp.WinForms
                         {
                             if (_publishFilesDir.IsNullOrEmpty())
                             {
-                                MetroMessageBox.Show(this, "请选择文件目录或者项目文件", "未找到要部署的文件", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MetroMessageBox.Show(this, "请先选择文件目录或者项目文件", "无法打开文件选择窗口", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 SetStepAsync(1);
                                 return;
                             }
@@ -480,6 +481,7 @@ namespace TPublish.WinFormClientApp.WinForms
                                 catch (Exception ex)
                                 {
                                     MetroMessageBox.Show(this, ex.Message, "文件处理错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    _zipFilePath = string.Empty;
                                 }
                             };
                             filesForm.ShowDialog();
@@ -487,6 +489,19 @@ namespace TPublish.WinFormClientApp.WinForms
                         break;
                     case 3:
                         {
+                            if (_projectSetting == null)
+                            {
+                                MetroMessageBox.Show(this, "请选择文件目录或者项目文件", "无法打开发布到服务器窗口", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                SetStepAsync(1);
+                                return;
+                            }
+
+                            if (_zipFilePath.IsNullOrEmpty())
+                            {
+                                MetroMessageBox.Show(this, "重新选择需要发布的文件进行压缩", "未找到压缩文件", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                SetStepAsync(2);
+                                return;
+                            }
                             ServiceForm form = new ServiceForm(_projectModel, _projectSetting, _settingInfo);
                             form.Activate();
                             ServiceForm.ServiceSelectedEvent = (type, appId) =>
@@ -565,9 +580,14 @@ namespace TPublish.WinFormClientApp.WinForms
         /// <param name="e"></param>
         private void linkSetting_Click(object sender, EventArgs e)
         {
+            var settingBackUp = _settingInfo.DeepCopy();
             SettingForm settingForm = new SettingForm(_settingInfo);
             settingForm.Activate();
-            settingForm.ShowDialog();
+            var dlgRes = settingForm.ShowDialog();
+            if (dlgRes != DialogResult.OK)
+            {
+                _settingInfo = settingBackUp;
+            }
 
             if (_settingInfo == null)
             {
@@ -591,16 +611,21 @@ namespace TPublish.WinFormClientApp.WinForms
         private void DeployForm_Shown(object sender, EventArgs e)
         {
             _settingInfo = SettingHelper.LoadSettingInfo();
-            if (_settingInfo == null || _settingInfo.ApiIpAdress.IsNullOrEmpty())
+            if (_settingInfo?.GetCurrServiceInfo() == null)
             {
+                var settingBackUp = _settingInfo.DeepCopy();
                 SettingForm settingForm = new SettingForm(_settingInfo);
                 settingForm.Activate();
-                settingForm.ShowDialog();
+                var dlgRes = settingForm.ShowDialog();
+                if (dlgRes != DialogResult.OK)
+                {
+                    _settingInfo = settingBackUp;
+                }
             }
 
             if (_settingInfo == null)
             {
-                _settingInfo = new MSettingInfo();
+                _settingInfo = new MSettingInfo() { SelectedItems = new List<MSelectedItem>(), ServiceInfos = new List<ServiceInfo>() };
             }
             this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
@@ -620,8 +645,7 @@ namespace TPublish.WinFormClientApp.WinForms
             var isConnect = ApiHelper.Connect(_settingInfo);
             if (!isConnect)
             {
-                MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                MetroMessageBox.Show(this, "默认服务器连接失败，请检查服务器地址或者选择其他服务器进行部署", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             SetStepIndex(1);

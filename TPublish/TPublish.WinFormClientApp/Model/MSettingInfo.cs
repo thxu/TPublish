@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TPublish.WinFormClientApp.Model
 {
@@ -14,14 +15,19 @@ namespace TPublish.WinFormClientApp.Model
         public string Authour { get; set; }
 
         /// <summary>
-        /// api地址
+        /// 服务器信息
         /// </summary>
-        public string ApiIpAdress { get; set; }
+        public List<ServiceInfo> ServiceInfos { get; set; }
 
-        /// <summary>
-        /// api key
-        /// </summary>
-        public string ApiKey { get; set; }
+        ///// <summary>
+        ///// api地址
+        ///// </summary>
+        //public string ApiIpAdress { get; set; }
+
+        ///// <summary>
+        ///// api key
+        ///// </summary>
+        //public string ApiKey { get; set; }
 
         /// <summary>
         /// 微软编译器路径
@@ -33,13 +39,35 @@ namespace TPublish.WinFormClientApp.Model
         /// </summary>
         public List<MSelectedItem> SelectedItems { get; set; }
 
-        /// <summary>
-        /// 获取api地址
-        /// </summary>
-        /// <returns></returns>
-        public string GetApiUrl()
+        ///// <summary>
+        ///// 获取api地址
+        ///// </summary>
+        ///// <returns></returns>
+        //public string GetApiUrl()
+        //{
+        //    var apiService = GetCurrServiceInfo();
+        //    if (apiService == null)
+        //    {
+        //        return null;
+        //    }
+        //    return $"{apiService?.ApiIpAdress}/ClientApi";
+        //}
+
+        public ServiceInfo GetCurrServiceInfo()
         {
-            return $"{ApiIpAdress}/ClientApi";
+            ServiceInfo res = null;
+            if (this.ServiceInfos != null && this.ServiceInfos.Any())
+            {
+                res = this.ServiceInfos.FirstOrDefault(n => n.IsDefault) ??
+                       this.ServiceInfos.FirstOrDefault();
+            }
+
+            //if (res ==  null)
+            //{
+            //    throw new Exception("请先配置服务器信息");
+            //}
+
+            return res;
         }
 
         /// <summary>
@@ -51,6 +79,32 @@ namespace TPublish.WinFormClientApp.Model
         /// 风格
         /// </summary>
         public int MetroColorStyle { get; set; }
+    }
+
+    public class ServiceInfo
+    {
+        public string Alias { get; set; }
+
+        public bool IsDefault { get; set; }
+
+        /// <summary>
+        /// api地址
+        /// </summary>
+        public string ApiIpAdress { get; set; }
+
+        /// <summary>
+        /// api key
+        /// </summary>
+        public string ApiKey { get; set; }
+
+        /// <summary>
+        /// 获取api地址
+        /// </summary>
+        /// <returns></returns>
+        public string GetApiUrl()
+        {
+            return $"{ApiIpAdress}/ClientApi";
+        }
     }
 
     public class MSelectedItem

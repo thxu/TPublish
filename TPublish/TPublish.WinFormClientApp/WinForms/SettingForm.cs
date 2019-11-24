@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using MetroFramework;
 using MetroFramework.Forms;
@@ -17,8 +21,6 @@ namespace TPublish.WinFormClientApp.WinForms
             _settingInfo = settingInfo ?? new MSettingInfo();
 
             this.txtAuthor.Text = _settingInfo.Authour;
-            this.txtApiAdress.Text = _settingInfo.ApiIpAdress;
-            this.txtApiKey.Text = _settingInfo.ApiKey;
             this.txtMsBuildPath.Text = _settingInfo.MsBuildExePath;
         }
 
@@ -40,17 +42,7 @@ namespace TPublish.WinFormClientApp.WinForms
             try
             {
                 _settingInfo.Authour = this.txtAuthor.Text;
-                _settingInfo.ApiIpAdress = this.txtApiAdress.Text;
-                _settingInfo.ApiKey = this.txtApiKey.Text;
                 _settingInfo.MsBuildExePath = this.txtMsBuildPath.Text;
-
-                var isConnect = ApiHelper.Connect(_settingInfo);
-                if (!isConnect)
-                {
-                    MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
 
                 var isSuccess = SettingHelper.SaveSettingInfo(_settingInfo);
                 if (!isSuccess)
@@ -58,6 +50,8 @@ namespace TPublish.WinFormClientApp.WinForms
                     MetroMessageBox.Show(this, "保存失败，请稍后再试", "保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (System.Exception ex)
@@ -71,66 +65,168 @@ namespace TPublish.WinFormClientApp.WinForms
             this.txtMsBuildPath.Text = SettingHelper.GetMsBuildPath();
         }
 
-        private void btnTestConnect_Click(object sender, System.EventArgs e)
-        {
-            try
-            {
-                var settingTmp = _settingInfo.DeepCopy();
-                settingTmp.Authour = this.txtAuthor.Text;
-                settingTmp.ApiIpAdress = this.txtApiAdress.Text;
-                settingTmp.ApiKey = this.txtApiKey.Text;
-                var isConnect = ApiHelper.Connect(settingTmp);
-                if (!isConnect)
-                {
-                    MetroMessageBox.Show(this, "服务器连接失败，请检查服务器地址", "无法连接到服务器", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                MetroMessageBox.Show(this, "连接成功", "连接成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (System.Exception ex)
-            {
-                MetroMessageBox.Show(this, ex.Message, "连接到服务器出错", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
         private void metroTile1_Click(object sender, System.EventArgs e)
         {
             _settingInfo.MetroThemeStyle = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Dark.GetHashCode() : MetroThemeStyle.Light.GetHashCode();
             this.metroStyleManager1.Theme = (MetroThemeStyle)_settingInfo.MetroThemeStyle;
-            //this.Theme = (MetroThemeStyle)_settingInfo.MetroThemeStyle;
-
-            //this.Refresh();
         }
 
         private void metroTile2_Click(object sender, System.EventArgs e)
         {
             _settingInfo.MetroColorStyle = (_settingInfo.MetroColorStyle + 1) % 15;
             this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
-            //this.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
-            //this.Refresh();
         }
 
         private void SettingForm_Shown(object sender, System.EventArgs e)
         {
-            this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
-            //this.Theme = _settingInfo.MetroThemeStyle == 0 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
-
-            if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+            try
             {
-                _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+                RefreshServiceList();
+
+                this.metroStyleManager1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+
+                if (_settingInfo.MetroColorStyle < 0 || _settingInfo.MetroColorStyle >= 15)
+                {
+                    _settingInfo.MetroColorStyle = MetroColorStyle.Blue.GetHashCode();
+                }
+                this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+
+                this.StyleManager = this.metroStyleManager1;
+
+                this.Refresh();
             }
-            this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
-            //this.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            catch (Exception ex)
+            {
+                MetroMessageBox.Show(this, ex.Message, "设置页面初始化错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-            this.StyleManager = this.metroStyleManager1;
+        private void RefreshServiceList()
+        {
+            if (_settingInfo.ServiceInfos != null && _settingInfo.ServiceInfos.Any())
+            {
+                this.gridServices.Rows.Clear();
+                if (!_settingInfo.ServiceInfos.Any(n=>n.IsDefault))
+                {
+                    var first = _settingInfo.ServiceInfos.First();
+                    first.IsDefault = true;
+                }
+                foreach (ServiceInfo serviceInfo in _settingInfo.ServiceInfos)
+                {
+                    var index = this.gridServices.Rows.Add();
+                    this.gridServices.Rows[index].Cells[0] = new DataGridViewTextBoxCell()
+                    {
+                        Value = $"{serviceInfo.Alias}{(serviceInfo.IsDefault ? "(默认)" : "")}",
+                        Style = new DataGridViewCellStyle()
+                        {
+                            Font = serviceInfo.IsDefault ? new Font(DefaultFont, FontStyle.Italic | FontStyle.Bold) : DefaultFont,
+                        }
+                    };
+                    this.gridServices.Rows[index].Cells[1] = new DataGridViewTextBoxCell()
+                    {
+                        Value = serviceInfo.ApiIpAdress,
+                        Style = new DataGridViewCellStyle()
+                        {
+                            Font = serviceInfo.IsDefault ? new Font(DefaultFont, FontStyle.Italic | FontStyle.Bold) : DefaultFont,
+                        }
+                    };
+                }
+                this.gridServices.Refresh();
+            }
+        }
 
-            metroToolTip1.InitialDelay = 300;
-            metroToolTip1.SetToolTip(metroTile1, "点我有惊喜");
+        private void gridServices_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.RowIndex >= 0)
+                {
+                    //若行已是选中状态就不再进行设置
+                    if (gridServices.Rows[e.RowIndex].Selected == false)
+                    {
+                        gridServices.ClearSelection();
+                        gridServices.Rows[e.RowIndex].Selected = true;
+                    }
+                    //只选中一行时设置活动单元格
+                    if (gridServices.SelectedRows.Count == 1)
+                    {
+                        gridServices.CurrentCell = gridServices.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                    }
+                    //弹出操作菜单
+                    menuOfServiceGrid.Show(MousePosition.X, MousePosition.Y);
+                }
+            }
+        }
 
-            metroToolTip2.InitialDelay = 300;
-            metroToolTip2.SetToolTip(metroTile2, "点我有惊喜");
+        private void AddToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddServiceForm form = new AddServiceForm(this._settingInfo);
+            AddServiceForm.ServiceSaveEvent = info =>
+            {
+                if (_settingInfo.ServiceInfos == null)
+                {
+                    _settingInfo.ServiceInfos = new List<ServiceInfo>();
+                }
 
-            this.Refresh();
+                if (_settingInfo.ServiceInfos.Count == 0)
+                {
+                    info.IsDefault = true;
+                }
+                this._settingInfo.ServiceInfos.Add(info);
+            };
+            form.Activate();
+            form.ShowDialog();
+            RefreshServiceList();
+        }
+
+        private void DelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var currRow = this.gridServices.CurrentRow;
+            if (currRow == null)
+            {
+                return;
+            }
+
+            var apiService = currRow.Cells[1].Value.ToString().Trim();
+            if (apiService.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            if (_settingInfo.ServiceInfos != null && _settingInfo.ServiceInfos.Any())
+            {
+                for (int i = _settingInfo.ServiceInfos.Count - 1; i >= 0; i--)
+                {
+                    if (_settingInfo.ServiceInfos[i].ApiIpAdress.Trim() == apiService)
+                    {
+                        _settingInfo.ServiceInfos.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+            this.RefreshServiceList();
+        }
+
+        private void SetDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var currRow = this.gridServices.CurrentRow;
+            if (currRow == null)
+            {
+                return;
+            }
+            var apiService = currRow.Cells[1].Value.ToString().Trim();
+            if (apiService.IsNullOrEmpty())
+            {
+                return;
+            }
+            if (_settingInfo.ServiceInfos != null && _settingInfo.ServiceInfos.Any())
+            {
+                for (int i = _settingInfo.ServiceInfos.Count - 1; i >= 0; i--)
+                {
+                    _settingInfo.ServiceInfos[i].IsDefault = _settingInfo.ServiceInfos[i].ApiIpAdress.Trim() == apiService;
+                }
+            }
+            this.RefreshServiceList();
         }
     }
 }

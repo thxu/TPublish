@@ -41,13 +41,15 @@
             this.btnCancel = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
+            this.cbServiceList = new MetroFramework.Controls.MetroComboBox();
+            this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // metroLabel1
             // 
             this.metroLabel1.AutoSize = true;
-            this.metroLabel1.Location = new System.Drawing.Point(37, 81);
+            this.metroLabel1.Location = new System.Drawing.Point(37, 126);
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(107, 19);
             this.metroLabel1.TabIndex = 0;
@@ -56,7 +58,7 @@
             // metroLabel2
             // 
             this.metroLabel2.AutoSize = true;
-            this.metroLabel2.Location = new System.Drawing.Point(23, 122);
+            this.metroLabel2.Location = new System.Drawing.Point(23, 168);
             this.metroLabel2.Name = "metroLabel2";
             this.metroLabel2.Size = new System.Drawing.Size(121, 19);
             this.metroLabel2.TabIndex = 1;
@@ -65,7 +67,7 @@
             // metroLabel3
             // 
             this.metroLabel3.AutoSize = true;
-            this.metroLabel3.Location = new System.Drawing.Point(23, 163);
+            this.metroLabel3.Location = new System.Drawing.Point(23, 210);
             this.metroLabel3.Name = "metroLabel3";
             this.metroLabel3.Size = new System.Drawing.Size(121, 19);
             this.metroLabel3.TabIndex = 2;
@@ -74,7 +76,7 @@
             // metroLabel4
             // 
             this.metroLabel4.AutoSize = true;
-            this.metroLabel4.Location = new System.Drawing.Point(37, 204);
+            this.metroLabel4.Location = new System.Drawing.Point(37, 254);
             this.metroLabel4.Name = "metroLabel4";
             this.metroLabel4.Size = new System.Drawing.Size(107, 19);
             this.metroLabel4.TabIndex = 3;
@@ -84,7 +86,7 @@
             // lbSerPath
             // 
             this.lbSerPath.AutoSize = true;
-            this.lbSerPath.Location = new System.Drawing.Point(150, 163);
+            this.lbSerPath.Location = new System.Drawing.Point(150, 210);
             this.lbSerPath.Name = "lbSerPath";
             this.lbSerPath.Size = new System.Drawing.Size(15, 19);
             this.lbSerPath.TabIndex = 4;
@@ -99,7 +101,7 @@
             this.cbProjType.Items.AddRange(new object[] {
             "IIS",
             "EXE"});
-            this.cbProjType.Location = new System.Drawing.Point(150, 76);
+            this.cbProjType.Location = new System.Drawing.Point(150, 121);
             this.cbProjType.Name = "cbProjType";
             this.cbProjType.Size = new System.Drawing.Size(236, 29);
             this.cbProjType.TabIndex = 5;
@@ -112,7 +114,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbServiceName.FormattingEnabled = true;
             this.cbServiceName.ItemHeight = 23;
-            this.cbServiceName.Location = new System.Drawing.Point(150, 117);
+            this.cbServiceName.Location = new System.Drawing.Point(150, 163);
             this.cbServiceName.Name = "cbServiceName";
             this.cbServiceName.Size = new System.Drawing.Size(236, 29);
             this.cbServiceName.TabIndex = 6;
@@ -136,7 +138,7 @@
             this.txtDeployRemark.CustomButton.UseSelectable = true;
             this.txtDeployRemark.CustomButton.Visible = false;
             this.txtDeployRemark.Lines = new string[0];
-            this.txtDeployRemark.Location = new System.Drawing.Point(150, 204);
+            this.txtDeployRemark.Location = new System.Drawing.Point(150, 254);
             this.txtDeployRemark.MaxLength = 32767;
             this.txtDeployRemark.Multiline = true;
             this.txtDeployRemark.Name = "txtDeployRemark";
@@ -157,7 +159,7 @@
             // 
             this.btnDeploy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnDeploy.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            this.btnDeploy.Location = new System.Drawing.Point(150, 204);
+            this.btnDeploy.Location = new System.Drawing.Point(150, 253);
             this.btnDeploy.Name = "btnDeploy";
             this.btnDeploy.Size = new System.Drawing.Size(75, 46);
             this.btnDeploy.TabIndex = 8;
@@ -169,7 +171,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            this.btnCancel.Location = new System.Drawing.Point(242, 204);
+            this.btnCancel.Location = new System.Drawing.Point(242, 253);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 46);
             this.btnCancel.TabIndex = 9;
@@ -187,11 +189,35 @@
             // 
             this.metroStyleManager1.Owner = this;
             // 
+            // cbServiceList
+            // 
+            this.cbServiceList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbServiceList.FormattingEnabled = true;
+            this.cbServiceList.ItemHeight = 23;
+            this.cbServiceList.Location = new System.Drawing.Point(150, 79);
+            this.cbServiceList.Name = "cbServiceList";
+            this.cbServiceList.Size = new System.Drawing.Size(236, 29);
+            this.cbServiceList.TabIndex = 11;
+            this.cbServiceList.UseSelectable = true;
+            this.cbServiceList.SelectedIndexChanged += new System.EventHandler(this.cbServiceList_SelectedIndexChanged);
+            // 
+            // metroLabel5
+            // 
+            this.metroLabel5.AutoSize = true;
+            this.metroLabel5.Location = new System.Drawing.Point(51, 84);
+            this.metroLabel5.Name = "metroLabel5";
+            this.metroLabel5.Size = new System.Drawing.Size(93, 19);
+            this.metroLabel5.TabIndex = 10;
+            this.metroLabel5.Text = "服务器地址：";
+            // 
             // ServiceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(416, 269);
+            this.ClientSize = new System.Drawing.Size(416, 317);
+            this.Controls.Add(this.cbServiceList);
+            this.Controls.Add(this.metroLabel5);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnDeploy);
             this.Controls.Add(this.txtDeployRemark);
@@ -226,5 +252,7 @@
         private MetroFramework.Controls.MetroButton btnCancel;
         private MetroFramework.Components.MetroToolTip toolTip1;
         private MetroFramework.Components.MetroStyleManager metroStyleManager1;
+        private MetroFramework.Controls.MetroComboBox cbServiceList;
+        private MetroFramework.Controls.MetroLabel metroLabel5;
     }
 }
