@@ -400,7 +400,7 @@ namespace TPublish.WinFormClientApp.WinForms
                                 SetProcessVal(100);
                                 SetStepIndex(2);
 
-                            }, null, new List<Control>() { this, this.linkSetting }.ToArray());
+                            }, null, this);
                         }
                         else
                         {
