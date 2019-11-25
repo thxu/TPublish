@@ -35,8 +35,8 @@ namespace TPublish.WinFormClientApp.WinForms
 
         #region 线程中操作UI控件
 
-        delegate void SetProcessCallback(int val);
-        private void SetProcessVal(int val)
+        delegate void SetProcessCallback(int val, bool isUseMarqueeStyle);
+        private void SetProcessVal(int val, bool isUseMarqueeStyle = false)
         {
             if (this.buildProgressBar.InvokeRequired)
             {
@@ -48,10 +48,11 @@ namespace TPublish.WinFormClientApp.WinForms
                     }
                 }
                 SetProcessCallback callback = new SetProcessCallback(SetProcessVal);
-                this.buildProgressBar.Invoke(callback, new object[] { val });
+                this.buildProgressBar.Invoke(callback, new object[] { val, isUseMarqueeStyle });
             }
             else
             {
+                this.buildProgressBar.ProgressBarStyle = isUseMarqueeStyle ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
                 this.buildProgressBar.Value = val;
             }
         }
@@ -399,7 +400,7 @@ namespace TPublish.WinFormClientApp.WinForms
                                 SetProcessVal(100);
                                 SetStepIndex(2);
 
-                            }, null, this);
+                            }, null, new List<Control>() { this, this.linkSetting }.ToArray());
                         }
                         else
                         {
@@ -508,7 +509,7 @@ namespace TPublish.WinFormClientApp.WinForms
                             {
                                 try
                                 {
-                                    SetProcessVal(20);
+                                    SetProcessVal(20, true);
                                     LogAppend("开始上传文件");
                                     ApiHelper.UploadZipFile(_settingInfo, type, appId, _zipFilePath);
                                     SetProcessVal(100);

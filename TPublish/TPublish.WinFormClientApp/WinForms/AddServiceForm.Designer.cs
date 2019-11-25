@@ -60,6 +60,7 @@
             this.txtApiAlias.MaxLength = 32767;
             this.txtApiAlias.Name = "txtApiAlias";
             this.txtApiAlias.PasswordChar = '\0';
+            this.txtApiAlias.PromptText = "自己定义服务器地址的简称，如：19";
             this.txtApiAlias.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.txtApiAlias.SelectedText = "";
             this.txtApiAlias.SelectionLength = 0;
@@ -68,6 +69,7 @@
             this.txtApiAlias.Size = new System.Drawing.Size(254, 23);
             this.txtApiAlias.TabIndex = 14;
             this.txtApiAlias.UseSelectable = true;
+            this.txtApiAlias.WaterMark = "自己定义服务器地址的简称，如：19";
             this.txtApiAlias.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.txtApiAlias.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
@@ -90,6 +92,7 @@
             this.txtApiAdress.MaxLength = 32767;
             this.txtApiAdress.Name = "txtApiAdress";
             this.txtApiAdress.PasswordChar = '\0';
+            this.txtApiAdress.PromptText = "示例：http://192.168.10.19:9527";
             this.txtApiAdress.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.txtApiAdress.SelectedText = "";
             this.txtApiAdress.SelectionLength = 0;
@@ -98,6 +101,7 @@
             this.txtApiAdress.Size = new System.Drawing.Size(254, 23);
             this.txtApiAdress.TabIndex = 13;
             this.txtApiAdress.UseSelectable = true;
+            this.txtApiAdress.WaterMark = "示例：http://192.168.10.19:9527";
             this.txtApiAdress.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.txtApiAdress.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
