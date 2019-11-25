@@ -229,7 +229,6 @@
             this.Controls.Add(this.metroLabel2);
             this.Controls.Add(this.metroLabel1);
             this.Name = "ServiceForm";
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "发布到服务器";
             this.Shown += new System.EventHandler(this.ServiceForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();

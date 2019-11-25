@@ -33,8 +33,8 @@
             this.richTxtLog = new System.Windows.Forms.RichTextBox();
             this.linkSetting = new MetroFramework.Controls.MetroLink();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
-            this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
             this.metroStyleExtender1 = new MetroFramework.Components.MetroStyleExtender(this.components);
+            this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,6 +103,7 @@
         "项目准备",
         "选择文件",
         "推送到服务器"};
+            this.deployStep.StepStyle = MetroFramework.MetroColorStyle.Default;
             this.deployStep.StepWidth = 35;
             this.deployStep.TabIndex = 3;
             this.deployStep.IndexChecked += new System.EventHandler(this.DeployStepOnIndexChecked);
@@ -117,7 +118,6 @@
             this.Controls.Add(this.deployStep);
             this.Controls.Add(this.buildProgressBar);
             this.Name = "DeployForm";
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "文件部署";
             this.Shown += new System.EventHandler(this.DeployForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();

@@ -113,7 +113,6 @@
             this.Controls.Add(this.btnSelectFolder);
             this.Controls.Add(this.btnSelectProj);
             this.Name = "SelectProjectForm";
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "项目选择";
             this.Shown += new System.EventHandler(this.SelectProjectForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();

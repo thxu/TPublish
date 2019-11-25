@@ -123,7 +123,6 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tvFiles);
             this.Name = "SelectFilesForm";
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "选择要发布的文件";
             this.Shown += new System.EventHandler(this.SelectFilesForm_Shown);
             this.groupBox1.ResumeLayout(false);
