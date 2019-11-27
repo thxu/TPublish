@@ -187,16 +187,16 @@
       <publishTime>05/10/2018 22:42:40</publishTime>
     </File>
     <File Include="bin/TPublish.Common.dll">
-      <publishTime>11/21/2019 09:19:57</publishTime>
+      <publishTime>11/27/2019 11:14:33</publishTime>
     </File>
     <File Include="bin/TPublish.Common.pdb">
-      <publishTime>11/21/2019 09:19:57</publishTime>
+      <publishTime>11/27/2019 11:14:33</publishTime>
     </File>
     <File Include="bin/TPublish.Web.dll">
-      <publishTime>11/21/2019 09:20:07</publishTime>
+      <publishTime>11/27/2019 11:14:54</publishTime>
     </File>
     <File Include="bin/TPublish.Web.pdb">
-      <publishTime>11/21/2019 09:20:07</publishTime>
+      <publishTime>11/27/2019 11:14:54</publishTime>
     </File>
     <File Include="bin/zh-Hans/System.Web.Helpers.resources.dll">
       <publishTime>05/10/2018 22:42:44</publishTime>
@@ -321,6 +321,24 @@
     <File Include="Scripts/jquery-1.10.2.min.map">
       <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
+    <File Include="Scripts/jquery-3.4.1.js">
+      <publishTime>11/22/2019 09:21:48</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.4.1.min.js">
+      <publishTime>11/22/2019 09:21:48</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.4.1.min.map">
+      <publishTime>11/22/2019 09:21:48</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.4.1.slim.js">
+      <publishTime>11/22/2019 09:21:48</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.4.1.slim.min.js">
+      <publishTime>11/22/2019 09:21:48</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.4.1.slim.min.map">
+      <publishTime>11/22/2019 09:21:48</publishTime>
+    </File>
     <File Include="Scripts/jquery.nicescroll.js">
       <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
@@ -415,7 +433,7 @@
       <publishTime>09/26/2019 15:57:36</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>11/21/2019 09:22:28</publishTime>
+      <publishTime>11/27/2019 11:15:10</publishTime>
     </File>
   </ItemGroup>
 </Project>

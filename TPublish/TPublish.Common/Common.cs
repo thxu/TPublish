@@ -26,7 +26,7 @@ namespace TPublish.Common
             {
                 if (i is DirectoryInfo)     //判断是否文件夹
                 {
-                    if (i.Name.ToLower().Contains("log"))
+                    if (i.Name.ToLower().Equals("log") || i.Name.ToLower().Equals("logs"))
                     {
                         continue;
                     }
