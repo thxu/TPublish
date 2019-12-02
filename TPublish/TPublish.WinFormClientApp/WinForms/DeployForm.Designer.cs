@@ -34,8 +34,12 @@
             this.linkSetting = new MetroFramework.Controls.MetroLink();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
             this.metroStyleExtender1 = new MetroFramework.Components.MetroStyleExtender(this.components);
+            this.metroCbDeployType = new MetroFramework.Controls.MetroComboBox();
             this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
+            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // buildProgressBar
@@ -83,6 +87,30 @@
             // 
             this.metroStyleManager1.Owner = null;
             // 
+            // metroCbDeployType
+            // 
+            this.metroCbDeployType.BackColor = System.Drawing.Color.Transparent;
+            this.metroCbDeployType.FontSize = MetroFramework.MetroComboBoxSize.Small;
+            this.metroCbDeployType.FontWeight = MetroFramework.MetroComboBoxWeight.Light;
+            this.metroCbDeployType.FormattingEnabled = true;
+            this.metroCbDeployType.ItemHeight = 19;
+            this.metroCbDeployType.Items.AddRange(new object[] {
+            "FDD(runtime)",
+            "SCD(win-x86)",
+            "SCD(win-x64)",
+            "SCD(oxs-x64)",
+            "SCD(linux-x64)",
+            "SCD(win-arm)",
+            "SCD(linux-arm)"});
+            this.metroCbDeployType.Location = new System.Drawing.Point(23, 172);
+            this.metroCbDeployType.Name = "metroCbDeployType";
+            this.metroCbDeployType.Size = new System.Drawing.Size(111, 25);
+            this.metroCbDeployType.TabIndex = 7;
+            this.metroToolTip1.SetToolTip(this.metroCbDeployType, "FDD：依赖式部署\r\n需要部署环境已安装NetCore\r\nSCD：独立式部署\r\n编译时已包含对应平台框架\r\n");
+            this.metroCbDeployType.UseSelectable = true;
+            this.metroCbDeployType.Visible = false;
+            this.metroCbDeployType.SelectedIndexChanged += new System.EventHandler(this.metroCbDeployType_SelectedIndexChanged);
+            // 
             // deployStep
             // 
             this.deployStep.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -108,11 +136,37 @@
             this.deployStep.TabIndex = 3;
             this.deployStep.IndexChecked += new System.EventHandler(this.DeployStepOnIndexChecked);
             // 
+            // metroToolTip1
+            // 
+            this.metroToolTip1.AutomaticDelay = 200;
+            this.metroToolTip1.AutoPopDelay = 5000;
+            this.metroToolTip1.InitialDelay = 200;
+            this.metroToolTip1.ReshowDelay = 40;
+            this.metroToolTip1.StripAmpersands = true;
+            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip1.StyleManager = null;
+            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.BackgroundImage = global::TPublish.WinFormClientApp.Properties.Resources.iconsQuestion;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.Location = new System.Drawing.Point(133, 162);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(15, 15);
+            this.pictureBox1.TabIndex = 24;
+            this.pictureBox1.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBox1, "FDD：依赖式部署\r\n需要部署环境已安装NetCore\r\nSCD：独立式部署\r\n编译时已包含对应平台框架");
+            this.pictureBox1.Visible = false;
+            // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(551, 467);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.metroCbDeployType);
             this.Controls.Add(this.linkSetting);
             this.Controls.Add(this.richTxtLog);
             this.Controls.Add(this.deployStep);
@@ -121,6 +175,7 @@
             this.Text = "文件部署";
             this.Shown += new System.EventHandler(this.DeployForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -132,6 +187,9 @@
         private MetroFramework.Controls.MetroLink linkSetting;
         private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private MetroFramework.Components.MetroStyleExtender metroStyleExtender1;
+        private MetroFramework.Controls.MetroComboBox metroCbDeployType;
+        private MetroFramework.Components.MetroToolTip metroToolTip1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

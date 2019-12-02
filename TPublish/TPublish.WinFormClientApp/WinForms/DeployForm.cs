@@ -24,8 +24,8 @@ namespace TPublish.WinFormClientApp.WinForms
         private string _zipFilePath = null;
         private MSettingInfo _settingInfo = new MSettingInfo();
 
-        //private string _publishProjPath = string.Empty;
-        //private string _publishProjName = string.Empty;
+        private readonly string[] _deployTypesStr = { "runtime", "win-x86", "win-x64", "oxs-x64", "linux-x64","win-arm","linux-arm" };
+        private bool _isUpdatingDeployType = false;
 
         public DeployForm(ProjectModel projectModel = null)
         {
@@ -159,6 +159,53 @@ namespace TPublish.WinFormClientApp.WinForms
             }
         }
 
+        delegate void SetDeployTypeVisibleCallback(bool visible);
+        private void SetDeployTypeVisible(bool visible)
+        {
+            if (this.metroCbDeployType.InvokeRequired)
+            {
+                while (!this.metroCbDeployType.IsHandleCreated)
+                {
+                    if (this.metroCbDeployType.Disposing || this.metroCbDeployType.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+
+                SetDeployTypeVisibleCallback callback = SetDeployTypeVisible;
+                this.metroCbDeployType.Invoke(callback, visible);
+            }
+            else
+            {
+                this.metroCbDeployType.Visible = visible;
+                this.pictureBox1.Visible = visible;
+            }
+        }
+
+        delegate void SetDeployTypeIndexCallback(int index);
+        private void SetDeployTypeIndex(int index)
+        {
+            if (this.metroCbDeployType.InvokeRequired)
+            {
+                while (!this.metroCbDeployType.IsHandleCreated)
+                {
+                    if (this.metroCbDeployType.Disposing || this.metroCbDeployType.IsDisposed)
+                    {
+                        return;
+                    }
+                }
+
+                SetDeployTypeIndexCallback callback = SetDeployTypeIndex;
+                this.metroCbDeployType.Invoke(callback, index);
+            }
+            else
+            {
+                _isUpdatingDeployType = true;
+                this.metroCbDeployType.SelectedIndex = index;
+                _isUpdatingDeployType = false;
+            }
+        }
+
         #endregion
 
         #region Build
@@ -219,7 +266,7 @@ namespace TPublish.WinFormClientApp.WinForms
             }
             ClearPublishFolder(_publishFilesDir);
 
-            var buildArg = $"publish \"{_projectModel.ProjPath}\" -c Debug --no-build ";
+            var buildArg = $"publish \"{_projectModel.ProjPath}\" -c Debug {((_projectSetting.DeployType.IsNullOrEmpty() || _projectSetting.DeployType == "runtime") ? " --no-build " : " --runtime " + _projectSetting.DeployType)}  ";
             buildArg += " -o \"" + _publishFilesDir + "\"";
             SetProcessVal(2);
 
@@ -390,6 +437,29 @@ namespace TPublish.WinFormClientApp.WinForms
                         SetProcessVal(0);
                         if (_projectModel?.ProjType == 1)
                         {
+                            _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
+                            if (_projectModel.IsNetCore)
+                            {
+                                this.metroCbDeployType.Visible = true;
+                                _isUpdatingDeployType = true;
+                                for (int i = 0; i < _deployTypesStr.Length; i++)
+                                {
+                                    if (_deployTypesStr[i] == _projectSetting.DeployType)
+                                    {
+                                        this.metroCbDeployType.SelectedIndex = i;
+                                    }
+                                }
+
+                                if (this.metroCbDeployType.SelectedIndex < 0)
+                                {
+                                    this.metroCbDeployType.SelectedIndex = 0;
+                                }
+                                _isUpdatingDeployType = false;
+                            }
+                            else
+                            {
+                                this.metroCbDeployType.Visible = false;
+                            }
                             ControlHelper.ThreadRunExt(this, () =>
                             {
                                 bool isBuildSuccess = BuildProj();
@@ -415,6 +485,30 @@ namespace TPublish.WinFormClientApp.WinForms
                                     {
                                         // c# 项目
                                         _projectModel = ProjectHelper.ParseProject(item.Path);
+                                        _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
+                                        if (_projectModel.IsNetCore)
+                                        {
+                                            SetDeployTypeVisible(true);
+                                            bool find = false;
+                                            for (int i = 0; i < _deployTypesStr.Length; i++)
+                                            {
+                                                if (_deployTypesStr[i] == _projectSetting.DeployType)
+                                                {
+                                                    find = true;
+                                                    SetDeployTypeIndex(i);
+                                                }
+                                            }
+
+                                            if (!find)
+                                            {
+                                                SetDeployTypeIndex(0);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            SetDeployTypeVisible(false);
+                                        }
+
                                         bool isBuildSuccess = BuildProj();
                                         SetProcessVal(100);
                                         if (!isBuildSuccess)
@@ -433,6 +527,8 @@ namespace TPublish.WinFormClientApp.WinForms
                                             ProjPath = item.Path,
                                             ProjType = item.Type,
                                         };
+                                        _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
+                                        SetDeployTypeVisible(false);
                                         _publishFilesDir = item.Path;
                                         SetStepIndex(2);
                                     }
@@ -455,7 +551,7 @@ namespace TPublish.WinFormClientApp.WinForms
                                 SetStepAsync(1);
                                 return;
                             }
-                            _projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
+                            //_projectSetting = ProjectHelper.LoadProjectSettingInfo(this._projectModel.ProjName);
                             SelectFilesForm filesForm = new SelectFilesForm(_projectSetting, _publishFilesDir, _settingInfo);
                             filesForm.Activate();
                             SelectFilesForm.FileSaveEvent = list =>
@@ -606,6 +702,10 @@ namespace TPublish.WinFormClientApp.WinForms
             this.linkSetting.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.buildProgressBar.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             this.buildProgressBar.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            this.metroToolTip1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.metroToolTip1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            this.metroCbDeployType.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.metroCbDeployType.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.Refresh();
         }
 
@@ -640,7 +740,12 @@ namespace TPublish.WinFormClientApp.WinForms
             this.linkSetting.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.buildProgressBar.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
             this.buildProgressBar.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            this.metroToolTip1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.metroToolTip1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
+            this.metroCbDeployType.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.metroCbDeployType.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
             this.Refresh();
+
 
             // 尝试连接服务器
             var isConnect = ApiHelper.Connect(_settingInfo);
@@ -650,6 +755,28 @@ namespace TPublish.WinFormClientApp.WinForms
             }
 
             SetStepIndex(1);
+        }
+
+        private void metroCbDeployType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_isUpdatingDeployType)
+            {
+                return;
+            }
+
+            _projectSetting.DeployType = _deployTypesStr[this.metroCbDeployType.SelectedIndex];
+            ProjectHelper.SaveProjectSettingInfo(_projectSetting);
+            ControlHelper.ThreadRunExt(this, () =>
+            {
+                bool isBuildSuccess = BuildProj();
+                if (!isBuildSuccess)
+                {
+                    return;
+                }
+                SetProcessVal(100);
+                SetStepIndex(2);
+
+            }, null, this);
         }
     }
 }

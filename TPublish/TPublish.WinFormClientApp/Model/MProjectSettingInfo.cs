@@ -23,5 +23,15 @@ namespace TPublish.WinFormClientApp.Model
         /// 上次选择的app
         /// </summary>
         public string LastChooseAppName { get; set; }
+
+        /// <summary>
+        /// 部署类型
+        /// runtime
+        /// win-x86
+        /// win-x64
+        /// oxs-x64
+        /// linux-x64
+        /// </summary>
+        public string DeployType { get; set; }
     }
 }

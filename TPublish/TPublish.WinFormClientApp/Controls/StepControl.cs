@@ -330,6 +330,7 @@ namespace TPublish.WinFormClientApp.Controls
                     g.DrawString(_mSteps[i], Font, new SolidBrush(_mStepIndex > i ? MetroPaint.GetStyleColor(StepStyle) : _mStepBackColor), new Point(intLeft + i * (_mStepWidth + intSplitWidth) + (_mStepWidth - (int)sizeTxt.Width) / 2 + 1, intTxtY));
                 }
 
+                // 画进度线
                 for (var i = 0; i < _mSteps.Length; i++)
                 {
                     if (_mStepIndex > i)

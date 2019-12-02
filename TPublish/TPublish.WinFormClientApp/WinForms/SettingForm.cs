@@ -69,12 +69,14 @@ namespace TPublish.WinFormClientApp.WinForms
         {
             _settingInfo.MetroThemeStyle = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Dark.GetHashCode() : MetroThemeStyle.Light.GetHashCode();
             this.metroStyleManager1.Theme = (MetroThemeStyle)_settingInfo.MetroThemeStyle;
+            this.metroToolTip1.Theme = (MetroThemeStyle)_settingInfo.MetroThemeStyle;
         }
 
         private void metroTile2_Click(object sender, System.EventArgs e)
         {
             _settingInfo.MetroColorStyle = (_settingInfo.MetroColorStyle + 1) % 15;
             this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+            this.metroToolTip1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
         }
 
         private void SettingForm_Shown(object sender, System.EventArgs e)
@@ -92,6 +94,8 @@ namespace TPublish.WinFormClientApp.WinForms
                 this.metroStyleManager1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
 
                 this.StyleManager = this.metroStyleManager1;
+                this.metroToolTip1.Style = (MetroColorStyle)_settingInfo.MetroColorStyle;
+                this.metroToolTip1.Theme = _settingInfo.MetroThemeStyle <= 1 ? MetroThemeStyle.Light : MetroThemeStyle.Dark;
 
                 this.Refresh();
             }
