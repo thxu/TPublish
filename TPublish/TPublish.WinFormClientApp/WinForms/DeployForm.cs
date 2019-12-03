@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MetroFramework;
@@ -24,7 +25,9 @@ namespace TPublish.WinFormClientApp.WinForms
         private string _zipFilePath = null;
         private MSettingInfo _settingInfo = new MSettingInfo();
 
-        private readonly string[] _deployTypesStr = { "runtime", "win-x86", "win-x64", "oxs-x64", "linux-x64","win-arm","linux-arm" };
+        private volatile bool stop_iis_cancel_token;
+
+        private readonly string[] _deployTypesStr = { "runtime", "win-x86", "win-x64", "oxs-x64", "linux-x64", "win-arm", "linux-arm" };
         private bool _isUpdatingDeployType = false;
 
         public DeployForm(ProjectModel projectModel = null)
@@ -213,7 +216,7 @@ namespace TPublish.WinFormClientApp.WinForms
         /// <summary>
         /// NetFramework编译
         /// </summary>
-        private bool Msbuild()
+        private bool Msbuild(Func<bool> checkCancel = null)
         {
             if (string.IsNullOrWhiteSpace(_settingInfo.MsBuildExePath))
             {
@@ -244,14 +247,14 @@ namespace TPublish.WinFormClientApp.WinForms
 
             SetProcessVal(2);
 
-            var isSuccess = RunCmd(_settingInfo.MsBuildExePath, buildArg);
+            var isSuccess = RunCmd(_settingInfo.MsBuildExePath, buildArg, checkCancel);
             return isSuccess;
         }
 
         /// <summary>
         /// NetCore编译
         /// </summary>
-        private bool DotNetBuild()
+        private bool DotNetBuild(Func<bool> checkCancel = null)
         {
             string filePath = ProjectHelper.GetBuildToPath(_projectModel.ProjName);
             if (string.IsNullOrWhiteSpace(filePath))
@@ -270,7 +273,7 @@ namespace TPublish.WinFormClientApp.WinForms
             buildArg += " -o \"" + _publishFilesDir + "\"";
             SetProcessVal(2);
 
-            var isSuccess = RunCmd("dotnet", buildArg);
+            var isSuccess = RunCmd("dotnet", buildArg, checkCancel);
             return isSuccess;
         }
 
@@ -329,7 +332,7 @@ namespace TPublish.WinFormClientApp.WinForms
         /// <param name="fileName"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        private bool RunCmd(string fileName, string arguments)
+        private bool RunCmd(string fileName, string arguments, Func<bool> checkCancel = null)
         {
             Process process = null;
             try
@@ -348,8 +351,35 @@ namespace TPublish.WinFormClientApp.WinForms
 
                 process.Start();
 
+
                 process.OutputDataReceived += (sender, args) =>
                 {
+                    Thread.Sleep(5000);
+                    if (checkCancel != null)
+                    {
+                        var r = checkCancel();
+                        if (r)
+                        {
+                            LogAppend($"编译取消", Color.Red);
+                            try
+                            {
+                                process?.Dispose();
+                            }
+                            catch (Exception)
+                            {
+                                //ignore
+                            }
+
+                            try
+                            {
+                                process?.Kill();
+                            }
+                            catch (Exception)
+                            {
+                                //ignore
+                            }
+                        }
+                    }
                     if (!string.IsNullOrWhiteSpace(args.Data))
                     {
                         if (args.Data.StartsWith(" "))
@@ -375,6 +405,31 @@ namespace TPublish.WinFormClientApp.WinForms
 
                 process.ErrorDataReceived += (sender, data) =>
                 {
+                    if (checkCancel != null)
+                    {
+                        var r = checkCancel();
+                        if (r)
+                        {
+                            LogAppend($"编译取消", Color.Red);
+                            try
+                            {
+                                process?.Dispose();
+                            }
+                            catch (Exception)
+                            {
+                                //ignore
+                            }
+
+                            try
+                            {
+                                process?.Kill();
+                            }
+                            catch (Exception)
+                            {
+                                //ignore
+                            }
+                        }
+                    }
                     if (!string.IsNullOrWhiteSpace(data.Data))
                     {
                         LogAppend($"[error]:{data.Data}");
@@ -638,18 +693,19 @@ namespace TPublish.WinFormClientApp.WinForms
         {
             try
             {
+                this.stop_iis_cancel_token = false;
                 var isSuccess = false;
                 SetProcessVal(1);
                 // 判断项目类型
                 if (_projectModel.IsNetCore)
                 {
                     LogAppend($"开始编译DotNet项目:{this._projectModel.ProjName}", Color.FromArgb(0, 174, 219));
-                    isSuccess = DotNetBuild();
+                    isSuccess = DotNetBuild(() => stop_iis_cancel_token);
                 }
                 else
                 {
                     LogAppend($"开始编译NetFramework项目:{this._projectModel.ProjName}");
-                    isSuccess = Msbuild();
+                    isSuccess = Msbuild(() => stop_iis_cancel_token);
                 }
 
                 if (!isSuccess)
@@ -764,6 +820,7 @@ namespace TPublish.WinFormClientApp.WinForms
                 return;
             }
 
+            this.stop_iis_cancel_token = true;
             _projectSetting.DeployType = _deployTypesStr[this.metroCbDeployType.SelectedIndex];
             ProjectHelper.SaveProjectSettingInfo(_projectSetting);
             ControlHelper.ThreadRunExt(this, () =>
