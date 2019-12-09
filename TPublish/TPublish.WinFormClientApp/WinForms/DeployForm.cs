@@ -354,7 +354,6 @@ namespace TPublish.WinFormClientApp.WinForms
 
                 process.OutputDataReceived += (sender, args) =>
                 {
-                    Thread.Sleep(5000);
                     if (checkCancel != null)
                     {
                         var r = checkCancel();
@@ -834,6 +833,19 @@ namespace TPublish.WinFormClientApp.WinForms
                 SetStepIndex(2);
 
             }, null, this);
+        }
+
+        private void ClearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.richTxtLog.Clear();
+        }
+
+        private void richTxtLog_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                metroContextMenu1.Show(MousePosition.X, MousePosition.Y);
+            }
         }
     }
 }

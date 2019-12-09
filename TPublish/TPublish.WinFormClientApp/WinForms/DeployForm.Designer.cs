@@ -35,11 +35,14 @@
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager(this.components);
             this.metroStyleExtender1 = new MetroFramework.Components.MetroStyleExtender(this.components);
             this.metroCbDeployType = new MetroFramework.Controls.MetroComboBox();
-            this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.metroContextMenu1 = new MetroFramework.Controls.MetroContextMenu(this.components);
+            this.ClearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deployStep = new TPublish.WinFormClientApp.Controls.StepControl();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.metroContextMenu1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buildProgressBar
@@ -68,6 +71,7 @@
             this.richTxtLog.Size = new System.Drawing.Size(505, 200);
             this.richTxtLog.TabIndex = 4;
             this.richTxtLog.Text = "";
+            this.richTxtLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.richTxtLog_MouseDown);
             // 
             // linkSetting
             // 
@@ -111,6 +115,44 @@
             this.metroCbDeployType.Visible = false;
             this.metroCbDeployType.SelectedIndexChanged += new System.EventHandler(this.metroCbDeployType_SelectedIndexChanged);
             // 
+            // metroToolTip1
+            // 
+            this.metroToolTip1.AutomaticDelay = 200;
+            this.metroToolTip1.AutoPopDelay = 5000;
+            this.metroToolTip1.InitialDelay = 200;
+            this.metroToolTip1.ReshowDelay = 40;
+            this.metroToolTip1.StripAmpersands = true;
+            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip1.StyleManager = null;
+            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.BackgroundImage = global::TPublish.WinFormClientApp.Properties.Resources.iconsQuestion;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.Location = new System.Drawing.Point(133, 162);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(15, 15);
+            this.pictureBox1.TabIndex = 24;
+            this.pictureBox1.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBox1, "FDD：依赖式部署\r\n需要部署环境已安装NetCore\r\nSCD：独立式部署\r\n编译时已包含对应平台框架");
+            this.pictureBox1.Visible = false;
+            // 
+            // metroContextMenu1
+            // 
+            this.metroContextMenu1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ClearToolStripMenuItem});
+            this.metroContextMenu1.Name = "metroContextMenu1";
+            this.metroContextMenu1.Size = new System.Drawing.Size(101, 26);
+            // 
+            // ClearToolStripMenuItem
+            // 
+            this.ClearToolStripMenuItem.Name = "ClearToolStripMenuItem";
+            this.ClearToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.ClearToolStripMenuItem.Text = "清空";
+            this.ClearToolStripMenuItem.Click += new System.EventHandler(this.ClearToolStripMenuItem_Click);
+            // 
             // deployStep
             // 
             this.deployStep.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -136,30 +178,6 @@
             this.deployStep.TabIndex = 3;
             this.deployStep.IndexChecked += new System.EventHandler(this.DeployStepOnIndexChecked);
             // 
-            // metroToolTip1
-            // 
-            this.metroToolTip1.AutomaticDelay = 200;
-            this.metroToolTip1.AutoPopDelay = 5000;
-            this.metroToolTip1.InitialDelay = 200;
-            this.metroToolTip1.ReshowDelay = 40;
-            this.metroToolTip1.StripAmpersands = true;
-            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroToolTip1.StyleManager = null;
-            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.BackgroundImage = global::TPublish.WinFormClientApp.Properties.Resources.iconsQuestion;
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox1.Location = new System.Drawing.Point(133, 162);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(15, 15);
-            this.pictureBox1.TabIndex = 24;
-            this.pictureBox1.TabStop = false;
-            this.metroToolTip1.SetToolTip(this.pictureBox1, "FDD：依赖式部署\r\n需要部署环境已安装NetCore\r\nSCD：独立式部署\r\n编译时已包含对应平台框架");
-            this.pictureBox1.Visible = false;
-            // 
             // DeployForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -176,6 +194,7 @@
             this.Shown += new System.EventHandler(this.DeployForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.metroContextMenu1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -190,6 +209,8 @@
         private MetroFramework.Controls.MetroComboBox metroCbDeployType;
         private MetroFramework.Components.MetroToolTip metroToolTip1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private MetroFramework.Controls.MetroContextMenu metroContextMenu1;
+        private System.Windows.Forms.ToolStripMenuItem ClearToolStripMenuItem;
     }
 }
 

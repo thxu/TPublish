@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="TPublish.VsixClient.35e62fb5-4fc6-4dbe-b727-3aa24415dbbb" Version="1.0.0.4" Language="en-US" Publisher="TangXu" />
+        <Identity Id="TPublish.VsixClient.35e62fb5-4fc6-4dbe-b727-3aa24415dbbb" Version="1.0.0.5" Language="en-US" Publisher="TangXu" />
         <DisplayName>TPublish.VsixClient</DisplayName>
         <Description xml:space="preserve">发布IIS应用程序和EXE程序的快捷工具</Description>
     </Metadata>
