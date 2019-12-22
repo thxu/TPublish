@@ -95,6 +95,8 @@ namespace TPublish.Common
                     }
                     mgr.CommitChanges();
                 }
+
+                res.IsSucceed = true;
             }
             catch (Exception e)
             {

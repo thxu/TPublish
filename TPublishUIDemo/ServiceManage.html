@@ -1,0 +1,456 @@
+<!-- import Vue before Element -->
+<script src="js/vue.js"></script>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="css/index.css">
+<!-- 引入组件库 -->
+<script src="js/index.js"></script>
+<!-- <script src="js/jquery-1.10.2.js"></script> -->
+
+
+<style>
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        color: #333;
+    }
+
+    .transition-box {
+    margin-bottom: 10px;
+    width: 200px;
+    height: 100px;
+    border-radius: 4px;
+    background-color: #409EFF;
+    text-align: center;
+    color: #fff;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    margin-right: 20px;
+  }
+</style>
+
+<div id="app1">
+    <el-container style="height: auto; border: 1px solid #eee">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['1']">
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message"></i>导航一</template>
+                    <el-menu-item index="1-1" v-on:click="navjump('ServiceManage.html')">服务器管理</el-menu-item>
+                    <el-menu-item index="1-2" v-on:click="navjump('ServiceMapManage.html')">运行环境管理</el-menu-item>
+                    <el-menu-item index="1-3" v-on:click="navjump('LoadBalanceManage.html')">负载管理</el-menu-item>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+        <el-dialog title="添加新服务器" :visible.sync="dialogFormVisible">
+            <el-form :model="addServiceForm">
+                <el-form-item label="服务器IP" :label-width="formLabelWidth">
+                    <el-input v-model="addServiceForm.SerIP" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器别名" :label-width="formLabelWidth">
+                    <el-input v-model="addServiceForm.SerAlias" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addNewService()">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="修改WCF配置文件" :visible.sync="updateWcfSettingDialogFormVisible">
+            <el-input v-model="updateSettingForm.AppConfig" type="textarea" :autosize="{ minRows: 10, maxRows: 20}"
+                autocomplete="off"></el-input>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="updateWcfSettingDialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <el-container>
+            <el-main>
+                <el-collapse-transition>
+                    <div v-show="showSerListPannel">
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item>首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器列表</el-breadcrumb-item>
+                        </el-breadcrumb>
+                        <br />
+                        <el-form :inline="true" :model="formIISQuery" class="demo-form-inline">
+                            <el-form-item label="IP/别名">
+                                <el-input v-model="formIISQuery.Content" placeholder="服务器IP地址或别名"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
+                                <el-button type="primary" icon="el-icon-plus" @click="openAddDialog()">添加服务器</el-button>
+                            </el-form-item>
+                        </el-form>
+
+                        <el-table :data="tableIISServiceData" height="auto" max-height="800">
+                            <el-table-column label="序号" width="80">
+                                <template slot-scope="scope">
+                                    <span style="margin-left:10px">{{scope.$index}}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="ip" label="服务器IP" width="160">
+                            </el-table-column>
+                            <el-table-column prop="alias" label="服务器别名" width="220">
+                            </el-table-column>
+                            <el-table-column label="操作" fixed="right">
+                                <template slot-scope="scope">
+                                    <el-button-group>
+                                        <el-button size="mini" icon="el-icon-edit" @click="updateService(scope.$index)">修改</el-button>
+                                        <el-button size="mini" icon="el-icon-info" @click="showSerListPannel = false">详情</el-button>
+                                    </el-button-group>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </el-collapse-transition>
+                <el-collapse-transition>
+                    <div v-show="ShowAppList">
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item>首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>服务器列表</el-breadcrumb-item>
+                            <el-breadcrumb-item>应用程序列表</el-breadcrumb-item>
+                        </el-breadcrumb>
+                        <br />
+                        <el-tabs>
+                            <el-tab-pane label="IIS应用程序">
+                                <div v-show="showIISAppListPannel">
+                                    <el-form :inline="true" :model="IISAppList.formIISDetailQuery" class="demo-form-inline">
+                                        <el-form-item label="程序名称">
+                                            <el-input v-model="IISAppList.formIISDetailQuery.Content" placeholder="IIS应用程序名称"></el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
+                                            <el-button type="primary" @click="showAddIISPanel = true" icon="el-icon-plus">创建新应用程序</el-button>
+                                            <el-button type="primary" @click="showSerListPannel = true" icon="el-icon-back">返回</el-button>
+                                        </el-form-item>
+                                    </el-form>
+
+                                    <el-table :data="IISAppList.tableIISDetailData" height="auto" max-height="800">
+                                        <el-table-column label="序号" width="80">
+                                            <template slot-scope="scope">
+                                                <span style="margin-left:10px">{{scope.$index}}</span>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="name" label="程序名称" width="120"></el-table-column>
+                                        <el-table-column prop="desc" label="程序描述" width="120"></el-table-column>
+                                        <el-table-column prop="version" label="当前版本" width="120"></el-table-column>
+
+                                        <el-table-column prop="path" label="程序路径" width="220">
+                                            <template slot-scope="scope">
+                                                <el-popover placement="top-start" width="auto" trigger="hover"
+                                                    v-bind:content="scope.row.path">
+                                                    <span slot="reference" style="display:block;overflow: hidden;">{{scope.row.path}}</span>
+                                                </el-popover>
+                                            </template>
+                                        </el-table-column>
+
+                                        <el-table-column prop="status" label="程序状态" width="120"></el-table-column>
+                                        <el-table-column prop="io" label="磁盘占用" width="120"></el-table-column>
+                                        <el-table-column prop="memory" label="内存占用" width="120"></el-table-column>
+                                        <el-table-column label="操作" fixed="right">
+                                            <template slot-scope="scope">
+                                                <el-button-group>
+                                                    <el-popover placement="top" width="auto" v-model="IISAppList.changeVersionVisible"
+                                                        trigger="click">
+                                                        <p>可用版本</p>
+                                                        <el-select v-model="IISAppList.versionValue" placeholder="请选择">
+                                                            <el-option v-for="item in IISAppList.versionOptions" :key="item.value"
+                                                                :label="item.label" :value="item.value">
+                                                            </el-option>
+                                                        </el-select>
+                                                        <br />
+                                                        <div style="text-align: right;margin-top: 5%">
+                                                            <el-button size="mini" type="text" @click="IISAppList.changeVersionVisible = false">取消</el-button>
+                                                            <el-button type="primary" size="mini" @click="IISAppList.changeVersionVisible = false">确定</el-button>
+                                                        </div>
+                                                        <el-button size="mini" slot="reference" icon="el-icon-sort"
+                                                            @click="IISAppList.changeVersionVisible = true">版本切换</el-button>
+                                                    </el-popover>
+                                                    <el-popover placement="top" width="auto" v-model="IISAppList.runtimeEnvironmentVisible" trigger="click">
+                                                        <p>运行环境</p>
+                                                        <el-select v-model="IISAppList.runtimeEnvironmentValue"
+                                                            placeholder="请选择">
+                                                            <el-option v-for="item in IISAppList.runtimeEnvironmentOptions"
+                                                                :key="item.value" :label="item.label" :value="item.value">
+                                                            </el-option>
+                                                        </el-select>
+                                                        <br />
+                                                        <div style="text-align: right;margin-top: 5%">
+                                                            <el-button size="mini" type="text" @click="IISAppList.runtimeEnvironmentVisible = false">取消</el-button>
+                                                            <el-button type="primary" size="mini" @click="IISAppList.runtimeEnvironmentVisible = false">确定</el-button>
+                                                        </div>
+                                                        <el-button size="mini" slot="reference" icon="el-icon-edit-outline" @click="IISAppList.runtimeEnvironmentVisible = true;">设置运行环境</el-button>
+                                                    </el-popover>
+                                                    <el-button size="mini" icon="el-icon-warning" @click="RestartIISApp()">重启</el-button>
+                                                    <el-button size="mini" icon="el-icon-error" @click="StopIISApp()">停止</el-button>
+                                                    <!-- <el-button size="mini" icon="el-icon-upload2" @click="">上传并切换版本</el-button> -->
+                                                    <el-button size="mini" icon="el-icon-upload2" @click="showIISConfig = true;">新增版本</el-button>
+                                                </el-button-group>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                                <div v-show="showAddIISPanel">
+                                    <el-form :model="IISAppList.formIISDetailQuery" class="demo-form-inline">
+                                        <el-form-item label="程序名称">
+                                            <el-input v-model="IISAppList.formIISDetailQuery.Content" placeholder="IIS应用程序名称"></el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="" icon="el-icon-search">查询</el-button>
+                                            <el-button type="primary" @click="showAddIISPanel = false;" icon="el-icon-back">返回</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </div>
+
+                                <div v-show="showIISConfig">
+                                    <h1>上传、配置</h1>
+                                    <el-form ref="form" :model="updateSettingForm">
+                                        <el-form-item label="程序配置" :label-width="formLabelWidth">
+                                            <el-input v-model="updateSettingForm.AppConfig" type="textarea" :autosize="{ minRows: 2, maxRows: 20}"
+                                                autocomplete="off"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="WcfConfig配置" :label-width="formLabelWidth">
+                                            <el-table :data="updateSettingForm.IISWcfConfigTableData">
+                                                <el-table-column width="80">
+                                                    <template slot-scope="scope">
+                                                        <span style="margin-left:10px">{{scope.$index}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="name" width="160">
+                                                </el-table-column>
+                                                <el-table-column fixed="right">
+                                                    <template slot-scope="scope">
+                                                        <el-button size="mini" icon="el-icon-edit" @click="updateWcfSettingDialogFormVisible = true">编辑</el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                            <br />
+
+                                            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/"
+                                                :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove"
+                                                multiple drag :limit="10" :on-exceed="handleExceed" :file-list="updateSettingForm.fileList"
+                                                :auto-upload="false">
+                                                <i slot="trigger" class="el-icon-upload"></i>
+                                                <div slot="trigger" class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                                                <div slot="tip" class="el-upload__tip">只能上传config文件，且不超过500kb</div>
+                                            </el-upload>
+
+                                        </el-form-item>
+                                        <el-form-item label="程序压缩包位置" :label-width="formLabelWidth">
+                                            <el-radio v-model="updateSettingForm.radio" label="1">从16上自动打包</el-radio>
+                                            <el-radio v-model="updateSettingForm.radio" label="2">从本地上传</el-radio>
+
+                                            <el-upload v-show="updateSettingForm.radio == 2" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/"
+                                                :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove"
+                                                multiple drag :limit="1" :on-exceed="handleExceed" :file-list="updateSettingForm.appfileList"
+                                                :auto-upload="false">
+                                                <i slot="trigger" class="el-icon-upload"></i>
+                                                <div slot="trigger" class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                                                <div slot="tip" class="el-upload__tip">只能上传config文件，且不超过500kb</div>
+                                            </el-upload>
+                                        </el-form-item>
+                                        <el-form-item label="更新内容" :label-width="formLabelWidth">
+                                            <el-input v-model="updateSettingForm.AppConfig" type="textarea" :autosize="{ minRows: 2, maxRows: 20}"
+                                                autocomplete="off"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="负责人" :label-width="formLabelWidth">
+                                            <el-input v-model="updateSettingForm.AppConfig"></el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button @click="showIISConfig = false">取 消</el-button>
+                                            <el-button type="primary" @click="">保 存</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </div>
+
+                            </el-tab-pane>
+                            <el-tab-pane label="EXE应用程序">
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+                </el-collapse-transition>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script>
+    const item = {
+        ip: '192.168.10.16',
+        alias: '内网16'
+    };
+    const detail = {
+        name: "go.hello.exe",
+        desc: "示例程序",
+        version: "1.0.0.0",
+        path: "d://exe/go.hello/1.0.0.0",
+        status: "started",
+        io: "10%",
+        memory: "4.5M",
+    }
+    var vm = new Vue({
+        el: '#app1',
+        data: function () {
+            return {
+                tableIISServiceData: Array(5).fill(item),
+                tableEXEServiceData: Array(5).fill(item),
+                dialogFormVisible: false,
+                addServiceForm: {
+                    SerIP: '',
+                    SerAlias: '',
+                    Index: 0,
+                },
+                updateWcfSettingDialogFormVisible: false,
+                updateSettingForm: {
+                    AppConfig: "",
+                    IISWcfConfigTableData: [
+                        { name: "order.config", },
+                        { name: "user.config" }],
+                    fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
+                    appfileList: [{ name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
+                    radio: "1",
+                },
+                formLabelWidth: '120px',
+                showSerListPannel: true,
+                // showIISAppListPannel: true,
+                showIISConfig: false,
+                showAddIISPanel: false,
+                formIISQuery: {
+                    Content: ""
+                },
+                IISAppList: {
+                    formIISDetailQuery: {
+                        Content: ""
+                    },
+                    tableIISDetailData: Array(1).fill(detail),
+                    changeVersionVisible: false,
+                    versionOptions: [
+                    {
+                        value: '1.0.0.0',
+                        label: '1.0.0.0'
+                    }, 
+                    {
+                        value: '1.0.0.1',
+                        label: '1.0.0.1'
+                    }, 
+                    {
+                        value: '1.0.0.2',
+                        label: '1.0.0.2'
+                    }, 
+                    {
+                        value: '1.0.0.3',
+                        label: '1.0.0.3'
+                    }, 
+                    {
+                        value: '1.0.0.4',
+                        label: '1.0.0.4'
+                    }],
+                    versionValue: '1.0.0.3',
+
+                    runtimeEnvironmentVisible: false,
+                    runtimeEnvironmentOptions: [
+                    {
+                        value: "1",
+                        label: "内网测试16",
+                    },
+                    {
+                        value: "2",
+                        label: "预发布",
+                    },
+                    {
+                        value: "3",
+                        label: "正式",
+                    }],
+                    runtimeEnvironmentValue: "预发布",
+                },
+
+
+
+            }
+        },
+        computed: {
+            ShowAppList: function () {
+                return !this.showSerListPannel;
+            },
+            thirdPanelShow: function () {
+                return this.showIISConfig;
+            },
+            showIISAppListPannel: function () {
+                return !(this.showAddIISPanel || this.showIISConfig)
+            }
+        },
+        methods: {
+            navjump: function (url) {
+                window.location.href = url;
+            },
+            openAddDialog: function () {
+                vm.$data.addServiceForm.SerIP = "";
+                vm.$data.addServiceForm.SerAlias = "";
+                vm.$data.addServiceForm.Index = 0;
+                vm.$data.dialogFormVisible = true;
+            },
+            addNewService: function () {
+                if (vm.$data.addServiceForm.Index <= 0) {
+                    vm.$data.tableIISServiceData.push({ ip: vm.$data.addServiceForm.SerIP, alias: vm.$data.addServiceForm.SerAlias });
+                    this.$message({ message: '添加成功', type: "success" });
+                } else {
+                    var index = vm.$data.addServiceForm.Index;
+                    vm.$data.tableIISServiceData[index].ip = vm.$data.addServiceForm.SerIP;
+                    vm.$data.tableIISServiceData[index].alias = vm.$data.addServiceForm.SerAlias;
+                    this.$message({ message: '修改成功', type: "success" });
+                }
+                vm.$data.dialogFormVisible = false;
+            },
+            updateService: function (index) {
+                vm.$data.addServiceForm.SerIP = vm.$data.tableIISServiceData[index].ip;
+                vm.$data.addServiceForm.SerAlias = vm.$data.tableIISServiceData[index].alias;
+                vm.$data.addServiceForm.Index = index;
+                vm.$data.dialogFormVisible = true;
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            },
+            beforeRemove(file, fileList) {
+                return this.$confirm(`确定移除 ${file.name}？`);
+            },
+            StopIISApp: function () {
+                this.$confirm('此操作将停止该应用程序, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '停止成功!'
+                    })
+                });
+            },
+            RestartIISApp: function () {
+                this.$confirm('此操作将重启该应用程序, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '重启成功!'
+                    })
+                });
+            }
+        }
+    });
+</script>

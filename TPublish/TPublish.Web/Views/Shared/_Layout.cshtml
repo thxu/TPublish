@@ -1,0 +1,167 @@
+﻿@RenderBody()
+@using TPublish.Web.Controllers
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动部署3333</title>
+
+    <link href="~/Content/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+
+    <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/style-responsive.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <section id="container">
+        <header class="header black-bg">
+            <div class="sidebar-toggle-box">
+                <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+            </div>
+            <a href="#" class="logo"><b>Auto<span>Publish</span></b></a>
+            <div class="top-menu">
+                <ul class="nav pull-right top-menu">
+                    <li><a class="logout" href="#">Logout</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <aside>
+            <div id="sidebar" class="nav-collapse ">
+                <!-- sidebar menu start-->
+                <ul class="sidebar-menu" id="nav-accordion">
+                    <p class="centered"><a href="#"><img src="~/Content/img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+                    <h5 class="centered">Sam Soffes</h5>
+                    <li class="mt">
+                        <a class="active" href="/Home/Default">
+                            <i class="fa fa-dashboard"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-desktop"></i>
+                            <span>UI Elements</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="/Home/LocalAppListView" target="iframe0">所有app列表</a></li>
+                            <li><a href="/Home/LocalAppListView" target="iframe0">Buttons</a></li>
+                            <li><a href="/Home/Default" target="iframe0">Panels</a></li>
+                            <li><a href="/Home/Default" target="iframe0">Font Awesome</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-cogs"></i>
+                            <span>Components</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="grids.html">Grids</a></li>
+                            <li><a href="calendar.html">Calendar</a></li>
+                            <li><a href="gallery.html">Gallery</a></li>
+                            <li><a href="todo_list.html">Todo List</a></li>
+                            <li><a href="dropzone.html">Dropzone File Upload</a></li>
+                            <li><a href="inline_editor.html">Inline Editor</a></li>
+                            <li><a href="file_upload.html">Multiple File Upload</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-book"></i>
+                            <span>Extra Pages</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="blank.html">Blank Page</a></li>
+                            <li><a href="login.html">Login</a></li>
+                            <li><a href="lock_screen.html">Lock Screen</a></li>
+                            <li><a href="profile.html">Profile</a></li>
+                            <li><a href="invoice.html">Invoice</a></li>
+                            <li><a href="pricing_table.html">Pricing Table</a></li>
+                            <li><a href="faq.html">FAQ</a></li>
+                            <li><a href="404.html">404 Error</a></li>
+                            <li><a href="500.html">500 Error</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-tasks"></i>
+                            <span>Forms</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="form_component.html">Form Components</a></li>
+                            <li><a href="advanced_form_components.html">Advanced Components</a></li>
+                            <li><a href="form_validation.html">Form Validation</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-th"></i>
+                            <span>Data Tables</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="basic_table.html">Basic Table</a></li>
+                            <li><a href="responsive_table.html">Responsive Table</a></li>
+                            <li><a href="advanced_table.html">Advanced Table</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="inbox.html">
+                            <i class="fa fa-envelope"></i>
+                            <span>Mail </span>
+                            <span class="label label-theme pull-right mail-info">2</span>
+                        </a>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class=" fa fa-bar-chart-o"></i>
+                            <span>Charts</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="morris.html">Morris</a></li>
+                            <li><a href="chartjs.html">Chartjs</a></li>
+                            <li><a href="flot_chart.html">Flot Charts</a></li>
+                            <li><a href="xchart.html">xChart</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-comments-o"></i>
+                            <span>Chat Room</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="lobby.html">Lobby</a></li>
+                            <li><a href="chat_room.html"> Chat Room</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="google_maps.html">
+                            <i class="fa fa-map-marker"></i>
+                            <span>Google Maps </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </section>
+
+    <section id="main-content">
+        <section class="wrapper">
+            <div class="row">
+                <iframe class="J_iframe" name="iframe0" id="iframe0" style="width: 100%; height: 1000px; border: 0;" src="@Url.Action("Default", "Home")" seamless="seamless" onload="autoSizeIframe()"></iframe>
+            </div>
+        </section>
+    </section>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/customer.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.nicescroll.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.sparkline.js"></script>
+    <script type="text/javascript" src="~/Scripts/common-scripts.js"></script>
+
+</body>
+</html>

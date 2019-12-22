@@ -1,0 +1,333 @@
+<!-- import Vue before Element -->
+<script src="js/vue.js"></script>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="css/index.css">
+<!-- 引入组件库 -->
+<script src="js/index.js"></script>
+<!-- <script src="js/jquery-1.10.2.js"></script> -->
+
+
+<style>
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        color: #333;
+    }
+
+    .transition-box {
+    margin-bottom: 10px;
+    width: 200px;
+    height: 100px;
+    border-radius: 4px;
+    background-color: #409EFF;
+    text-align: center;
+    color: #fff;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    margin-right: 20px;
+  }
+</style>
+
+<div id="app1">
+    <el-container style="height: auto; border: 1px solid #eee">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['1']">
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message"></i>导航一</template>
+                    <el-menu-item index="1-1" v-on:click="navjump('ServiceManage.html')">服务器管理</el-menu-item>
+                    <el-menu-item index="1-2" v-on:click="navjump('ServiceMapManage.html')">运行环境管理</el-menu-item>
+                    <el-menu-item index="1-3" v-on:click="navjump('LoadBalanceManage.html')">负载管理</el-menu-item>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+        <el-dialog title="添加新运行环境" :visible.sync="EnvironmentModel.addEnvironmentFormShow">
+            <el-form :model="EnvironmentModel.addEnvironmentForm">
+                <el-form-item label="运行环境名" :label-width="formLabelWidth">
+                    <el-input v-model="EnvironmentModel.addEnvironmentForm.enName" autocomplete="off"></el-input>
+                    <input type="hidden" id="hidEnId" v-model="EnvironmentModel.addEnvironmentForm.enId">
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="EnvironmentModel.addEnvironmentFormShow = false">取 消</el-button>
+                <el-button type="primary" @click="addEnvironment()">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="添加程序" :visible.sync="AppModel.AddNewIISAppDlgShow">
+            <el-steps :active="AppModel.AddNewIISAppDlg.active" finish-status="success">
+                <el-step title="选择服务器"></el-step>
+                <el-step title="选择应用程序"></el-step>
+                <el-step title="添加负载程序"></el-step>
+                <el-step title="完成"></el-step>
+            </el-steps>
+            <div v-show="AppModel.AddNewIISAppDlg.active == 0">
+                <el-table :data="AppModel.AddNewIISAppDlg.SerListData" height="auto" max-height="800" highlight-current-row @current-change="handleCurrentChange">
+                    <el-table-column label="序号" width="80" type="index"></el-table-column>
+                    <el-table-column prop="ip" label="服务器IP" width="160"></el-table-column>
+                    <el-table-column prop="alias" label="服务器别名" width="220"></el-table-column>
+                </el-table>
+            </div>
+            <div v-show="AppModel.AddNewIISAppDlg.active == 1">
+                <el-table :data="AppModel.AddNewIISAppDlg.AppListData" height="auto" max-height="800">
+                    <el-table-column label="序号" width="80" type="index"></el-table-column>
+                    <el-table-column prop="name" label="程序名称" width="160"></el-table-column>
+                    <el-table-column prop="desc" label="程序描述" width="220"></el-table-column>
+                    <el-table-column prop="path" label="程序路径" width="220"></el-table-column>
+                </el-table>
+            </div>
+            <el-button style="margin-top: 12px;" @click="addNewIISAppPreStep">上一步</el-button>
+            <el-button style="margin-top: 12px;" @click="addNewIISAppNextStep">下一步</el-button>
+        </el-dialog>
+
+        <el-container>
+            <el-main>
+                <el-collapse-transition>
+                    <div v-show="EnvironmentModelShow">
+                        <h1>运行环境列表</h1>
+                        <el-button type="primary" icon="el-icon-plus" @click="openAddEnvironmentDialog()">添加环境</el-button>
+
+                        <el-table :data="EnvironmentModel.environmentListData" height="800" max-height="800">
+                            <el-table-column label="序号" width="80">
+                                <template slot-scope="scope">
+                                    <span style="margin-left:10px">{{scope.$index}}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="enName" label="运行环境名" width="160">
+                            </el-table-column>
+                            <el-table-column label="操作" fixed="right">
+                                <template slot-scope="scope">
+                                    <el-button-group>
+                                        <el-button size="mini" icon="el-icon-delete" @click="delEnvironment(scope.$index)">删除</el-button>
+                                        <el-button size="mini" icon="el-icon-info" @click="EnvironmentModelShow = false">查看所有程序</el-button>
+                                    </el-button-group>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </el-collapse-transition>
+                <el-collapse-transition>
+                    <div v-show="AppListShow">
+                        <h1>应用程序列表</h1>
+                        <el-tabs>
+                            <el-tab-pane label="IIS应用程序">
+                                <el-form :inline="true" :model="AppModel.IISAppListForm" class="demo-form-inline">
+                                    <el-form-item label="程序名称">
+                                        <el-input v-model="AppModel.IISAppListForm.IISAppName" placeholder="IIS应用程序名称"></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <!-- <el-button type="primary" @click="AppModel.AddNewIISAppDlgShow = true;AppModel.AddNewIISAppDlg.active=0"
+                                            icon="el-icon-plus">创建新应用程序</el-button> -->
+                                        <el-button type="primary" @click="EnvironmentModelShow = true" icon="el-icon-back">返回</el-button>
+                                    </el-form-item>
+                                </el-form>
+
+                                <el-table :data="tableIISDetailData" height="auto" max-height="800">
+                                    <el-table-column label="序号" width="80">
+                                        <template slot-scope="scope">
+                                            <span style="margin-left:10px">{{scope.$index}}</span>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="name" label="程序名称" width="120"></el-table-column>
+                                    <el-table-column prop="desc" label="程序描述" width="120"></el-table-column>
+                                    <el-table-column prop="serviceInfo" label="服务器信息" width="160">
+                                            <template slot-scope="scope">
+                                                    <p>IP: {{ scope.row.serviceInfo.ip }}</p>
+                                                    <p>别名: {{ scope.row.serviceInfo.alias }}</p>
+                                            </template>
+                                        </el-table-column>
+                                    <el-table-column prop="version" label="当前版本" width="120"></el-table-column>
+
+                                    <el-table-column prop="path" label="程序路径" width="220">
+                                        <template slot-scope="scope">
+                                            <el-popover placement="top-start" width="auto" trigger="hover"
+                                                v-bind:content="scope.row.path">
+                                                <span slot="reference" style="display:block;overflow: hidden;">{{scope.row.path}}</span>
+                                            </el-popover>
+                                        </template>
+                                    </el-table-column>
+
+                                    <el-table-column prop="status" label="程序状态" width="120"></el-table-column>
+                                    <el-table-column prop="io" label="磁盘占用" width="120"></el-table-column>
+                                    <el-table-column prop="memory" label="内存占用" width="120"></el-table-column>
+                                    <el-table-column label="操作" fixed="right">
+                                        <template slot-scope="scope">
+                                            <el-button-group>
+                                                <el-popover placement="top" width="auto" v-model="changeVersionVisible"
+                                                    trigger="click">
+                                                    <p>可用版本</p>
+                                                    <el-select v-model="value" placeholder="请选择">
+                                                        <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                                            :value="item.value">
+                                                        </el-option>
+                                                    </el-select>
+                                                    <br />
+                                                    <div style="text-align: right;margin-top: 5%">
+                                                        <el-button size="mini" type="text" @click="changeVersionVisible = false">取消</el-button>
+                                                        <el-button type="primary" size="mini" @click="changeVersionVisible = false">确定</el-button>
+                                                    </div>
+                                                    <el-button size="mini" slot="reference" icon="el-icon-sort" @click="changeVersionVisible = true">版本切换</el-button>
+                                                </el-popover>
+                                                <!-- <el-button size="mini" icon="el-icon-plus" @click="openAddDialog()">版本切换</el-button> -->
+                                                <el-button size="mini" icon="el-icon-warning" @click="">重启</el-button>
+                                                <el-button size="mini" icon="el-icon-upload2" @click="">上传并切换版本</el-button>
+                                                <el-button size="mini" icon="el-icon-edit" @click="showConfig = true">更改配置文件</el-button>
+                                            </el-button-group>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-tab-pane>
+                            <el-tab-pane label="EXE应用程序">
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+                </el-collapse-transition>
+                <el-collapse-transition>
+                    <div v-show="showConfig">
+                        <h1>111111</h1>
+                        <el-button @click="showConfig = false" icon="el-icon-back">返回</el-button>
+                    </div>
+                </el-collapse-transition>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script>
+    const item = {
+        ip: '192.168.10.16',
+        alias: '内网16'
+    };
+    const detail = {
+        serviceInfo:{
+            ip:"192.168.10.19",
+            alias:"19"
+        },
+        name: "go.hello.exe",
+        desc: "示例程序",
+        version: "1.0.0.0",
+        path: "d://exe/go.hello/1.0.0.0",
+        status: "started",
+        io: "10%",
+        memory: "4.5M",
+    }
+    var vm = new Vue({
+        el: '#app1',
+        data: function () {
+            return {
+                EnvironmentModelShow: true,
+                EnvironmentModel: {
+                    addEnvironmentFormShow: false,
+                    addEnvironmentForm: {
+                        enName: "",
+                        enId: ""
+                    },
+                    environmentListData: [
+                        {
+                            enName: "内网",
+                            enId: "1",
+                        },
+                        {
+                            enName: "预发布",
+                            enId: "2",
+                        }],
+                },
+                AppModel: {
+                    IISAppListForm: {
+                        IISAppName: ""
+                    },
+                    AddNewIISAppDlgShow: false,
+                    AddNewIISAppDlg: {
+                        show: false,
+                        active: 0,
+                        SerListData: Array(5).fill(item),
+                        AppListData: Array(5).fill(detail),
+                    }
+                },
+                tableIISServiceData: Array(5).fill(item),
+                tableEXEServiceData: Array(5).fill(item),
+                dialogFormVisible: false,
+                addServiceForm: {
+                    SerIP: '',
+                    SerAlias: '',
+                    Index: 0,
+                },
+                formLabelWidth: '120px',
+                show: true,
+                showConfig: false,
+                formIISQuery: {
+                    Content: ""
+                },
+                formIISDetailQuery: {
+                    Content: ""
+                },
+                tableIISDetailData: Array(1).fill(detail),
+                changeVersionVisible: false,
+                options: [{
+                    value: '1.0.0.0',
+                    label: '1.0.0.0'
+                }, {
+                    value: '1.0.0.1',
+                    label: '1.0.0.1'
+                }, {
+                    value: '1.0.0.2',
+                    label: '1.0.0.2'
+                }, {
+                    value: '1.0.0.3',
+                    label: '1.0.0.3'
+                }, {
+                    value: '1.0.0.4',
+                    label: '1.0.0.4'
+                }],
+                value: '1.0.0.3',
+            }
+        },
+        computed: {
+            AppListShow: function () {
+                return !this.EnvironmentModelShow;
+            },
+        },
+        methods: {
+            navjump: function (url) {
+                window.location.href = url;
+            },
+            openAddEnvironmentDialog: function () {
+                this.EnvironmentModel.addEnvironmentForm.enName = "",
+                    this.EnvironmentModel.addEnvironmentForm.enId = "",
+                    this.EnvironmentModel.addEnvironmentFormShow = true;
+            },
+            addEnvironment: function () {
+                this.EnvironmentModel.environmentListData.push(
+                    {
+                        enName: this.EnvironmentModel.addEnvironmentForm.enName,
+                        enId: this.EnvironmentModel.addEnvironmentForm.enId
+                    });
+                this.$message({ message: '添加成功', type: "success" });
+                this.EnvironmentModel.addEnvironmentFormShow = false;
+            },
+            delEnvironment: function (index) {
+                this.EnvironmentModel.environmentListData.splice(index, 1);
+                this.EnvironmentModel.addEnvironmentFormShow = false;
+            },
+            addNewIISAppPreStep: function () {
+                if(this.AppModel.AddNewIISAppDlg.active > 0){
+                    this.AppModel.AddNewIISAppDlg.active--;
+                }
+            },
+            addNewIISAppNextStep: function () {
+                if (this.AppModel.AddNewIISAppDlg.active++ > 2) {
+                    this.AppModel.AddNewIISAppDlgShow = false;
+                    this.$message({ message: '添加成功', type: "success" });
+                }
+            },
+            openAddNewIISAppDlg: function () {
+                this.AppModel.AddNewIISAppDlgShow = true;
+                this.AppModel.AddNewIISAppDlg.active = 0;
+            },
+        }
+    });
+</script>

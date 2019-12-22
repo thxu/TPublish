@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using System.Xml.Linq;
 using TPublish.Common;
 using TPublish.Common.Model;
@@ -12,9 +14,24 @@ namespace TPublish.Web.Controllers
 {
     public class ClientApiController : BaseController
     {
+        private static readonly string _apiKey = ConfigurationManager.AppSettings["ApiKey"] ?? string.Empty;
+
         public string Index()
         {
             return "hello";
+        }
+
+        /// <summary>
+        /// 检查连接是否可用
+        /// </summary>
+        /// <returns></returns>
+        public string CheckConnection(string apiKey)
+        {
+            if (apiKey.Trim() == _apiKey.Trim())
+            {
+                return "OK";
+            }
+            return "Fail";
         }
 
         /// <summary>

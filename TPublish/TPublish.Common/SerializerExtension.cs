@@ -117,6 +117,7 @@ namespace TPublish.Common
             }
             return model;
         }
+
         /// <summary>
         /// 将一个实体对象转换为另一个实体对象
         /// </summary>
@@ -150,6 +151,36 @@ namespace TPublish.Common
             }
 
             return modelList;
+        }
+
+        /// <summary>
+        /// 格式化json字符串
+        /// </summary>
+        /// <param name="str">json字符串</param>
+        /// <returns>格式化后的json字符串</returns>
+        public static string FormatJsonString(this string str)
+        {
+            //格式化json字符串
+            JsonSerializer serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            JsonTextReader jtr = new JsonTextReader(tr);
+            object obj = serializer.Deserialize(jtr);
+            if (obj != null)
+            {
+                StringWriter textWriter = new StringWriter();
+                JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
+                {
+                    Formatting = Formatting.Indented,
+                    Indentation = 4,
+                    IndentChar = ' '
+                };
+                serializer.Serialize(jsonWriter, obj);
+                return textWriter.ToString();
+            }
+            else
+            {
+                return str;
+            }
         }
     }
 }
