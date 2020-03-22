@@ -18,8 +18,9 @@ namespace TPublish.WinFormClientApp.WinForms
         private MSettingInfo _settingInfo = new MSettingInfo();
         private List<AppView> _appViews = new List<AppView>();
         private bool _isInit = false;
+        private ServiceInfo _currSelectedServiceInfo = null;
 
-        public static Action<string, string> ServiceSelectedEvent;
+        public static Action<string, string, ServiceInfo> ServiceSelectedEvent;
 
         public ServiceForm(ProjectModel projectModel, MProjectSettingInfo projectSetting, MSettingInfo settingInfo)
         {
@@ -27,6 +28,7 @@ namespace TPublish.WinFormClientApp.WinForms
             _projectModel = projectModel ?? new ProjectModel();
             _projectSetting = projectSetting ?? new MProjectSettingInfo();
             _settingInfo = settingInfo ?? new MSettingInfo();
+            _currSelectedServiceInfo = _settingInfo.GetCurrServiceInfo();
         }
 
         private void showLbText(MetroLabel lb, string text)
@@ -156,7 +158,7 @@ namespace TPublish.WinFormClientApp.WinForms
                     return;
                 }
 
-                ServiceSelectedEvent?.BeginInvoke(_projectSetting.Type, view.Id, null, null);
+                ServiceSelectedEvent?.BeginInvoke(_projectSetting.Type, view.Id, _currSelectedServiceInfo, null, null);
                 this.Close();
             }
             catch (Exception ex)
@@ -167,10 +169,14 @@ namespace TPublish.WinFormClientApp.WinForms
 
         private void cbServiceList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var currService = this.cbServiceList.SelectedItem as ServiceInfo;
+            if (_isInit)
+            {
+                return;
+            }
+            _currSelectedServiceInfo = this.cbServiceList.SelectedItem as ServiceInfo;
             _appViews = this.cbProjType.SelectedIndex == 0
-                ? ApiHelper.GetAllIISAppNames(currService)
-                : ApiHelper.GetExeAppView(currService, _projectModel.ProjType == 3 ? "" : _projectModel.ProjName);
+                ? ApiHelper.GetAllIISAppNames(_currSelectedServiceInfo)
+                : ApiHelper.GetExeAppView(_currSelectedServiceInfo, _projectModel.ProjType == 3 ? "" : _projectModel.ProjName);
             this.cbServiceName.DataSource = _appViews;
             this.cbServiceName.DisplayMember = "AppAlias";
             this.cbServiceName.ValueMember = "AppPhysicalPath";

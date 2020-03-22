@@ -655,13 +655,13 @@ namespace TPublish.WinFormClientApp.WinForms
                             }
                             ServiceForm form = new ServiceForm(_projectModel, _projectSetting, _settingInfo);
                             form.Activate();
-                            ServiceForm.ServiceSelectedEvent = (type, appId) =>
+                            ServiceForm.ServiceSelectedEvent = (type, appId,serviceInfo) =>
                             {
                                 try
                                 {
                                     SetProcessVal(20, true);
                                     LogAppend("开始上传文件");
-                                    ApiHelper.UploadZipFile(_settingInfo, type, appId, _zipFilePath);
+                                    ApiHelper.UploadZipFile(_settingInfo, serviceInfo, type, appId, _zipFilePath);
                                     SetProcessVal(100);
                                     LogAppend("文件部署完成");
                                 }

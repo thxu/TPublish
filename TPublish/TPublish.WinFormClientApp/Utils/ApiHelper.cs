@@ -94,5 +94,31 @@ namespace TPublish.WinFormClientApp.Utils
             }
             return res;
         }
+
+        public static Result UploadZipFile(MSettingInfo setting, ServiceInfo serviceInfo, string projType, string appId, string fullZipPath)
+        {
+            Result res = new Result();
+            try
+            {
+                NameValueCollection dic = new NameValueCollection();
+                dic.Add("Type", projType == "Library" ? "iis" : "exe");
+                dic.Add("AppId", appId);
+
+                if (serviceInfo == null || serviceInfo.ApiIpAdress.IsNullOrEmpty())
+                {
+                    serviceInfo = setting.GetCurrServiceInfo();
+                }
+
+                string url = $"{serviceInfo?.GetApiUrl()}/UploadZip";
+                string uploadResStr = HttpHelper.HttpPostData(url, 30000, Path.GetFileName(fullZipPath), fullZipPath, dic);
+                var uploadRes = uploadResStr.DeserializeObject<Result>();
+                return uploadRes;
+            }
+            catch (Exception e)
+            {
+                res.Message = e.Message;
+            }
+            return res;
+        }
     }
 }
