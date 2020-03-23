@@ -194,6 +194,13 @@ namespace TPublish.WinFormClientApp.WinForms
                             {
                                 paths.Add(tmp);
                             }
+
+                            tmp = treeNode.Tag.ToString().Replace(".dll", ".xml");
+                            file = new FileInfo(tmp);
+                            if (file.Exists)
+                            {
+                                paths.Add(tmp);
+                            }
                         }
                     }
 
